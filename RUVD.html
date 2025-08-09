@@ -1,0 +1,801 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Сен-Дени • Полицейские формы (v5)</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --muted:#a5adbb; --text:#e6e9ef;
+    --accent:#4cc3ff; --ok:#7bd88f; --danger:#ff6b6b; --warn:#ffb86b;
+    --border:#2a2f3a; --chip:#222634; --mark:#3a3f55;
+    --i:#8aa1ff; --m:#ffd37a; --f:#ff8aa1;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Arial;background:var(--bg);color:var(--text)}
+  header{position:sticky;top:0;z-index:50;background:rgba(15,17,21,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--border)}
+  .wrap{max-width:1200px;margin:0 auto;padding:14px}
+  h1{margin:0;font-size:18px}
+  .tabs{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .tab-btn{padding:8px 12px;border:1px solid var(--border);background:var(--panel);cursor:pointer;border-radius:8px;color:var(--text)}
+  .tab-btn.active{outline:2px solid var(--accent)}
+  .container{max-width:1200px;margin:18px auto;padding:0 14px;display:none}
+  .container.active{display:block}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:14px}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
+  .col{flex:1 1 240px}
+  label{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}
+  input[type=text],input[type=number],input[type=date],input[type=time],select,textarea{
+    width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);background:#0d0f14;color:var(--text)}
+  textarea{min-height:90px;resize:vertical}
+  .btn{padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+  .btn.primary{background:var(--accent);color:#00131e;border-color:transparent}
+  .btn.ghost{background:transparent}
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--border);font-size:12px;color:var(--muted)}
+  .kpi{padding:10px 14px;border-radius:10px;background:var(--chip);border:1px solid var(--border);min-width:120px}
+  .kpi b{font-size:18px}
+  .right{margin-left:auto}
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:8px;border-bottom:1px solid var(--border);vertical-align:top}
+  th{position:sticky;top:56px;background:var(--panel);z-index:5;color:var(--muted);text-align:left}
+  tr:hover td{background:#141823}
+  .badge{padding:2px 6px;border-radius:6px;border:1px solid var(--border);background:#0c1018;color:var(--muted);font-size:12px}
+  .badge.i{color:#cfe1ff;border-color:#2a3b77;background:rgba(138,161,255,.08)}
+  .badge.m{color:#ffe4ad;border-color:#6b5323;background:rgba(255,211,122,.08)}
+  .badge.f{color:#ffc0cb;border-color:#6b2430;background:rgba(255,138,161,.08)}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  .list{display:flex;flex-direction:column;gap:10px}
+  .item{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+  .item .wide{grid-column:1/-1}
+  .remove{background:transparent;border:1px dashed var(--border);color:var(--muted);padding:8px 10px;border-radius:8px;cursor:pointer}
+  /* превью в спойлере */
+  details{margin-top:12px}
+  details>summary{cursor:pointer;list-style:none}
+  .preview{white-space:pre-wrap;background:#0d0f14;border:1px solid var(--border);border-radius:10px;padding:12px;margin-top:10px;max-height:45vh;overflow:auto}
+  /* отчёт: убираем sticky подвал */
+  #report .sticky-footer{position:static;background:var(--panel)}
+  /* helper */
+  .tips{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+  .tip{background:var(--chip);border:1px dashed var(--border);padding:12px;border-radius:10px}
+  .law-head{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:8px}
+  #law_results{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+  .card{border:1px solid var(--border);background:#0d0f14;border-radius:10px;padding:10px}
+  .card h4{margin:0 0 6px;font-size:14px}
+  .law-view{white-space:pre-wrap;border:1px solid var(--border);border-radius:10px;background:#0b0e13;padding:12px;max-height:60vh;overflow:auto}
+  .mark{background:var(--mark);border-radius:4px;padding:0 2px}
+  @media (max-width:1024px){ th{position:static} .item{grid-template-columns:repeat(2,1fr)} }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>Памятка для ментов • РУВД по г. Сен-Денесийску</h1>
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="fine">Штраф</button>
+      <button class="tab-btn" data-tab="detain">Задержание</button>
+      <button class="tab-btn" data-tab="report">Отчёт</button>
+      <button class="tab-btn" data-tab="helper">Помощник</button>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- =================== ШТРАФ =================== -->
+<section id="fine" class="container active">
+  <div class="panel row">
+    <div class="col"><label>Гражданин — имя</label><input id="f_cit_fn" type="text"></div>
+    <div class="col"><label>Гражданин — фамилия</label><input id="f_cit_ln" type="text"></div>
+    <div class="col"><label>Регистрационный номер</label><input id="f_cit_reg" type="text" placeholder="№"></div>
+    <div class="col"><label>Офицер — должность</label><input id="f_off_rank" type="text" placeholder="Коностебль"></div>
+    <div class="col"><label>Офицер — имя и фамилия</label><input id="f_off_name" type="text" placeholder="Билл Бобчанский"></div>
+  </div>
+
+  <div class="panel">
+    <div class="row">
+      <div class="col">
+        <label>Режим расчёта</label>
+        <select id="f_mode"><option value="max">Максимум</option><option value="avg">Среднее</option></select>
+      </div>
+      <div class="col">
+        <label>Поиск статей</label>
+        <input id="f_search" type="text" placeholder="Код, название...">
+      </div>
+      <div class="col">
+        <label>Срок оплаты (дней)</label>
+        <input id="f_deadline_days" type="number" min="1" step="1" value="3">
+      </div>
+      <div class="right row" style="gap:12px">
+        <span class="kpi">Штраф: <b><span id="f_sum_fine">0</span>$</b></span>
+        <span class="kpi">Срок: <b><span id="f_sum_jail">0</span> ср</b></span>
+        <span class="pill">Год: 1900</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="row"><div class="pill">Скидки (до 75% суммарно)</div><span class="pill right">Итого: <b id="f_disc_total">0%</b></span></div>
+    <div class="row">
+      <label class="pill"><input type="checkbox" class="f_disc" data-val="10"> Признал вину 10%</label>
+      <label class="pill"><input type="checkbox" class="f_disc" data-val="25"> Информатор 25%</label>
+      <label class="pill"><input type="checkbox" class="f_disc" data-val="20"> Был жертвой 20%</label>
+      <label class="pill"><input type="checkbox" class="f_disc" data-val="50"> Приказ 50%</label>
+    </div>
+  </div>
+
+  <div class="panel">
+    <table id="f_table"><thead><tr>
+      <th style="width:32px"></th><th>Статья</th><th>Кат.</th><th>Штраф</th><th>Срок</th><th>Тип</th><th>Модификаторы</th>
+    </tr></thead><tbody></tbody></table>
+    <div class="pill" style="margin-top:8px">Потолки: <b>750$ / 60 ср</b> (кроме особо тяжких и казнённых)</div>
+  </div>
+
+  <div class="panel">
+    <div class="row">
+      <button class="btn primary" id="f_copy">Скопировать бланк</button>
+      <button class="btn" id="f_toggle">Показать превью</button>
+      <button class="btn ghost" id="f_reset">Сброс</button>
+    </div>
+    <details id="f_preview">
+      <summary class="pill">Предпросмотр (раскрыть)</summary>
+      <pre id="f_out" class="mono preview"></pre>
+    </details>
+  </div>
+</section>
+
+<!-- =================== ЗАДЕРЖАНИЕ =================== -->
+<section id="detain" class="container">
+  <div class="panel">
+    <div class="row">
+      <div class="col"><label>Задержанный — имя</label><input id="d_fn" type="text"></div>
+      <div class="col"><label>Задержанный — фамилия</label><input id="d_ln" type="text"></div>
+      <div class="col"><label>Регистрационный номер</label><input id="d_reg" type="text"></div>
+      <div class="col"><label>Место</label><input id="d_loc" type="text" placeholder="Где оформлено"></div>
+      <div class="col"><label>Дата</label><input id="d_date" type="date"></div>
+      <div class="col"><label>Время</label><input id="d_time" type="time"></div>
+      <div class="col"><label>Офицер — должность</label><input id="d_rank" type="text"></div>
+      <div class="col"><label>Офицер — имя и фамилия</label><input id="d_off" type="text"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="row">
+      <div class="col">
+        <label>Режим расчёта</label>
+        <select id="d_mode"><option value="max">Максимум</option><option value="avg">Среднее</option></select>
+      </div>
+      <div class="col"><label>Поиск статей</label><input id="d_search" type="text" placeholder="Код, название..."></div>
+      <div class="right row" style="gap:12px">
+        <span class="kpi">Штраф: <b><span id="d_sum_fine">0</span>$</b></span>
+        <span class="kpi">Срок: <b><span id="d_sum_jail">0</span> ср</b></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="row"><div class="pill">Скидки (до 75%)</div><span class="pill right">Итого: <b id="d_disc_total">0%</b></span></div>
+    <div class="row">
+      <label class="pill"><input type="checkbox" class="d_disc" data-val="10"> Признал вину</label>
+      <label class="pill"><input type="checkbox" class="d_disc" data-val="25"> Информатор</label>
+      <label class="pill"><input type="checkbox" class="d_disc" data-val="20"> Был жертвой</label>
+      <label class="pill"><input type="checkbox" class="d_disc" data-val="50"> Приказ</label>
+    </div>
+  </div>
+
+  <div class="panel">
+    <table id="d_table"><thead><tr>
+      <th style="width:32px"></th><th>Статья</th><th>Кат.</th><th>Штраф</th><th>Срок</th><th>Тип</th><th>Модификаторы</th>
+    </tr></thead><tbody></tbody></table>
+  </div>
+
+  <div class="panel">
+    <div class="row">
+      <div class="pill"><input id="d_has_w" type="checkbox"> Изъятое оружие</div>
+      <div class="pill"><input id="d_has_notes" type="checkbox"> Примечания</div>
+    </div>
+    <div id="d_weapons" class="list" style="display:none;margin-top:10px"></div>
+    <div id="d_notes_wrap" style="display:none;margin-top:10px">
+      <label>Примечания</label>
+      <textarea id="d_notes" placeholder="Кратко, по фактам"></textarea>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <button class="btn" id="d_add_weapon">+ Добавить оружие</button>
+    </div>
+    <div class="pill">Конфискация/возврат — по статьям и владельцу (см. Кодекс, раздел 8).</div>
+  </div>
+
+  <div class="panel">
+    <div class="row">
+      <button class="btn primary" id="d_copy">Скопировать оформление задержания</button>
+      <button class="btn" id="d_toggle">Показать превью</button>
+      <button class="btn" id="d_reset">Сброс</button>
+    </div>
+    <details id="d_preview">
+      <summary class="pill">Предпросмотр (раскрыть)</summary>
+      <pre id="d_out" class="mono preview"></pre>
+    </details>
+  </div>
+</section>
+
+<!-- =================== ОТЧЁТ =================== -->
+<section id="report" class="container">
+  <div class="panel">
+    <div class="row">
+      <div class="col"><label>Гражданин — имя</label><input id="r_fn" type="text"></div>
+      <div class="col"><label>Гражданин — фамилия</label><input id="r_ln" type="text"></div>
+      <div class="col"><label>Регистрационный номер</label><input id="r_reg" type="text"></div>
+      <div class="col"><label>Локация</label><input id="r_loc" type="text" placeholder="Где произошло"></div>
+      <div class="col"><label>Дата</label><input id="r_date" type="date"></div>
+      <div class="col"><label>Время (примерно)</label><input id="r_time" type="time"></div>
+      <div class="col" style="flex-basis:100%"><label>Заголовок (аббр. | кратко)</label><input id="r_title" type="text" placeholder="ПЛСД | Кратко о происшествии"></div>
+      <div class="col" style="flex-basis:100%"><label>Кратко (опционально)</label><input id="r_brief" type="text" maxlength="300"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="row">
+      <div class="col">
+        <label>Режим расчёта наказания</label>
+        <select id="r_mode"><option value="max">Максимум</option><option value="avg">Среднее</option></select>
+      </div>
+      <div class="col"><label>Поиск статей</label><input id="r_search" type="text" placeholder="Код, название..."></div>
+      <div class="right row" style="gap:12px">
+        <span class="kpi">Штраф: <b><span id="r_sum_fine">0</span>$</b></span>
+        <span class="kpi">Срок: <b><span id="r_sum_jail">0</span> ср</b></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <table id="r_table"><thead><tr>
+      <th style="width:32px"></th><th>Статья</th><th>Кат.</th><th>Штраф</th><th>Срок</th><th>Тип</th><th>Модификаторы</th>
+    </tr></thead><tbody></tbody></table>
+  </div>
+
+  <div class="panel">
+    <h3 class="pill" style="margin:0 0 10px">Изъятое вооружение</h3>
+    <div id="r_weapons" class="list"></div>
+    <button class="btn" id="r_add_weapon">+ Добавить оружие</button>
+  </div>
+
+  <div class="panel">
+    <h3 class="pill" style="margin:0 0 10px">Украденное имущество</h3>
+    <div id="r_stolen" class="list"></div>
+    <button class="btn" id="r_add_stolen">+ Добавить предмет</button>
+  </div>
+
+  <div class="panel">
+    <label>Описание ситуации (по фактам)</label>
+    <textarea id="r_desc" placeholder="Коротко: кто, где, когда, что сделал"></textarea>
+    <div class="row" style="margin-top:10px">
+      <div class="pill">Скидки (до 75%)</div>
+      <label class="pill"><input type="checkbox" class="r_disc" data-val="10"> Признал вину</label>
+      <label class="pill"><input type="checkbox" class="r_disc" data-val="25"> Информатор</label>
+      <label class="pill"><input type="checkbox" class="r_disc" data-val="20"> Был жертвой</label>
+      <label class="pill"><input type="checkbox" class="r_disc" data-val="50"> Приказ</label>
+      <span class="pill right">Итого: <b id="r_disc_total">0%</b></span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="row">
+      <div class="col"><label>Офицер — должность</label><input id="r_rank" type="text"></div>
+      <div class="col"><label>Офицер — имя и фамилия</label><input id="r_off" type="text"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="row">
+      <button class="btn primary" id="r_copy">Скопировать отчёт</button>
+      <button class="btn" id="r_toggle">Показать превью</button>
+      <button class="btn" id="r_reset">Сброс</button>
+    </div>
+    <details id="r_preview">
+      <summary class="pill">Предпросмотр (раскрыть)</summary>
+      <pre id="r_out" class="mono preview"></pre>
+    </details>
+  </div>
+</section>
+
+<!-- =================== ПОМОЩНИК =================== -->
+<section id="helper" class="container">
+  <div class="panel">
+    <h3 style="margin:0 0 10px">Быстрые подсказки</h3>
+    <div class="tips">
+      <div class="tip">1) Утилита упрощает жизнь, а не отключает мозг. Думайте головой, а меня используйте как помощника.</div>
+      <div class="tip">2) Что-то сломалось? Пишите <b>Шоперду</b> (детектив Сол Лудман). Он меня собрал, пока депал в казино Сен-Дени.</div>
+      <div class="tip">3) Сделано для работяг Сен-Дени с любовью и при помощи <b>ChatGPT 5</b>. Великие технологии + тёплый кофе.</div>
+      <div class="tip">4) Здесь — поиск по «Книге законов» и прочим важным вещам. Есть идеи — свяжитесь с автором этой утилиты для ленивых детективов и ментов из РУВД Сен-Денийска.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="law-head">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <input id="h_query" type="text" placeholder="Поиск: номер (напр. 3.4) или слова (‘разбой’, ‘вандализм’)">
+        <button class="btn" id="h_clear">Сбросить</button>
+        <button class="btn" id="h_expand">Показать всё</button>
+        <button class="btn" id="h_collapse">Свернуть всё</button>
+      </div>
+      <div class="row">
+        <button class="btn" id="h_copy">Скопировать кодекс</button>
+      </div>
+    </div>
+
+    <div id="law_results"></div>
+
+    <h4 class="pill" style="margin:16px 0 8px">Полный кодекс</h4>
+    <div id="law_view" class="law-view mono"></div>
+  </div>
+</section>
+</main>
+
+<script>
+/* ===================== ДАННЫЕ СТАТЕЙ (синхронизировано со скриншотами) ===================== */
+/* Сокращения: i — инфракция (админ), m — проступок, f — уголовное */
+const ARTICLES = [
+  /* 2. Мелкие правонарушения */
+  {code:"2.1",category:"i",title:"Нарушение общественного порядка (хулиганство, брань, непристойное поведение, опасная езда в городе)",penalty_mode:"or",fine_min:0,fine_max:8,jail_min:0,jail_max:5},
+  {code:"2.2",category:"i",title:"Надругательство над телами умерших / осквернение захоронений",penalty_mode:"or",fine_min:0,fine_max:10,jail_min:0,jail_max:5},
+  {code:"2.3",category:"m",title:"Безосновательная стрельба в черте города",penalty_mode:"or",fine_min:10,fine_max:20,jail_min:0,jail_max:5, note:"Оружие изымается (см. раздел 8)"},
+  {code:"2.4",category:"i",title:"Охота в черте города",penalty_mode:"fine_only",fine_min:5,fine_max:10},
+  {code:"2.5",category:"i",title:"Несогласованные массовые мероприятия",penalty_mode:"or",fine_min:0,fine_max:15,jail_min:0,jail_max:5,modifiers:{organizer:{label:"Организатор (x2)",kind:"mult",fine_delta_mult:1,jail_delta_mult:1}}},
+
+  /* 3. Имущественные преступления */
+  {code:"3.1",category:"f",title:"Ограбление или попытка ограбления",penalty_mode:"and",fine_min:0,fine_max:100,jail_min:0,jail_max:40},
+  /* Кража: особое правило по стоимости и проникновению, разделим на варианты */
+  {code:"3.2a",family:"3.2",category:"m",title:"Кража имущества (стоимость до 15$)",penalty_mode:"and",fine_min:0,fine_max:20,jail_min:0,jail_max:10},
+  {code:"3.2b",family:"3.2",category:"m",title:"Кража имущества (стоимость свыше 15$)",penalty_mode:"and",fine_min:0,fine_max:40,jail_min:0,jail_max:15,modifiers:{burglary:{label:"С проникновением (+15$ +10 ср)",fine_delta:15,jail_delta:10}}},
+  {code:"3.3",category:"m",title:"Угон движимого имущества (лошадь, повозка)",penalty_mode:"and",fine_min:0,fine_max:40,jail_min:0,jail_max:15},
+  {code:"3.4",category:"f",title:"Разбой (хищение с насилием)",penalty_mode:"and",fine_min:0,fine_max:90,jail_min:0,jail_max:35},
+  {code:"3.5",category:"f",title:"Вымогательство",penalty_mode:"and",fine_min:0,fine_max:80,jail_min:0,jail_max:25},
+  {code:"3.6",category:"f",title:"Мошенничество (обман)",penalty_mode:"and",fine_min:0,fine_max:50,jail_min:0,jail_max:20},
+  {code:"3.7",category:"m",title:"Приобретение/сбыт заведомо краденого",penalty_mode:"and",fine_min:0,fine_max:40,jail_min:0,jail_max:25},
+
+  /* 4. Преступления против личности и здоровья (по скриншотам) */
+  {code:"4.1",category:"m",title:"Лёгкий вред здоровью или домогательства (физические/вербальные угрозы)",penalty_mode:"and",fine_min:0,fine_max:25,jail_min:0,jail_max:15},
+  {code:"4.2",category:"m",title:"Тяжкий вред здоровью",penalty_mode:"and",fine_min:0,fine_max:40,jail_min:0,jail_max:20},
+  {code:"4.3",category:"f",title:"Насильственные действия сексуального характера",penalty_mode:"and",fine_min:0,fine_max:40,jail_min:0,jail_max:25},
+  {code:"4.4",category:"f",title:"Похищение/удержание человека",penalty_mode:"and",fine_min:0,fine_max:40,jail_min:0,jail_max:25},
+  {code:"4.5",category:"f",title:"Рабовладение",penalty_mode:"and",fine_min:0,fine_max:80,jail_min:0,jail_max:40},
+  {code:"4.6",category:"f",title:"Убийство / покушение на убийство",penalty_mode:"and",fine_min:0,fine_max:200,jail_min:0,jail_max:60,modifiers:{attempt:{label:"Покушение (штраф ≤120$, срок ≤45 ср)",note:true}}},
+  {code:"4.7",category:"f",title:"Клевета, наносящая тяжкий ущерб (чести/достоинству) / клевета с обвинением в преступлении",penalty_mode:"and",fine_min:0,fine_max:100,jail_min:0,jail_max:30},
+  {code:"4.8",category:"f",title:"Противоестественные развратные деяния (публичное обнажение срамных мест и т.п.)",penalty_mode:"and",fine_min:0,fine_max:30,jail_min:0,jail_max:20},
+
+  /* 5. Преступления против власти */
+  {code:"5.1",category:"f",title:"Нападение на представителя закона при исполнении",penalty_mode:"and",fine_min:0,fine_max:80,jail_min:0,jail_max:35},
+  {code:"5.2",category:"m",title:"Создание помех представителю закона при исполнении обязанностей",penalty_mode:"and",fine_min:0,fine_max:25,jail_min:0,jail_max:10},
+  {code:"5.3",category:"m",title:"Неподчинение законному требованию",penalty_mode:"and",fine_min:0,fine_max:15,jail_min:0,jail_max:10},
+  {code:"5.4",category:"f",title:"Предложение дачи взятки",penalty_mode:"and",fine_min:0,fine_max:50,jail_min:0,jail_max:15},
+  {code:"5.5",category:"f",title:"Незаконное присвоение должностных полномочий",penalty_mode:"and",fine_min:0,fine_max:80,jail_min:0,jail_max:20},
+  {code:"5.6",category:"f",title:"Уклонение от правосудия (побег/уничтожение улик/содействие уклонению)",penalty_mode:"and",fine_min:0,fine_max:60,jail_min:0,jail_max:25},
+  {code:"5.7",category:"f",title:"Покушение на жизнь федерального судьи или маршала при исполнении",penalty_mode:"and",fine_min:0,fine_max:300,jail_min:60,jail_max:60, special:{capital:true}},
+
+  /* 6. Экономические */
+  {code:"6.1",category:"m",title:"Неуплата штрафа в срок (удвоение суммы + арест)",penalty_mode:"and",fine_min:0,fine_max:0,jail_min:0,jail_max:20},
+  {code:"6.2",category:"f",title:"Дача/получение взятки, использование должности в корыстных целях",penalty_mode:"and",fine_min:0,fine_max:80,jail_min:0,jail_max:30},
+  {code:"6.3",category:"f",title:"Подделка документов",penalty_mode:"and",fine_min:0,fine_max:60,jail_min:0,jail_max:20},
+  {code:"6.4",category:"m",title:"Запрещённая предпринимательская деятельность лицами <21 лет",penalty_mode:"fine_only",fine_min:0,fine_max:80},
+
+  /* 8. Оружие */
+  {code:"8.1",category:"i",title:"Ношение огнестрельного в неуместных местах (суд, церковь)",penalty_mode:"fine_only",fine_min:0,fine_max:8},
+  {code:"8.2",category:"i",title:"Оружие у лиц младше 16 лет",penalty_mode:"fine_only",fine_min:0,fine_max:20},
+  {code:"8.3",category:"m",title:"Торговля оружием/боеприпасами вне оружейных магазинов",penalty_mode:"and",fine_min:0,fine_max:80,jail_min:0,jail_max:25},
+  {code:"8.4",category:"i",title:"Хранение оружия, зарегистрированного на другого",penalty_mode:"or",fine_min:0,fine_max:5,jail_min:0,jail_max:5},
+  {code:"8.5",category:"i",title:"Хранение незарегистрированного оружия (повтор — конфискация)",penalty_mode:"or",fine_min:0,fine_max:5,jail_min:0,jail_max:5,modifiers:{repeat:{label:"Повторное нарушение (конфискация без возврата)"}}},
+
+  /* 11. Полномочия представителей закона */
+  {code:"11.6",category:"f",title:"Превышение полномочий или халатность, повлёкшая ущерб",penalty_mode:"and",fine_min:0,fine_max:80,jail_min:0,jail_max:50},
+  {code:"11.7",category:"f",title:"Неоказание первой помощи представителем закона/медиком",penalty_mode:"or",fine_min:0,fine_max:20,jail_min:0,jail_max:15},
+
+  /* 14. Адвокатская деятельность */
+  {code:"14.3m",family:"14.3",category:"m",title:"Разовая частная адвокатская деятельность",penalty_mode:"and",fine_min:0,fine_max:60,jail_min:0,jail_max:25},
+  {code:"14.3f",family:"14.3",category:"f",title:"Систематическая частная адвокатская деятельность",penalty_mode:"and",fine_min:0,fine_max:100,jail_min:0,jail_max:40},
+  {code:"14.4m",family:"14.4",category:"m",title:"Халатность/разглашение адвокатом",penalty_mode:"jail_only",jail_min:0,jail_max:10},
+  {code:"14.4f",family:"14.4",category:"f",title:"Сговор/взяточничество адвоката",penalty_mode:"and",fine_min:0,fine_max:80,jail_min:0,jail_max:25}
+];
+
+/* ===================== УТИЛИТЫ ===================== */
+const $=id=>document.getElementById(id);
+const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+const sum=arr=>arr.reduce((a,b)=>a+b,0);
+function gameNow(){const n=new Date();return new Date(1900,n.getMonth(),n.getDate(),n.getHours(),n.getMinutes());}
+function addDays1900(d,days){const x=new Date(d);x.setDate(x.getDate()+days);return x;}
+function fmt(d){const dd=String(d.getDate()).padStart(2,'0'),mm=String(d.getMonth()+1).padStart(2,'0');return `${dd}.${mm}.${d.getFullYear()}`;}
+
+/* ===================== РАСЧЁТЫ ===================== */
+function valueFromRange(min,max,mode){
+  if(min==null && max==null) return 0;
+  if(mode==="max") return (max ?? min ?? 0);
+  if(min==null) return Math.floor((max||0)/2);
+  if(max==null) return Math.floor(min/2);
+  return Math.round((min+max)/2);
+}
+function computeFromPicks(picks, mode, discounts){
+  let fine=0, jail=0, capInfo="";
+  const selected=[];
+  for(const a of ARTICLES){
+    const p=picks[a.code]; if(!p?.sel) continue;
+    let f=0,j=0;
+    if(a.penalty_mode==="and"){f=valueFromRange(a.fine_min,a.fine_max,mode);j=valueFromRange(a.jail_min,a.jail_max,mode);}
+    if(a.penalty_mode==="fine_only"){f=valueFromRange(a.fine_min,a.fine_max,mode);}
+    if(a.penalty_mode==="jail_only"){j=valueFromRange(a.jail_min,a.jail_max,mode);}
+    if(a.penalty_mode==="or"){ if(p.use==="jail") j=valueFromRange(a.jail_min,a.jail_max,mode); else f=valueFromRange(a.fine_min,a.fine_max,mode); }
+    if(a.modifiers){ for(const k in a.modifiers){ if(p.mods?.[k]){ const m=a.modifiers[k]; if(m.kind==="mult"){f=Math.round(f*(1+(m.fine_delta_mult||0))); j=Math.round(j*(1+(m.jail_delta_mult||0)));} else {f+=m.fine_delta||0; j+=m.jail_delta||0;} } } }
+    fine+=f; jail+=j; selected.push({a,f,j});
+  }
+  const hasSpecial = selected.some(x=>x.a.special?.capital); // не ограничиваем 60 ср для особых
+  if(!hasSpecial){
+    const fc=Math.min(fine,750), jc=Math.min(jail,60);
+    if(fc!==fine||jc!==jail) capInfo="Потолок 750$ / 60 ср применён";
+    fine=fc; jail=jc;
+  } else capInfo="Особо тяжкое/казненное — потолки не действуют";
+  const disc=clamp(sum(discounts),0,75), k=(100-disc)/100;
+  fine=Math.round(fine*k); jail=Math.round(jail*k);
+  if(jail>0 && jail<5) jail=5; // минимум 5 ср, если срок есть
+  return {fine,jail,disc,capInfo,selected};
+}
+
+/* ===================== РЕНДЕР ТАБЛИЦ ===================== */
+function renderTable(tbody,picks,mode,searchInput){
+  const q=searchInput.value.trim().toLowerCase(); tbody.innerHTML="";
+  for(const a of ARTICLES){
+    const text=(a.code+" "+a.title).toLowerCase(); if(q && !text.includes(q)) continue;
+    const tr=document.createElement("tr");
+    // чек
+    const td0=document.createElement("td"); const cb=document.createElement("input"); cb.type="checkbox"; cb.checked=!!picks[a.code]?.sel;
+    cb.onchange=()=>{picks[a.code]=picks[a.code]||{mods:{}}; picks[a.code].sel=cb.checked; updateAll();}; td0.appendChild(cb); tr.appendChild(td0);
+    // статья
+    const td1=document.createElement("td"); td1.innerHTML=`<b>${a.code}</b> — ${a.title}`; tr.appendChild(td1);
+    // категория
+    const td2=document.createElement("td"); const b=document.createElement("span"); b.className="badge "+a.category; b.textContent=a.category; td2.appendChild(b); tr.appendChild(td2);
+    // диапазоны
+    const range=(min,max,suf)=> (min==null && max==null)?"—":`${min??0}${max!=null?"–"+max:""}${suf}`;
+    const td3=document.createElement("td"); td3.textContent=a.penalty_mode!=="jail_only"?range(a.fine_min,a.fine_max,"$"):"—"; tr.appendChild(td3);
+    const td4=document.createElement("td"); td4.textContent=a.penalty_mode!=="fine_only"?range(a.jail_min,a.jail_max," ср"):"—"; tr.appendChild(td4);
+    // тип/выбор
+    const td5=document.createElement("td");
+    if(a.penalty_mode==="or"){
+      const sel=document.createElement("select");
+      sel.innerHTML='<option value="fine">Штраф</option><option value="jail">Срок</option>';
+      sel.value=picks[a.code]?.use||"fine";
+      sel.onchange=()=>{picks[a.code]=picks[a.code]||{mods:{}}; picks[a.code].use=sel.value; updateAll();};
+      td5.appendChild(sel);
+    }else td5.innerHTML=`<span class="badge">${a.penalty_mode}</span>`;
+    tr.appendChild(td5);
+    // модификаторы
+    const td6=document.createElement("td");
+    if(a.modifiers){ for(const k in a.modifiers){ const m=a.modifiers[k]; const lbl=document.createElement("label"); lbl.className="pill";
+      const cbm=document.createElement("input"); cbm.type="checkbox"; cbm.checked=!!picks[a.code]?.mods?.[k];
+      cbm.onchange=()=>{picks[a.code]=picks[a.code]||{mods:{}}; picks[a.code].mods[k]=cbm.checked; updateAll();};
+      lbl.appendChild(cbm); lbl.append(" "+m.label); td6.appendChild(lbl); } }
+    else td6.textContent="—";
+    tr.appendChild(td6);
+    tbody.appendChild(tr);
+  }
+}
+
+/* ===================== МУЛЬТИС ПОЛЕЙ ===================== */
+function weaponItem(containerId){
+  const wrap=document.createElement("div"); wrap.className="item";
+  wrap.innerHTML=`
+    <input class="w_type" type="text" placeholder="Тип/название">
+    <input class="w_model" type="text" placeholder="Модель">
+    <input class="w_serial" type="text" placeholder="Серийный №">
+    <select class="w_owner">
+      <option value="suspect">Задержанный</option>
+      <option value="other">Другое лицо</option>
+    </select>
+    <input class="w_basis" type="text" placeholder="Основание (ст.)">
+    <button class="remove">Удалить</button>
+    <input class="wide w_note" type="text" placeholder="Примечание / статус конфискации">
+  `;
+  wrap.querySelector(".remove").onclick=()=>{wrap.remove();updateAll();};
+  $(containerId).appendChild(wrap);
+}
+function stolenItem(containerId){
+  const wrap=document.createElement("div"); wrap.className="item";
+  wrap.innerHTML=`
+    <input class="s_name" type="text" placeholder="Предмет / оружие">
+    <input class="s_owner" type="text" placeholder="Владелец (ФИО)">
+    <input class="s_serial" type="text" placeholder="Серийный №">
+    <input class="s_value" type="number" placeholder="Оценка, $">
+    <input class="s_where" type="text" placeholder="Где изъято/обнаружено">
+    <button class="remove">Удалить</button>
+    <input class="wide s_note" type="text" placeholder="Примечание">
+  `;
+  wrap.querySelector(".remove").onclick=()=>{wrap.remove();updateAll();};
+  $(containerId).appendChild(wrap);
+}
+
+/* ===================== СОСТОЯНИЯ ===================== */
+const F={picks:{}}, D={picks:{}}, R={picks:{}};
+
+/* ===================== ОБНОВЛЕНИЯ МОДУЛЕЙ ===================== */
+function computeModule(picks,modeSel,discClass){
+  const discounts=Array.from(document.querySelectorAll(`.${discClass}:checked`)).map(x=>+x.dataset.val);
+  const res=computeFromPicks(picks,$(modeSel).value,discounts);
+  return {...res,discounts};
+}
+
+/* Штраф */
+function updateFine(){
+  const res=computeModule(F.picks,"f_mode","f_disc");
+  $("f_sum_fine").textContent=res.fine; $("f_sum_jail").textContent=res.jail; $("f_disc_total").textContent=res.disc+"%";
+  const now=gameNow(); const pay=addDays1900(now, parseInt($("f_deadline_days").value,10)||3);
+  const arts=res.selected.map(x=>x.a.code).join(", ");
+  $("f_out").textContent=
+`№ ________      Дата: ${fmt(now)}
+
+Гражданин ${$("f_cit_fn").value} ${$("f_cit_ln").value} ${$("f_cit_reg").value?("#"+$("f_cit_reg").value):""},
+уведомляется о штрафе в размере ${res.fine}$ за нарушения статей: ${arts}.
+Срок оплаты: до ${fmt(pay)}.
+
+Штрафной бланк предъявите в департамент для регистрации оплаты.
+
+Офицер: ${$("f_off_rank").value} ${$("f_off_name").value}`;
+}
+
+/* Задержание */
+function updateDetain(){
+  const res=computeModule(D.picks,"d_mode","d_disc");
+  $("d_sum_fine").textContent=res.fine; $("d_sum_jail").textContent=res.jail; $("d_disc_total").textContent=res.disc+"%";
+  const wItems=Array.from($("d_weapons").querySelectorAll(".item")).map(x=>{
+    const t=[x.querySelector(".w_type").value, `"${x.querySelector(".w_model").value}"`, x.querySelector(".w_serial").value].filter(Boolean).join(" ");
+    const own=x.querySelector(".w_owner").value==="suspect"?"(задержанного)":"(другое лицо)";
+    const b=x.querySelector(".w_basis").value, note=x.querySelector(".w_note").value;
+    return `- ${t} ${own}${b?`, основание: ст. ${b}`:""}${note?` — ${note}`:""}`;
+  });
+  const arts=res.selected.map(x=>`${x.a.code}) ${x.a.title}`).join("\n");
+  const now=gameNow();
+  $("d_out").textContent=
+`ЗАДЕРЖАНИЕ
+
+Задержанный: ${$("d_fn").value} ${$("d_ln").value} ${$("d_reg").value?("["+$("d_reg").value+"]"):""}
+Место: ${$("d_loc").value}
+Дата/время: ${$("d_date").value||fmt(now)} ${$("d_time").value||"00:00"}
+
+Статьи:
+${arts||"—"}
+
+Изъятое вооружение:
+${wItems.length?wItems.join("\n"):"—"}
+
+Наказание:
+${res.jail} ср и штраф ${res.fine}$
+
+${$("d_has_notes").checked?("Примечания:\n"+($("d_notes").value||"—")+"\n"):""}Офицер: ${$("d_rank").value} ${$("d_off").value}`;
+}
+
+/* Отчёт */
+function updateReport(){
+  const res=computeModule(R.picks,"r_mode","r_disc");
+  $("r_sum_fine").textContent=res.fine; $("r_sum_jail").textContent=res.jail; $("r_disc_total").textContent=res.disc+"%";
+  const wItems=Array.from($("r_weapons").querySelectorAll(".item")).map(x=>{
+    const t=[x.querySelector(".w_type").value, `"${x.querySelector(".w_model").value}"`, x.querySelector(".w_serial").value].filter(Boolean).join(" ");
+    const own=x.querySelector(".w_owner").value==="suspect"?"(задержанного)":"(другое лицо)";
+    const b=x.querySelector(".w_basis").value, note=x.querySelector(".w_note").value;
+    return `- ${t} ${own}${b?`, основание: ст. ${b}`:""}${note?` — ${note}`:""}`;
+  });
+  const sItems=Array.from($("r_stolen").querySelectorAll(".item")).map(x=>{
+    const n=x.querySelector(".s_name").value,o=x.querySelector(".s_owner").value,sn=x.querySelector(".s_serial").value,v=x.querySelector(".s_value").value,w=x.querySelector(".s_where").value,note=x.querySelector(".s_note").value;
+    const parts=[n,(sn?`№${sn}`:""),(o?`— владелец ${o}`:""),(v?`— ${v}$`:""),(w?` — ${w}`:"")].filter(Boolean).join(" ");
+    return `- ${parts}${note?` — ${note}`:""}`;
+  });
+  const arts=res.selected.map(x=>`${x.a.code}) ${x.a.title}`).join("\n");
+  const now=gameNow();
+  $("r_out").textContent=
+`ДЕПАРТАМЕНТ
+
+Гражданин: ${$("r_fn").value} ${$("r_ln").value} ${$("r_reg").value?("["+$("r_reg").value+"]"):""}
+Заголовок: ${$("r_title").value||"—"}
+Кратко: ${$("r_brief").value||"—"}
+
+Срок тюремного заключения: ${res.jail} ср
+
+ОТЧЁТ О ПРОИСШЕСТВИИ:
+
+Примерное место и время:
+${$("r_loc").value||"—"}
+${$("r_date").value||fmt(now)} ${$("r_time").value||"00:00"}
+
+Описание ситуации:
+${$("r_desc").value||"—"}
+
+Нарушение статьи:
+${arts||"—"}
+
+Изъятое вооружение:
+${wItems.length?wItems.join("\n"):"—"}
+
+Украденное имущество:
+${sItems.length?sItems.join("\n"):"—"}
+
+Наказания:
+${res.jail} ср и штраф ${res.fine}$
+
+Отчёт составил:
+${$("r_rank").value} ${$("r_off").value}`;
+}
+
+/* ===================== ТАБЛИЦЫ ===================== */
+function tableWiring(prefix,state){
+  const tbody=$(prefix+"_table").querySelector("tbody");
+  const modeEl=$(prefix+"_mode"), searchEl=$(prefix+"_search");
+  const render=()=>renderTable(tbody,state.picks,modeEl.value,searchEl);
+  modeEl.onchange=()=>{render();updateAll();};
+  searchEl.oninput=render;
+  render();
+}
+
+/* ===================== ПОМОЩНИК: ТЕКСТ КОДЕКСА ===================== */
+const LAW_TEXT = `
+1. ОБЩИЕ ПОЛОЖЕНИЯ
+— Преступление: деяние, запрещённое Сводом, совершённое умышленно или по неосторожности и представляющее угрозу обществу или личности.
+— Малозначительные нарушения не являются преступлениями.
+— Соучастники наказываются по санкциям соответствующей статьи.
+— Покушение карается как совершённое, приготовление — до половины санкций.
+— Невиновность презюмируется. Обвиняемый и подозреваемый не обязаны доказывать невиновность или свидетельствовать против себя и близких.
+— Задержанный — временно лишённый свободы для выяснения обстоятельств.
+— Арест — до 15 ср (департамент). Лишение свободы — более 15 ср (тюрьма).
+— Каждый обязан сообщать о преступлениях. Каждый имеет право на защиту и неприкосновенность собственности, может защищать имущество соразмерной силой (летальная — только при угрозе жизни).
+— Категории: (i) административное, (m) проступок, (f) уголовное.
+— Совокупность преступлений: сроки суммируются, но не более 60 ср; штраф — суммируется, но не более 750$. Исключения — особо тяжкие/казнённые.
+
+2. МЕЛКИЕ ПРАВОНАРУШЕНИЯ
+2.1 (i) Нарушение общественного порядка (хулиганство, брань, непристойное поведение, опасная езда) — штраф до 8$ или арест до 5 ср.
+2.2 (i) Надругательство над телами умерших/захоронениями — штраф до 10$ или арест до 5 ср.
+2.3 (m) Стрельба в городе без оснований — штраф 10–20$ или арест до 5 ср. Оружие изымается (см. раздел 8).
+2.4 (i) Охота в черте города — штраф 5–10$.
+2.5 (i) Несогласованные массовые мероприятия — штраф до 15$ или арест до 5 ср. Организатор — двойное наказание.
+
+3. ИМУЩЕСТВЕННЫЕ ПРЕСТУПЛЕНИЯ
+3.1 (f) Ограбление/попытка — до 40 ср и штраф до 100$.
+3.2 (m) Кража: при стоимости до 15$ — до 10 ср и до 20$; при стоимости свыше 15$ — до 15 ср и до 40$. При проникновении в жилище +10 ср и +15$.
+3.3 (m) Угон движимого (лошадь, повозка) — до 15 ср и до 40$.
+3.4 (f) Разбой (с насилием) — до 35 ср и до 90$.
+3.5 (f) Вымогательство — до 25 ср и до 80$.
+3.6 (f) Мошенничество — до 20 ср и до 50$.
+3.7 (m) Приобретение/сбыт краденого — до 25 ср и до 40$.
+Примечание: похищенное имущество возвращается потерпевшему; при невозможности — компенсация по стоимости.
+
+4. ПРОТИВ ЛИЧНОСТИ И ЗДОРОВЬЯ
+4.1 (m) Лёгкий вред здоровью или домогательства — арест до 15 ср и штраф до 25$ (+компенсация).
+4.2 (m) Тяжкий вред — арест до 20 ср и штраф до 40$ (+компенсация).
+4.3 (f) Насильственные действия сексуального характера — до 25 ср и до 40$.
+4.4 (f) Похищение/удержание — до 25 ср и до 40$.
+4.5 (f) Рабовладение — до 40 ср и до 80$.
+4.6 (f) Убийство — до 60 ср и штраф до 200$. Покушение — до 45 ср и до 120$.
+4.7 (f) Клевета, наносящая тяжкий ущерб, или клевета с обвинением в преступлении — до 30 ср и до 100$.
+4.8 (f) Противоестественные развратные деяния (в т.ч. публичное обнажение) — до 20 ср и до 30$.
+
+5. ПРОТИВ ВЛАСТИ
+5.1 (f) Нападение на представителя закона при исполнении — до 35 ср и до 80$.
+5.2 (m) Создание помех — до 10 ср и до 25$.
+5.3 (m) Неподчинение законному требованию — до 10 ср и до 15$.
+5.4 (f) Предложение дачи взятки — до 15 ср и до 50$.
+5.5 (f) Незаконное присвоение полномочий — до 20 ср и до 80$.
+5.6 (f) Уклонение от правосудия (побег/уничтожение улик/содействие) — до 25 ср и до 60$.
+5.7 (f) Покушение на жизнь федерального судьи или маршала при исполнении — 60 ср и штраф до 300$. При доказанном умысле — повешение.
+
+6. ЭКОНОМИЧЕСКИЕ
+6.1 (m) Неуплата штрафа в срок — удвоение суммы и арест до 20 ср (при отсутствии средств — изъятие имущества/исправработы).
+6.2 (f) Дача/получение взятки, использование должности в корыстных целях — до 30 ср и до 80$ (должностные — двойное + отстранение).
+6.3 (f) Подделка документов — до 20 ср и до 60$.
+6.4 (m) Запрещённая предпринимательская деятельность лицами <21 лет — штраф до 80$ (оплачивает опекун).
+
+7. ИСПРАВИТЕЛЬНЫЕ РАБОТЫ — назначаются при невозможности оплаты штрафа; невыполнение условий — арест до 10 ср.
+
+8. ОРУЖИЕ
+8.1 (i) Ношение в неуместных местах (суд, церковь) — штраф до 8$ и временное изъятие.
+8.2 (i) Оружие у <16 лет — изъятие и штраф до 20$ (платит опекун).
+8.3 (m) Торговля оружием вне магазинов — до 25 ср, до 80$, изъятие товара.
+8.4 (i) Хранение оружия, зарегистрированного на другого — до 5 ср или до 5$; возврат владельцу после проверки.
+8.5 (i) Хранение незарегистрированного — до 5 ср или до 5$; повтор — конфискация без возврата.
+
+11. ПОЛНОМОЧИЯ ПРЕДСТАВИТЕЛЕЙ ЗАКОНА
+— Право задержания при подозрении, применение оружия для пресечения преступления/самообороны, проверка документов.
+11.6 (f) Превышение полномочий/халатность, повлёкшая ущерб — до 50 ср и до 80$ + лишение должности.
+11.7 (f) Неоказание первой помощи представителем закона/медиком — арест до 15 ср или штраф до 20$.
+
+14. АДВОКАТСКАЯ ДЕЯТЕЛЬНОСТЬ
+14.3 (m) Разовая частная практика — арест до 25 ср и штраф до 60$.
+14.3 (f) Систематическая частная практика — лишение свободы до 40 ср и штраф до 100$.
+14.4 (m) Халатность/разглашение — арест до 10 ср и отстранение.
+14.4 (f) Сговор/взяточничество — до 25 ср и до 80$ + пожизненное отстранение.
+
+15. ВЫСШАЯ МЕРА НАКАЗАНИЯ
+— Может применяться при повторных тяжких преступлениях (категория f) или особо тяжких случаях по санкции федерального судьи.
+`;
+
+/* ===================== ПОМОЩНИК: ПОИСК/ОТОБРАЖЕНИЕ ===================== */
+function escapeHtml(s){return s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+function escapeRegex(s){return s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");}
+function renderLaw(text,q=""){
+  const view=$("law_view"); if(!q){view.innerHTML=escapeHtml(text);return;}
+  const re=new RegExp(escapeRegex(q),"gi");
+  view.innerHTML=escapeHtml(text).replace(re,m=>`<span class="mark">${m}</span>`);
+}
+function helperSearch(){
+  const q=$("h_query").value.trim().toLowerCase();
+  const box=$("law_results"); box.innerHTML="";
+  const arr=ARTICLES.filter(a=>(a.code+" "+a.title).toLowerCase().includes(q));
+  arr.forEach(a=>{
+    const card=document.createElement("div"); card.className="card";
+    const fine=(a.fine_min==null&&a.fine_max==null)?"—":`${a.fine_min??0}${a.fine_max!=null?"–"+a.fine_max:""}$`;
+    const jail=(a.jail_min==null&&a.jail_max==null)?"—":`${a.jail_min??0}${a.jail_max!=null?"–"+a.jail_max:""} ср`;
+    card.innerHTML=`
+      <h4><b>${a.code}</b> — ${a.title}</h4>
+      <div class="pill">Категория: <b>${a.category}</b> • Наказание: <b>${a.penalty_mode}</b></div>
+      <div class="pill">Штраф: <b>${fine}</b> • Срок: <b>${jail}</b></div>
+      <div class="row" style="margin-top:8px">
+        <button class="btn" data-goto="${a.code}">Показать в кодексе</button>
+      </div>`;
+    card.querySelector("[data-goto]").onclick=()=>scrollToArticle(a.code);
+    box.appendChild(card);
+  });
+  renderLaw(LAW_TEXT,q);
+}
+function scrollToArticle(code){
+  const view=$("law_view");
+  const re=new RegExp(`(^|\\n)\\s*${escapeRegex(code)}(\\.|\\))`,"i");
+  const idx=LAW_TEXT.search(re);
+  if(idx>=0){
+    renderLaw(LAW_TEXT,$("h_query").value.trim());
+    view.scrollTop=Math.max(0, idx/LAW_TEXT.length*(view.scrollHeight-view.clientHeight));
+  }
+}
+
+/* ===================== НАВИГАЦИЯ, ПРИВЯЗКИ ===================== */
+document.querySelectorAll(".tab-btn").forEach(btn=>{
+  btn.onclick=()=>{document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));btn.classList.add("active");
+    document.querySelectorAll(".container").forEach(c=>c.classList.remove("active"));$(btn.dataset.tab).classList.add("active");};
+});
+
+/* wiring — штраф */
+["f_cit_fn","f_cit_ln","f_cit_reg","f_off_rank","f_off_name","f_deadline_days"].forEach(id=>$(id).oninput=updateFine);
+document.querySelectorAll(".f_disc").forEach(cb=>cb.onchange=updateFine);
+$("f_copy").onclick=()=>navigator.clipboard.writeText($("f_out").textContent);
+$("f_toggle").onclick=()=>{const d=$("f_preview");d.open=!d.open;$("f_toggle").textContent=d.open?"Скрыть превью":"Показать превью";};
+$("f_reset").onclick=()=>{F.picks={};document.querySelectorAll(".f_disc").forEach(x=>x.checked=false);$("f_search").value="";tableWiring("f",F);updateFine();};
+
+/* wiring — задержание */
+["d_fn","d_ln","d_reg","d_loc","d_date","d_time","d_rank","d_off","d_notes"].forEach(id=>$(id).oninput=updateDetain);
+document.querySelectorAll(".d_disc").forEach(cb=>cb.onchange=updateDetain);
+$("d_has_w").onchange=()=>{$("d_weapons").style.display=$("d_has_w").checked?"flex":"none";updateDetain();};
+$("d_has_notes").onchange=()=>{$("d_notes_wrap").style.display=$("d_has_notes").checked?"block":"none";};
+$("d_add_weapon").onclick=()=>{weaponItem("d_weapons");updateDetain();};
+$("d_copy").onclick=()=>navigator.clipboard.writeText($("d_out").textContent);
+$("d_toggle").onclick=()=>{const d=$("d_preview");d.open=!d.open;$("d_toggle").textContent=d.open?"Скрыть превью":"Показать превью";};
+$("d_reset").onclick=()=>{D.picks={};document.querySelectorAll(".d_disc").forEach(x=>x.checked=false);$("d_search").value="";$("d_weapons").innerHTML="";$("d_notes").value="";$("d_has_w").checked=false;$("d_has_notes").checked=false;tableWiring("d",D);updateDetain();};
+
+/* wiring — отчёт */
+["r_fn","r_ln","r_reg","r_loc","r_date","r_time","r_title","r_brief","r_desc","r_rank","r_off"].forEach(id=>$(id).oninput=updateReport);
+document.querySelectorAll(".r_disc").forEach(cb=>cb.onchange=updateReport);
+$("r_add_weapon").onclick=()=>{weaponItem("r_weapons");updateReport();};
+$("r_add_stolen").onclick=()=>{stolenItem("r_stolen");updateReport();};
+$("r_copy").onclick=()=>navigator.clipboard.writeText($("r_out").textContent);
+$("r_toggle").onclick=()=>{const d=$("r_preview");d.open=!d.open;$("r_toggle").textContent=d.open?"Скрыть превью":"Показать превью";};
+$("r_reset").onclick=()=>{R.picks={};document.querySelectorAll(".r_disc").forEach(x=>x.checked=false);$("r_search").value="";$("r_weapons").innerHTML="";$("r_stolen").innerHTML="";tableWiring("r",R);updateReport();};
+
+/* таблицы */
+tableWiring("f",F);
+tableWiring("d",D);
+tableWiring("r",R);
+
+/* даты 1900 по умолчанию */
+(function(){const n=gameNow();$("d_date").valueAsDate=n;$("r_date").valueAsDate=n;})();
+
+/* помощник */
+$("h_query").oninput=helperSearch;
+$("h_clear").onclick=()=>{$("h_query").value="";helperSearch();};
+$("h_copy").onclick=()=>navigator.clipboard.writeText(LAW_TEXT.trim());
+$("h_expand").onclick=()=>{ $("law_results").innerHTML=""; $("h_query").value=""; renderLaw(LAW_TEXT,""); };
+$("h_collapse").onclick=()=>{ $("law_view").scrollTop=0; $("h_query").value=""; helperSearch(); };
+renderLaw(LAW_TEXT);
+
+/* глобальный апдейт */
+function updateAll(){updateFine();updateDetain();updateReport();}
+updateAll();
+</script>
+</body>
+</html>
