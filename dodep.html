@@ -223,7 +223,17 @@
 <script>
 /* ==== данные/баланс и всё остальное — как у тебя было в последней версии ==== */
 const STORAGE_KEY='last_dodep_save_ui_v2';
-const SYMBOLS=[{id:'cherry',e:'🍒',weight:20,payout3:6,note:'Две 🍒 = 1×'},{id:'lemon',e:'🍋',weight:18,payout3:8},{id:'bell',e:'🔔',weight:14,payout3:10},{id:'card',e:'💳',weight:12,payout3:16},{id:'loan',e:'🧾',weight:9,payout3:24},{id:'chart',e:'📈',weight:8,payout3:36},{id:'vault',e:'🏦',weight:6,payout3:60},{id:'wild',e:'💸',weight:4,payout3:100,note:'Заменяет любой один'},{id:'jack',e:'🧿',weight:1.2,payout3:380}];
+const SYMBOLS = [
+  {id:'cherry',e:'🍒',weight:22,payout3:6,note:'Две 🍒 = 1×'},
+  {id:'lemon', e:'🍋',weight:20,payout3:8},
+  {id:'bell',  e:'🔔',weight:16,payout3:10},
+  {id:'card',  e:'💳',weight:13,payout3:16},
+  {id:'loan',  e:'🧾',weight:10,payout3:24},
+  {id:'chart', e:'📈',weight:8, payout3:36},
+  {id:'vault', e:'🏦',weight:6, payout3:60},
+  {id:'wild',  e:'💸',weight:4, payout3:100,note:'Заменяет любой один'},
+  {id:'jack',  e:'🧿',weight:1.2,payout3:380}
+];
 
 const INVENTORY_PRESET=[
   {id:'house',icon:'🏠',title:'Дом',cat:'property',value:[2500,3500]},
@@ -460,3 +470,4 @@ function buildPaytable(){const wrap=$('#paytable');wrap.innerHTML='';SYMBOLS.for
 </script>
 </body>
 </html>
+
