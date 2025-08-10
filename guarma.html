@@ -54,16 +54,16 @@
     display:flex; justify-content:center; align-items:flex-start;
     padding: clamp(12px, 6vh, 48px) 12px 12px; position:relative; overflow:hidden;
   }
-  .scene{position:absolute; inset:0; pointer-events:none; opacity:.18; background:
-    radial-gradient(1000px 60% at 50% 110%, rgba(255,255,255,.06), transparent 70%),
-    url('data:image/svg+xml;utf8,\
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox=\"0 0 800 400\" preserveAspectRatio=\"none\">\
-        <rect width=\"800\" height=\"400\" fill=\"#0e1f26\"/>\
-        <g fill=\"#0f3d3a\" opacity=\"0.65\">\
-          <ellipse cx=\"\" cy=\"330\" rx=\"220\" ry=\"60\"/>\
-          <ellipse cx=\"650\" cy=\"350\" rx=\"260\" ry=\"60\"/>\
-        </g>\
-      </svg>') center/cover no-repeat;}
+.scene{position:absolute; inset:0; pointer-events:none; opacity:.18; background:
+  radial-gradient(1000px 60% at 50% 110%, rgba(255,255,255,.06), transparent 70%),
+  url('data:image/svg+xml;utf8,\
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="none">\
+      <rect width="800" height="400" fill="#0e1f26"/>\
+      <g fill="#0f3d3a" opacity="0.65">\
+        <ellipse cx="150" cy="330" rx="220" ry="60"/>\
+        <ellipse cx="650" cy="350" rx="260" ry="60"/>\
+      </g>\
+    </svg>') center/cover no-repeat;}
   .click-wrap{position:relative; display:grid; place-items:center; gap:8px; z-index:1}
   .click-target{
     width:min(40vh, 300px); aspect-ratio:1; border-radius:16px;
@@ -206,10 +206,10 @@
       // БЫВШИЕ «моды/сек» -> теперь усиливают КЛИК (CPC)
       mods:[
         { id:'whip',   name:'Плеть Генерал-сержанта Уокера', emoji:'🏵️', desc:'Ритм плети добавляет силу клика.', base:50,    add:2,    owned:0, scale:1.15 },
-        { id:'goats',  name:'Ручные козлопасы из Валентайна', emoji:'🐐', desc:'Подпинывают вурдалаков и носят патроны.', base:,   add:6,    owned:0, scale:1.15 },
+        { id:'goats',  name:'Ручные козлопасы из Валентайна', emoji:'🐐', desc:'Подпинывают вурдалаков и носят патроны.', base:150, add:6, owned:0, scale:1.15 },
         { id:'sheriff',name:'Шериф-вурдалак с большой земли', emoji:'🧟‍♂️', desc:'Стреляет даже после отбоя.',   base:900,   add:30,   owned:0, scale:1.16 },
         { id:'medal',  name:'Наградная медаль Леруа Мерлен',  emoji:'🎖️', desc:'Блеск дисциплинирует всех.',      base:3500,  add:120,  owned:0, scale:1.17 },
-        { id:'beer',   name:'Ящик пива «Пиклз»',              emoji:'🍺', desc:'Мораль ↑, клик бодрее.',           base:00, add:600,  owned:0, scale:1.18 },
+       { id:'beer',   name:'Ящик пива «Пиклз»', emoji:'🍺', desc:'Мораль ↑, клик бодрее.', base:15000, add:600, owned:0, scale:1.18 },
         { id:'donkeys',name:'Ослиная кавалерия Гуармы',       emoji:'🐴', desc:'Великая мощь за 2000$.', base:80000, add:3000, owned:0, scale:1.19 },
       ],
       // БЫВШИЕ «улучшения клика» -> теперь пассивный ДОХОД (CPS) и заметно больше
@@ -560,6 +560,7 @@ function triggerDedBaldyozh(){
 </script>
 </body>
 </html>
+
 
 
 
