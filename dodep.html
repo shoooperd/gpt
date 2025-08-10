@@ -120,7 +120,7 @@
 <body>
   <div class="app">
     <header>
-      <h1>🎰 Последний додеп <span class="tag">сатирический слот</span></h1>
+      <h1>🎰 Последний додеп <span class="tag">юмор и сатира</span></h1>
       <div class="toggles">
         <div class="chip">Баланс: <b id="balance">—</b></div>
         <div class="chip">Ставка: <b id="betLabel">—</b></div>
@@ -293,8 +293,8 @@ function trimLog(){while(logEl.children.length>40)logEl.removeChild(logEl.lastCh
 function depPost(it, amount){
   const now=new Date(); const hh=String(now.getHours()).padStart(2,'0'), mm=String(now.getMinutes()).padStart(2,'0');
   const heads=[
-    `Анон ${it.icon} депнул ${it.title} на ${fmt(amount)}`,
-    `OP съел кек: продал ${it.title} ${it.icon} и залил ${fmt(amount)}`,
+    `Игнасио ${it.icon} депнул ${it.title} на ${fmt(amount)}`,
+    `Игнасио продал ${it.title} ${it.icon} и залил ${fmt(amount)}`,
     `${it.icon} минус инвентарь: ${it.title} → ${fmt(amount)}`
   ];
   const greens=[
@@ -305,7 +305,7 @@ function depPost(it, amount){
     '>верну как отобьюсь'
   ];
   const body = `
-    <div class="meta">Анон | ${hh}:${mm}</div>
+    <div class="meta">Игнасио | ${hh}:${mm}</div>
     <div><b>${heads[Math.floor(Math.random()*heads.length)]}</b></div>
     <div class="greentext">${greens[Math.floor(Math.random()*greens.length)]}</div>
   `;
@@ -419,3 +419,4 @@ function buildPaytable(){
 </script>
 </body>
 </html>
+
