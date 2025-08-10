@@ -343,10 +343,10 @@
   // ====== «ЗОЛОТОЙ КЛИК»: Дед Балдёж (усилен) ======
   function triggerDedBaldyozh(){
     // огромный буст 10с, затем дебафф 12с
-    const ms = 10000;
+    const ms = 5000;
     const debuffMs = 12000;
-    const startMsg = '💥 Дед Балдёж в расстрельной команде! CPC ×150 и CPS ×5 на 10 сек';
-    const endMsg = '🚫 Дед Балдёж ушёл в пермач (CPS −25% на 12 сек)';
+    const startMsg = '💥 Дед Балдёж в расстрельной команде! CPC ×10 и CPS ×5 на 10 сек';
+    const endMsg = '🚫 Дед Балдёж ушёл в пермач (CPS −85% на 12 сек)';
 
     els.target.classList.add('golden');
 
@@ -356,9 +356,9 @@
         els.target.classList.remove('golden');
         addLog('🕯️ ' + endMsg);
         toast(endMsg);
-        temporaryBoost(0.75, debuffMs, '⚠️ Балдёж лопнул', true, 'cps');
+        temporaryBoost(0.15, debuffMs, '⚠️ Балдёж лопнул', true, 'cps');
       },
-      150 // multCPC
+      10 // multCPC
     );
     state.stats.baldozh++;
     rewardSound();
@@ -553,3 +553,4 @@
 </script>
 </body>
 </html>
+
