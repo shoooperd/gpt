@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Последний додеп — слот-сатира</title>
+<style>
+  :root{
+    --bg:#0f1220; --panel:#151936; --panel-2:#10132a;
+    --line:#2b315f; --line-2:#333a77;
+    --text:#e9ecff; --muted:#98a0c6;
+    --accent:#69ff9a; --accent-2:#9aa8ff; --danger:#ff5978;
+    --shadow:0 12px 34px rgba(0,0,0,.35); --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; font-family:system-ui, -apple-system, Segoe UI, Inter, Roboto, Arial;
+    background: radial-gradient(1200px 800px at 70% -10%, #23284d 0%, #121428 40%, #0b0e1f 100%), var(--bg);
+    color:var(--text); display:flex; align-items:center; justify-content:center; padding:18px;
+  }
+  .app{width:min(1100px,100%); display:grid; gap:16px; grid-template-columns: 360px 1fr}
+  header{
+    grid-column:1/-1; background:linear-gradient(180deg,#1e2240,#14182d);
+    border:1px solid #2c325d; border-radius:14px; padding:12px 14px; box-shadow:var(--shadow);
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+  }
+  h1{margin:0; font-size:20px; display:flex; gap:10px; align-items:center}
+  .tag{font-size:12px; color:var(--muted); border:1px solid #2f3564; padding:2px 8px; border-radius:999px}
+  .chip{background:#10132a; border:1px solid #2b2f5f; padding:8px 10px; border-radius:12px; display:flex; gap:8px; align-items:center}
+  .toggles{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+  .toggle{display:flex; gap:6px; align-items:center; font-size:12px; color:var(--muted)}
+  .panel{background:linear-gradient(180deg,#151936,#10132a); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow)}
+  .left{padding:14px; display:flex; flex-direction:column; gap:12px}
+  .hero{background:linear-gradient(180deg,#1a1f47,#111534); border:1px solid #2a2f60; border-radius:12px; padding:12px}
+  .hero-inner{display:grid; grid-template-columns:90px 1fr; gap:12px; align-items:center}
+  .ignacio{
+    width:88px; height:88px; border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, #ffd77a, #ffbf3f 60%, #d18b1a 100%);
+    border:3px solid #2b1800; display:flex; align-items:center; justify-content:center; font-size:42px;
+    box-shadow: inset 0 -8px 20px rgba(0,0,0,.25), 0 10px 30px rgba(0,0,0,.35);
+  }
+  .ignacio.win{animation: win-bounce 1s ease}
+  .ignacio.lose{animation: lose-sad 1s ease}
+  @keyframes win-bounce{0%{transform:none}30%{transform:translateY(-10px) scale(1.05)}100%{transform:none}}
+  @keyframes lose-sad{0%{transform:none}40%{transform:translateY(6px) rotate(3deg)}100%{transform:none}}
+  .hero-name{font-weight:800}.hero-sub{font-size:12px; color:var(--muted)}
+  .props{display:flex; gap:8px; flex-wrap:wrap; margin-top:6px}
+  .prop{font-size:12px; color:var(--muted); border:1px dashed #3a3f6e; padding:4px 8px; border-radius:999px}
+  .prop.sold{opacity:.45; text-decoration:line-through}
+
+  .inv-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:6px}
+  .pill{border:1px solid #3a427d; border-radius:999px; padding:2px 8px; color:var(--muted); font-size:12px}
+  .inv-tabs{display:flex; gap:8px}
+  .tab{border:1px solid #39407a; background:#0f1331; color:#cfd4ff; padding:6px 10px; border-radius:10px; cursor:pointer}
+  .tab.active{background:#222a66}
+  .inventory{display:flex; flex-direction:column; gap:8px; max-height:240px; overflow:auto; padding-right:6px}
+  .item{display:grid; grid-template-columns:30px 1fr auto; gap:10px; align-items:center;
+        background:linear-gradient(180deg,#14193a,#0f1230); border:1px solid #2b315e; border-radius:10px; padding:8px}
+  .item.gone{opacity:.55; filter:grayscale(1)}
+  .dep{border:0; background:#242a56; color:#e7eaff; padding:6px 10px; border-radius:10px; border:1px solid #39407a; cursor:pointer}
+
+  .left-footer{margin-top:10px; padding-top:10px; border-top:1px solid #2b315f; display:flex; justify-content:space-between; align-items:center; gap:10px}
+  .reset-btn{border:0; background:linear-gradient(180deg,#ff8aa2,#ff5b7a); color:#2b0010; font-weight:700; padding:8px 12px; border-radius:10px; cursor:pointer}
+
+  .right{padding:14px; display:flex; flex-direction:column; gap:12px}
+
+  .slot{
+    background: radial-gradient(600px 300px at 50% 0%, #1f2553, #121534 60%), #0f1229;
+    border:1px solid var(--line); border-radius:14px; padding:14px; position:relative; overflow:hidden; min-height:410px;
+    transition: box-shadow .4s ease, outline-color .4s ease;
+  }
+  /* липкая подсветка выигрыша */
+  .slot.win-sticky{
+    box-shadow: 0 0 0 2px rgba(105,255,154,.4), 0 0 28px rgba(105,255,154,.35), inset 0 0 24px rgba(105,255,154,.18);
+  }
+
+  .reels{
+    position:relative; display:grid; grid-template-columns:repeat(3,1fr); gap:12px; padding:14px;
+    background:#0f1333; border:1px solid var(--line-2); border-radius:12px; box-shadow: inset 0 0 30px rgba(0,0,0,.45)
+  }
+  .reel{height:180px; overflow:hidden; background:linear-gradient(180deg,#0f1331,#0a0e27); border:1px solid #2c3165; border-radius:10px; position:relative}
+  .reel::before{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background:
+      linear-gradient(to bottom, transparent calc(33.333% - 1px), rgba(255,255,255,.16) calc(33.333% - 1px), rgba(255,255,255,.16) calc(33.333% + 1px), transparent calc(33.333% + 1px)),
+      linear-gradient(to bottom, transparent calc(66.666% - 1px), rgba(255,255,255,.16) calc(66.666% - 1px), rgba(255,255,255,.16) calc(66.666% + 1px), transparent calc(66.666% + 1px));
+  }
+  .reel:not(:last-child)::after{
+    content:""; position:absolute; top:0; right:-6px; bottom:0; width:12px; pointer-events:none;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.16), transparent);
+  }
+  .strip{position:absolute; left:0; right:0; top:0; will-change:transform}
+  .cell{height:60px; display:flex; align-items:center; justify-content:center; font-size:34px; text-shadow:0 2px 0 rgba(0,0,0,.45); filter:drop-shadow(0 4px 10px rgba(0,0,0,.35))}
+
+  .controls{display:grid; grid-template-columns: 1fr auto 1fr; gap:12px; align-items:center; margin-top:12px}
+  .betbox{display:flex; align-items:center; gap:8px; justify-content:flex-start}
+  .btn{border:0; background:linear-gradient(180deg,#5efc7a,#34dc5a); color:#082313; font-weight:800; padding:10px 14px; border-radius:12px; cursor:pointer; box-shadow:0 6px 20px rgba(79,255,140,.25)}
+  .spin-big{justify-self:center; font-size:18px; padding:14px 24px}
+  .bet-ctrl{display:flex; gap:6px; align-items:center}
+  .step{border:1px solid #39407a; background:#1a204b; color:#e7eaff; width:34px; height:34px; border-radius:8px; font-weight:800; cursor:pointer}
+  .bet-slider{width:220px}
+  .statbox{justify-self:end; display:flex; gap:12px; align-items:center}
+  .auto-btn{background:linear-gradient(180deg,#9aa8ff,#6c7aff); color:#0d1230}
+
+  .log{background:linear-gradient(180deg,#13163b,#0e1130); border:1px solid #2d3364; border-radius:12px; padding:10px; min-height:72px; max-height:160px; overflow:auto; font-size:13px}
+  .log p{margin:6px 0}
+  /* 2ch-стиль */
+  .post{padding:6px 8px; background:#0e1433; border:1px solid #2a3266; border-radius:8px}
+  .meta{font-size:12px; color:#8aa1ff}
+  .greentext{color:#78ff7a}
+  .win-flash{position:absolute; inset:0; pointer-events:none; opacity:0; background:radial-gradient(400px 200px at 50% 50%, rgba(191,255,212,.65), rgba(191,255,212,0) 60%); transition:opacity .5s}
+  .win-flash.show{opacity:1; animation:flash 800ms ease}
+  @keyframes flash{0%{opacity:1}100%{opacity:0}}
+  .footer{display:flex; gap:10px; align-items:center; justify-content:space-between; font-size:12px; color:var(--muted); margin-top:8px}
+  .rules{font-size:12px; color:#a7afff; text-decoration:underline; cursor:pointer}
+  .small{font-size:12px; color:var(--muted)}
+</style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>🎰 Последний додеп <span class="tag">сатирический слот</span></h1>
+      <div class="toggles">
+        <div class="chip">Баланс: <b id="balance">—</b></div>
+        <div class="chip">Ставка: <b id="betLabel">—</b></div>
+        <label class="toggle"><input type="checkbox" id="sfxToggle" checked/> Звуки</label>
+        <label class="toggle"><input type="checkbox" id="ttsToggle"/> Озвучка</label>
+      </div>
+    </header>
+
+    <!-- ЛЕВАЯ ПАНЕЛЬ -->
+    <div class="panel left">
+      <div class="hero">
+        <div class="hero-inner">
+          <div class="ignacio" id="ignacio">😐</div>
+          <div>
+            <div class="hero-name">Игнасио Додепов</div>
+            <div class="hero-sub">«ещё один спин — и точно в плюс»</div>
+            <div class="props" id="props"></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="inv-head">
+          <b>Имущество Игнасио</b>
+          <div class="pill" id="invSummary">Доступно к депу: —</div>
+        </div>
+        <div class="inv-tabs">
+          <button class="tab active" id="tabAvailable">Доступно</button>
+          <button class="tab" id="tabSold">Продано</button>
+          <button class="tab" id="tabAll">Все</button>
+        </div>
+        <div class="inventory" id="inventory"></div>
+        <div class="left-footer">
+          <span class="small">Надоело страдать? Начать с чистого листа:</span>
+          <button class="reset-btn" id="resetBtn">Сброс прогресса</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ПРАВАЯ ПАНЕЛЬ -->
+    <div class="panel right">
+      <div class="slot" id="slotBox">
+        <div class="reels" id="reels"></div>
+
+        <div class="controls">
+          <div class="betbox">
+            <div class="bet-ctrl">
+              <button class="step" id="betMinus">−</button>
+              <button class="step" id="betPlus">+</button>
+            </div>
+            <input type="range" class="bet-slider" id="bet" min="5" max="100" step="5"/>
+          </div>
+
+          <button id="spinBtn" class="btn spin-big">Крутить</button>
+
+          <div class="statbox">
+            <button id="autoBtn" class="btn auto-btn">Автоспин: выкл</button>
+            <span class="small">RTP ~92% • <span class="rules" id="rulesLink">Правила и выплаты</span></span>
+          </div>
+        </div>
+
+        <div class="log" id="log"></div>
+        <div class="footer">
+          <div>Если остался один «аппендикс» — забери <b>ответственность</b> 💀</div>
+          <div class="small">Сатира. Не пропаганда.</div>
+        </div>
+        <div class="win-flash" id="winFlash"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ПРАВИЛА -->
+  <div class="modal-backdrop" id="rulesModal" style="display:none;align-items:center;justify-content:center;padding:14px;background:rgba(10,12,25,.65);position:fixed;inset:0">
+    <div class="modal" style="width:min(520px,100%); background:linear-gradient(180deg,#1a1e45,#101334); border:1px solid #2b3161; border-radius:16px; box-shadow:var(--shadow); padding:18px">
+      <h2>Выплаты и символы</h2>
+      <p class="small">Комбо по центральной линии. Две 🍒 (с учётом 💸) — возврат ставки.</p>
+      <div class="paytable" id="paytable" style="display:grid; grid-template-columns:1fr 1fr; gap:8px"></div>
+      <div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="btn auto-btn" id="rulesClose">Понятно</button></div>
+    </div>
+  </div>
+
+  <!-- ФИНАЛ -->
+  <div class="modal-backdrop" id="gameOver" style="display:none;align-items:center;justify-content:center;padding:14px;background:rgba(10,12,25,.65);position:fixed;inset:0">
+    <div class="modal" style="width:min(520px,100%); background:linear-gradient(180deg,#1a1e45,#101334); border:1px solid #2b3161; border-radius:16px; box-shadow:var(--shadow); padding:18px">
+      <h2>Финал: «Последний додеп»</h2>
+      <p>Игнасио распродал всё, слот моргает в пустоту. Настоящий занос — нажать паузу.</p>
+      <div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="btn" id="restartBtn">Начать заново</button></div>
+    </div>
+  </div>
+
+<script>
+/* ===== Константы/данные (как раньше) ===== */
+const STORAGE_KEY='last_dodep_save_ui_v1';
+const SYMBOLS=[{id:'cherry',e:'🍒',weight:20,payout3:6,note:'Две 🍒 = 1×'},{id:'lemon',e:'🍋',weight:18,payout3:8},{id:'bell',e:'🔔',weight:14,payout3:10},{id:'card',e:'💳',weight:12,payout3:16},{id:'loan',e:'🧾',weight:9,payout3:24},{id:'chart',e:'📈',weight:8,payout3:36},{id:'vault',e:'🏦',weight:6,payout3:60},{id:'wild',e:'💸',weight:4,payout3:100,note:'Заменяет любой один'},{id:'jack',e:'🧿',weight:1.2,payout3:380}];
+const INVENTORY_PRESET=[{id:'car',icon:'🚗',title:'Машина',value:[600,800]},{id:'pc',icon:'💻',title:'Компьютер',value:[500,900]},{id:'house',icon:'🏠',title:'Дом',value:[900,1200]},{id:'garage',icon:'🏚️',title:'Гараж',value:[250,400]},{id:'altgirl',icon:'🧑‍🎤',title:'Картонная «альтушка из шкафа»',value:[80,140]},{id:'jacket',icon:'🧥',title:'Куртка',value:[60,120]},{id:'shirt',icon:'👕',title:'Футболка',value:[30,60]},{id:'pants',icon:'👖',title:'Штаны',value:[40,80]},{id:'under',icon:'🩲',title:'Трусы',value:[10,20]},{id:'hair',icon:'💇',title:'Волосы',value:[20,40]},{id:'armL',icon:'✋',title:'Левая рука',value:[120,180]},{id:'armR',icon:'🤚',title:'Правая рука',value:[120,180]},{id:'legL',icon:'🦵',title:'Левая нога',value:[160,220]},{id:'legR',icon:'🦿',title:'Правая нога',value:[160,220]},{id:'eye',icon:'👁️',title:'Глаз',value:[250,400]},{id:'kidney',icon:'🫁',title:'Почка',value:[700,900]},{id:'liver',icon:'🫀',title:'Часть печени',value:[300,420]},{id:'appendix',icon:'🧫',title:'Апендикс',value:[40,70]},{id:'stomach',icon:'🫃',title:'Желудок',value:[220,300]},{id:'brain',icon:'🧠',title:'Мозг',value:[500,700]}];
+const START_BALANCE=500,MIN_BET=5,MAX_BET=100;
+
+/* ===== Утилиты/формат ===== */
+const $=s=>document.querySelector(s);
+const rand=(a,b)=>Math.random()*(b-a)+a;
+const randint=(a,b)=>Math.floor(rand(a,b+1));
+const curFmt=new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0});
+const fmt=n=>curFmt.format(n);
+function clamp(n,a,b){return Math.max(a,Math.min(b,n))}
+function weightedPick(items,key='weight'){const t=items.reduce((s,i)=>s+i[key],0);let r=Math.random()*t;for(const it of items){if((r-=it[key])<=0)return it}return items[items.length-1]}
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
+function load(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))}catch{return null}}
+
+/* ===== Звуки ===== */
+class SFX{constructor(){this.ctx=null;this.enabled=true}init(){if(this.ctx)return;const AC=window.AudioContext||window.webkitAudioContext;if(AC)this.ctx=new AC()}toggle(v){this.enabled=v}osc(type,f,t,g){if(!this.enabled||!this.ctx)return;const o=this.ctx.createOscillator(),G=this.ctx.createGain();o.type=type;o.frequency.value=f;G.gain.value=g;o.connect(G);G.connect(this.ctx.destination);const now=this.ctx.currentTime;o.start(now);G.gain.exponentialRampToValueAtTime(.0001,now+t);o.stop(now+t+.02)}coin(){[880,1320,1760].forEach((f,i)=>setTimeout(()=>this.osc('square',f,.06,.09),i*60))}spin(){if(!this.enabled||!this.ctx)return;const o=this.ctx.createOscillator(),G=this.ctx.createGain();o.type='sawtooth';o.frequency.value=140;G.gain.value=.07;o.connect(G);G.connect(this.ctx.destination);const now=this.ctx.currentTime;o.start(now);G.gain.linearRampToValueAtTime(.0001,now+.8);o.frequency.exponentialRampToValueAtTime(55,now+.8);o.stop(now+.82)}win(){[523,659,784,1046].forEach((f,i)=>setTimeout(()=>this.osc('triangle',f,.1,.12),i*110))}thud(){this.osc('triangle',120,.15,.12)}sad(){if(!this.enabled||!this.ctx)return;const o=this.ctx.createOscillator(),G=this.ctx.createGain();o.type='sawtooth';o.frequency.value=220;G.gain.value=.08;o.connect(G);G.connect(this.ctx.destination);const now=this.ctx.currentTime;o.start(now);o.frequency.exponentialRampToValueAtTime(90,now+.6);G.gain.exponentialRampToValueAtTime(.0001,now+.65);o.stop(now+.7)}}
+const sfx=new SFX();
+
+/* ===== Озвучка (как раньше) ===== */
+const TTS={enabled:false,voice:null,ensureReady(){if(!('speechSynthesis'in window))return false;const ss=speechSynthesis;const pick=()=>{const v=ss.getVoices();TTS.voice=v.find(x=>/^ru/i.test(x.lang))||v[0]||null};pick();if(!TTS.voice)ss.onvoiceschanged=pick;return true},speak(t){if(!TTS.enabled||!('speechSynthesis'in window))return;const u=new SpeechSynthesisUtterance(t);u.lang=(TTS.voice&&TTS.voice.lang)||'ru-RU';if(TTS.voice)u.voice=TTS.voice;u.rate=1;u.pitch=1;u.volume=1;speechSynthesis.speak(u)},cancel(){if('speechSynthesis'in window)speechSynthesis.cancel()}};
+
+/* ===== Состояние/DOM ===== */
+let state={balance:START_BALANCE,bet:25,auto:false,inventory:[]};
+const balanceEl=$('#balance'),betEl=$('#bet'),betLabelEl=$('#betLabel');
+const spinBtn=$('#spinBtn'),autoBtn=$('#autoBtn'),sfxToggle=$('#sfxToggle'),ttsToggle=$('#ttsToggle');
+const reelsEl=$('#reels'),logEl=$('#log'),winFlashEl=$('#winFlash'),ignEl=$('#ignacio'),slotBox=$('#slotBox');
+const invEl=$('#inventory'),invSummaryEl=$('#invSummary'),propsEl=$('#props');
+const tabAvailable=$('#tabAvailable'),tabSold=$('#tabSold'),tabAll=$('#tabAll');
+const rulesLink=$('#rulesLink'),rulesClose=$('#rulesClose'),rulesModal=$('#rulesModal');
+const overModal=$('#gameOver'),restartBtn=$('#restartBtn'),resetBtn=$('#resetBtn');
+const betMinus=$('#betMinus'),betPlus=$('#betPlus');
+
+/* ===== Инициализация ===== */
+document.addEventListener('DOMContentLoaded',()=>{
+  const saved=load();
+  if(saved){state={...state,...saved}}else{state.inventory=INVENTORY_PRESET.map(x=>({...x,price:randint(x.value[0],x.value[1]),sold:false}))}
+  buildReels(); renderAll(); buildPaytable();
+});
+
+/* ===== Рендер ===== */
+function renderAll(){renderStats();renderInventory(currentFilter);renderHero()}
+function renderStats(){balanceEl.textContent=fmt(state.balance);betEl.value=clamp(state.bet,MIN_BET,MAX_BET);betLabelEl.textContent=fmt(state.bet);spinBtn.disabled=state.bet>state.balance;autoBtn.textContent=`Автоспин: ${state.auto?'вкл':'выкл'}`} 
+let currentFilter='available';
+function renderInventory(filter='available'){
+  currentFilter=filter; invEl.innerHTML='';
+  const items=state.inventory, avail=items.filter(i=>!i.sold), sold=items.filter(i=>i.sold);
+  invSummaryEl.textContent=`Доступно к депу: ${avail.length} • Осталось: ${items.length-sold.length}/${items.length}`;
+  let list=items; if(filter==='available')list=avail; if(filter==='sold')list=sold;
+  const rec=avail.length?avail.reduce((a,b)=>a.price>b.price?a:b).id:null;
+  list.forEach(it=>{
+    const row=document.createElement('div');row.className='item'+(it.sold?' gone':'');
+    const icon=document.createElement('div');icon.textContent=it.icon;icon.style.fontSize='20px';
+    const txt=document.createElement('div');txt.innerHTML=`<b>${it.title}</b>${(!it.sold&&it.id===rec)?' • <span class="small" style="color:#a7ffcf">рекомендуем</span>':''}<div class="small">${it.sold?'Продано':'Можно продать'}</div>`;
+    const btn=document.createElement('button');btn.className='dep';btn.textContent=it.sold?'—':`Депнуть +${fmt(it.price)}`;btn.disabled=it.sold;btn.addEventListener('click',()=>dep(it.id));
+    row.append(icon,txt,btn);invEl.appendChild(row);
+  });
+  [tabAvailable,tabSold,tabAll].forEach(b=>b.classList.remove('active')); if(filter==='available')tabAvailable.classList.add('active'); else if(filter==='sold')tabSold.classList.add('active'); else tabAll.classList.add('active');
+}
+function renderHero(){
+  propsEl.innerHTML=''; state.inventory.forEach(it=>{const t=document.createElement('div');t.className='prop'+(it.sold?' sold':'');t.textContent=`${it.icon} ${it.title}`;propsEl.appendChild(t)});
+  const lost=state.inventory.filter(i=>i.sold).length; ignEl.classList.remove('win','lose');
+  ignEl.textContent=lost===0?'😐':lost<4?'🙂':lost<8?'😬':lost<12?'😵‍💫':lost<16?'🥴':'🫠';
+}
+
+/* ===== Рёлы ===== */
+function buildReels(){
+  reelsEl.innerHTML=''; for(let i=0;i<3;i++){const reel=document.createElement('div');reel.className='reel';const strip=document.createElement('div');strip.className='strip';for(let k=0;k<3;k++){const s=weightedPick(SYMBOLS);const c=document.createElement('div');c.className='cell';c.textContent=s.e;strip.appendChild(c)}reel.appendChild(strip);reelsEl.appendChild(reel)}
+}
+
+/* ===== Лог (обычный и HTML) ===== */
+function putLog(text){const p=document.createElement('p');p.textContent=text;logEl.prepend(p);trimLog()}
+function putLogHTML(html){const p=document.createElement('p');p.className='post';p.innerHTML=html;logEl.prepend(p);trimLog()}
+function trimLog(){while(logEl.children.length>40)logEl.removeChild(logEl.lastChild)}
+
+/* ===== Генератор борд-поста для депа ===== */
+function depPost(it, amount){
+  const now=new Date(); const hh=String(now.getHours()).padStart(2,'0'), mm=String(now.getMinutes()).padStart(2,'0');
+  const heads=[
+    `Анон ${it.icon} депнул ${it.title} на ${fmt(amount)}`,
+    `OP съел кек: продал ${it.title} ${it.icon} и залил ${fmt(amount)}`,
+    `${it.icon} минус инвентарь: ${it.title} → ${fmt(amount)}`
+  ];
+  const greens=[
+    '>ещё один спин — и в плюс',
+    '>без штанов крутится легче',
+    '>лудоман — не профессия, а стиль жизни',
+    `>${it.title} всё равно пылился`,
+    '>верну как отобьюсь'
+  ];
+  const body = `
+    <div class="meta">Анон | ${hh}:${mm}</div>
+    <div><b>${heads[Math.floor(Math.random()*heads.length)]}</b></div>
+    <div class="greentext">${greens[Math.floor(Math.random()*greens.length)]}</div>
+  `;
+  return body;
+}
+
+/* ===== Вращение (со sticky highlight) ===== */
+let spinning=false;
+function roll(){return weightedPick(SYMBOLS)}
+function analyze(line){
+  const ids=line.map(s=>s.id), em=line.map(s=>s.e), wilds=ids.filter(x=>x==='wild').length;
+  for(const b of SYMBOLS){ if(b.id==='wild')continue; const c=ids.filter(x=>x===b.id).length; if(c>=3) return {win:true,mult:b.payout3,label:`${b.e}${b.e}${b.e}`,line:em}; }
+  for(const b of SYMBOLS){ if(b.id==='wild')continue; const c=ids.filter(x=>x===b.id).length+wilds; if(c>=3) return {win:true,mult:b.payout3,label:`${b.e}${b.e}${b.e} (с 💸)`,line:em}; }
+  const ch=ids.filter(x=>x==='cherry').length+wilds; if(ch>=2) return {win:false,small:true,line:em};
+  return {win:false,line:em};
+}
+async function spin(){
+  if(spinning) return;
+  // убрать прошлую «липкую» подсветку при запуске нового спина
+  slotBox.classList.remove('win-sticky');
+
+  if(state.bet>state.balance){putLog('Недостаточно средств. Депни что-нибудь… или остановись 😶‍🌫️');sfx.sad();TTS.speak('Недостаточно средств. Может, хватит?');return}
+  spinning=true; state.balance-=state.bet; renderStats(); save(); sfx.init(); sfx.spin(); TTS.cancel();
+
+  const res=[]; const reels=[...document.querySelectorAll('.reel')];
+  for(let i=0;i<reels.length;i++){
+    const reel=reels[i]; const old= reel.querySelector('.strip');
+    const target=[roll(),roll(),roll()]; res.push(target[1]);
+    const strip=document.createElement('div'); strip.className='strip';
+    for(let k=0;k<15;k++){const s=weightedPick(SYMBOLS);const c=document.createElement('div');c.className='cell';c.textContent=s.e;strip.appendChild(c)}
+    target.forEach(s=>{const c=document.createElement('div');c.className='cell';c.textContent=s.e;strip.appendChild(c)});
+    old.replaceWith(strip);
+    const cellH=strip.querySelector('.cell').offsetHeight; const reelH=reel.clientHeight;
+    const distance=(strip.children.length*cellH)-reelH;
+    await animateY(strip,-Math.round(distance),520+i*160);
+  }
+
+  const outcome=analyze(res);
+  const lineTxt=`Линия: ${outcome.line.join(' | ')}`;
+  if(outcome.win){
+    const amount=Math.floor(state.bet*outcome.mult);
+    state.balance+=amount; renderStats(); save();
+    $('#winFlash').classList.add('show'); setTimeout(()=>$('#winFlash').classList.remove('show'),600);
+    // включаем липкую подсветку — останется до след. спина
+    slotBox.classList.add('win-sticky');
+    ignEl.classList.add('win'); sfx.win();
+    putLog(`${lineTxt} • Комбо: ${outcome.label} • Выигрыш: ${fmt(amount)}`);
+    TTS.speak(`Занос! ${amount} долларов`);
+  } else if(outcome.small){
+    state.balance+=state.bet; renderStats(); save();
+    ignEl.classList.add('win'); sfx.osc('square',660,.07,.09);
+    putLog(`${lineTxt} • Микро-камбэк: 🍒🍒 — возврат ставки`);
+    TTS.speak('Возврат ставки');
+  } else {
+    ignEl.classList.add('lose'); sfx.thud();
+    const phrase=randomQuote(); putLog(`${lineTxt} • ${phrase}`); TTS.speak(phrase);
+  }
+
+  spinning=false;
+  if(state.balance<state.bet){
+    const next=state.inventory.find(i=>!i.sold);
+    if(next){ putLog(`Нужен деп: ${next.icon} ${next.title} за +${fmt(next.price)}.`); TTS.speak(`Продай ${next.title}`); sfx.sad(); }
+    else showGameOver();
+  }
+  if(state.auto&&!spinning) setTimeout(spin,420);
+}
+function animateY(el,to,d=600){return new Promise(res=>{const s=performance.now();const from=0;function step(t){const p=Math.min(1,(t-s)/d),e=1-Math.pow(1-p,3),y=Math.round(from+(to-from)*e);el.style.transform=`translate3d(0,${y}px,0)`;if(p<1)requestAnimationFrame(step);else res()}requestAnimationFrame(step)})}
+
+/* ===== Фразы / депы / финал / сброс ===== */
+const QUOTES=['Пацаны, не хомяки — это стратегия.','Ещё один деп — и точно выхожу.','Фарт пахнет микрозаймом.','Без штанов крутится легче.','Левая почка — не основная.','Окупился! Пока в теории.','Банкролл менеджмент? Слышал краем печени.','Кнопка сама просит.'];
+function randomQuote(){return QUOTES[Math.floor(Math.random()*QUOTES.length)]}
+
+function dep(id){
+  const it=state.inventory.find(x=>x.id===id); if(!it||it.sold) return;
+  it.sold=true; state.balance+=it.price; sfx.coin(); renderInventory(currentFilter); renderStats(); renderHero(); save();
+  // борд-пост в лог
+  putLogHTML( depPost(it, it.price) );
+  TTS.speak(`Продано: ${it.title}`);
+  const left=state.inventory.filter(i=>!i.sold).length; if(left===0&&state.balance<state.bet) showGameOver();
+}
+
+function showRules(){rulesModal.style.display='flex'} function hideRules(){rulesModal.style.display='none'}
+function showGameOver(){overModal.style.display='flex'; state.auto=false; renderStats(); TTS.speak('Финал. Пора сделать паузу.')}
+function hardReset(){ if(!confirm('Сбросить прогресс и начать заново?')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  state={balance:START_BALANCE,bet:25,auto:false,inventory:INVENTORY_PRESET.map(x=>({...x,price:randint(x.value[0],x.value[1]),sold:false}))};
+  buildReels(); renderAll(); buildPaytable(); putLog('Прогресс сброшен.');
+}
+
+/* ===== События ===== */
+spinBtn.addEventListener('click',()=>{sfx.init();spin()});
+autoBtn.addEventListener('click',()=>{sfx.init();state.auto=!state.auto;renderStats();save();if(state.auto)spin()});
+betEl.addEventListener('input',e=>{state.bet=clamp(parseInt(e.target.value,10)||MIN_BET,MIN_BET,MAX_BET);renderStats();save()});
+$('#betMinus').addEventListener('click',()=>{state.bet=clamp(state.bet-5,MIN_BET,MAX_BET);betEl.value=state.bet;renderStats();save()});
+$('#betPlus').addEventListener('click',()=>{state.bet=clamp(state.bet+5,MIN_BET,MAX_BET);betEl.value=state.bet;renderStats();save()});
+sfxToggle.addEventListener('change',e=>sfx.toggle(e.target.checked));
+ttsToggle.addEventListener('change',e=>{TTS.enabled=e.target.checked&&TTS.ensureReady(); if(TTS.enabled) TTS.speak('Озвучка включена')});
+$('#tabAvailable').addEventListener('click',()=>renderInventory('available'));
+$('#tabSold').addEventListener('click',()=>renderInventory('sold'));
+$('#tabAll').addEventListener('click',()=>renderInventory('all'));
+rulesLink.addEventListener('click',showRules); rulesClose.addEventListener('click',hideRules);
+restartBtn.addEventListener('click',()=>{hardReset();overModal.style.display='none'});
+resetBtn.addEventListener('click',hardReset);
+document.addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();sfx.init();spin()}});
+
+/* ===== Пэйтейбл ===== */
+function buildPaytable(){
+  const wrap=$('#paytable'); wrap.innerHTML='';
+  SYMBOLS.forEach(s=>{const row=document.createElement('div');row.style.cssText='display:flex;justify-content:space-between;background:#111537;border:1px solid #2c3262;border-radius:10px;padding:6px 8px';row.innerHTML=`<div style="display:flex;gap:8px;align-items:center"><span style="font-size:22px">${s.e}</span> ×3</div><div><b>${s.payout3}×</b> <span class="small">${s.note||''}</span></div>`;wrap.appendChild(row)});
+}
+</script>
+</body>
+</html>
