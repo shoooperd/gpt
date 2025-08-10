@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Гуарма кликер — аккуратный интерфейс</title>
+<style>
+  :root{
+    --bg:#0e1920; --panel:#12222b; --panel-2:#0f1c24; --border:#1a3340;
+    --accent:#ffd44d; --accent-2:#ffe995; --focus:#79c6ff;
+    --text:#e6f3f7; --muted:#a7c2cb; --good:#96f2a1; --bad:#ff9d9d;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;
+    background: radial-gradient(1200px 60% at 50% 100%, rgba(255,255,255,.05), transparent 60%), linear-gradient(180deg,#09131a, var(--bg));
+  }
+
+  /* Макет: понятная трёхколоночная сетка */
+  .ui{display:grid; grid-template-columns: 320px 1fr 360px; gap:14px; min-height:100vh; padding:14px;}
+  .card{background:var(--panel); border:1px solid var(--border); border-radius:14px; box-shadow:0 10px 25px rgba(0,0,0,.25);}
+  header.card{grid-column:1/-1; display:flex; align-items:center; justify-content:space-between; padding:10px 14px;}
+  .brand{display:flex; gap:10px; align-items:center}
+  .brand .seal{font-size:26px}
+  .brand h1{margin:0; font-size:20px; letter-spacing:.2px}
+  .subtitle{font-size:12px; color:var(--muted)}
+  .counter{display:flex; gap:14px; align-items:baseline; flex-wrap:wrap}
+  .counter .label{opacity:.9}
+  .counter .value{font-variant-numeric:tabular-nums; font-size:28px; color:var(--accent)}
+  .counter small{color:var(--muted)}
+  .rightbar{display:flex; align-items:center; gap:10px}
+
+  .btn{background:#163240; border:1px solid var(--border); color:var(--text); border-radius:10px; padding:6px 10px; cursor:pointer}
+  .btn:disabled{opacity:.55; cursor:not-allowed}
+  .btn:focus-visible{outline:2px solid var(--focus); outline-offset:2px}
+  .toggle{min-width:86px; text-align:center}
+  .pill{padding:4px 8px; border-radius:999px; font-size:12px; background:#12303b; border:1px solid var(--border); color:var(--muted)}
+  .pill.good{color:#bdf6c5} .pill.bad{color:#ffd2d2}
+
+  /* Левая и правая колонка */
+  .panel{padding:10px}
+  .section-title{margin:0 0 8px 0; font-size:14px; color:var(--accent-2); letter-spacing:.3px}
+  .shop-list{display:grid; gap:8px}
+  .item{background:var(--panel-2); border:1px solid var(--border); border-radius:10px; padding:8px; display:grid;
+    grid-template-columns:auto 1fr auto; gap:10px; align-items:center}
+  .item .emoji{font-size:22px}
+  .item .name{font-weight:700}
+  .item .desc{font-size:12px; color:var(--muted)}
+  .item .price{font-variant-numeric:tabular-nums; color:var(--accent)}
+  .stats{display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:13px; color:var(--muted)}
+  .stats div{background:var(--panel-2); border:1px solid var(--border); border-radius:8px; padding:8px}
+  .help{font-size:12px; color:var(--muted); padding-top:2px}
+
+  /* Центр: кнопка выше */
+  .center.card{
+    display:flex; justify-content:center; align-items:flex-start;
+    padding: clamp(12px, 6vh, 48px) 12px 12px; position:relative; overflow:hidden;
+  }
+  .scene{position:absolute; inset:0; pointer-events:none; opacity:.18; background:
+    radial-gradient(1000px 60% at 50% 110%, rgba(255,255,255,.06), transparent 70%),
+    url('data:image/svg+xml;utf8,\
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox=\"0 0 800 400\" preserveAspectRatio=\"none\">\
+        <rect width=\"800\" height=\"400\" fill=\"#0e1f26\"/>\
+        <g fill=\"#0f3d3a\" opacity=\"0.65\">\
+          <ellipse cx=\"150\" cy=\"330\" rx=\"220\" ry=\"60\"/>\
+          <ellipse cx=\"650\" cy=\"350\" rx=\"260\" ry=\"60\"/>\
+        </g>\
+      </svg>') center/cover no-repeat;}
+  .click-wrap{position:relative; display:grid; place-items:center; gap:8px; z-index:1}
+  .click-target{
+    width:min(40vh, 300px); aspect-ratio:1; border-radius:16px;
+    background:#18323b; border:1px solid var(--border);
+    display:grid; place-items:center; cursor:pointer; user-select:none;
+    box-shadow: 0 10px 22px rgba(0,0,0,.28), inset 0 0 0 9999px rgba(255,255,255,.02);
+    transition: transform .06s ease, box-shadow .12s ease, background .2s ease, outline-color .2s ease;
+    outline:2px solid transparent;
+  }
+  .click-target:hover{box-shadow: 0 12px 28px rgba(0,0,0,.32)}
+  .click-target:active{transform:translateY(1px) scale(.995)}
+  .click-target.golden{outline-color:#ffdf6a; box-shadow:0 0 0 2px rgba(255,223,106,.35), 0 18px 44px rgba(255,223,106,.18)}
+  .click-emoji{font-size:min(18vh, 120px)}
+  .click-caption{font-size:13px; color:var(--muted)}
+
+  /* Тосты и всплывающие числа */
+  .toast{position:fixed; left:50%; transform:translateX(-50%); bottom:16px; background:#0f2f38; border:1px solid var(--border);
+    padding:10px 14px; border-radius:10px; box-shadow:0 8px 22px rgba(0,0,0,.35); opacity:0; pointer-events:none; transition:.25s}
+  .toast.show{opacity:1}
+  .floating{position:absolute; pointer-events:none; font-weight:700; text-shadow:0 1px 0 #0008; animation:floatUp 900ms ease-out forwards}
+  @keyframes floatUp{from{transform:translateY(0); opacity:1} to{transform:translateY(-60px); opacity:0}}
+
+  /* Древо ачивок */
+  .tree{display:grid; gap:10px}
+  .branch{background:var(--panel-2); border:1px solid var(--border); border-radius:10px; padding:10px}
+  .branch h4{margin:0 0 8px 0; font-size:13px; color:var(--accent-2); letter-spacing:.2px}
+  .ach{display:grid; gap:6px; margin:6px 0; padding:6px; border-radius:8px; border:1px dashed #214050}
+  .ach-head{display:grid; grid-template-columns: auto 1fr auto; gap:8px; align-items:center}
+  .ach-icon{font-size:18px}
+  .ach-name{font-weight:700}
+  .ach-req{font-size:12px; color:var(--muted)}
+  .bar{height:8px; background:#0d2832; border-radius:6px; overflow:hidden; border:1px solid #153340}
+  .bar>span{display:block; height:100%; background:linear-gradient(90deg, #ffde7a, #ffd44d); width:0%}
+  .ach.done{border-style:solid}
+  .ach.done .bar>span{background:linear-gradient(90deg,#8cff9a,#48d46b)}
+  .ach-note{font-size:11px; color:var(--muted)}
+
+  /* Сезоны/баффы */
+  .buffs{display:flex; gap:6px; flex-wrap:wrap}
+  .buff{font-size:11px; padding:4px 6px; border-radius:8px; border:1px solid var(--border); background:#0e3541}
+  .buff.good{outline:1px solid #1d6f42}
+  .buff.bad{outline:1px solid #7a2c2c}
+</style>
+</head>
+<body>
+<header class="card">
+  <div class="brand">
+    <div class="seal">🦜</div>
+    <div>
+      <h1>Гуарма кликер</h1>
+      <div class="subtitle">сатирическое произведение о Генерал-сержанте Итане Уокере</div>
+    </div>
+  </div>
+  <div class="counter">
+    <div class="label">Расстрелянных негров:</div>
+    <div class="value" id="score">0</div>
+    <small>(клик — <span id="cpc">1</span>, сек — <span id="cps">0</span>)</small>
+  </div>
+  <div class="rightbar">
+    <div id="seasonTag" class="pill">Сезон: —</div>
+    <button class="btn toggle" id="muteBtn">🔊 Звук</button>
+    <button class="btn" id="saveBtn">💾 Сохранить</button>
+    <button class="btn" id="wipeBtn">♻️ Сбросить</button>
+  </div>
+</header>
+
+<div class="ui">
+  <!-- Левая колонка: апгрейды клика -->
+  <aside class="card">
+    <div class="panel">
+      <h3 class="section-title">Улучшения клика</h3>
+      <div id="clickups" class="shop-list"></div>
+      <div class="help">Совет: усиливай клик сначала, потом переходи к модификаторам.</div>
+    </div>
+  </aside>
+
+  <!-- Центр: клик и события -->
+  <main class="center card" aria-label="Игровая сцена">
+    <div class="scene" aria-hidden="true"></div>
+    <div class="click-wrap">
+      <div id="clickTarget" class="click-target" role="button" aria-label="Клик: Расстрел негра">
+        <div class="click-emoji" id="clickEmoji" aria-hidden="true">👨🏿</div>
+      </div>
+      <div class="click-caption">Действие клика: <b>Расстрел негра</b></div>
+      <div class="buffs" id="buffsCenter"></div>
+    </div>
+  </main>
+
+  <!-- Правая колонка: моды, события, статистика и ачивки -->
+  <aside class="card">
+    <div class="panel">
+      <h3 class="section-title">Модификаторы (доход в секунду)</h3>
+      <div id="mods" class="shop-list"></div>
+    </div>
+
+    <div class="panel">
+      <h3 class="section-title">Сезонные ивенты</h3>
+      <div class="buffs" id="buffs"></div>
+      <div class="subtitle" id="seasonTimer">След. ивент через —</div>
+    </div>
+
+    <div class="panel">
+      <h3 class="section-title">Статистика</h3>
+      <div class="stats" style="margin-bottom:8px">
+        <div>Всего кликов: <b id="totalClicks">0</b></div>
+        <div>Куплено модификаторов: <b id="bought">0</b></div>
+        <div>Бонус клика: <b id="cpcStat">+0</b></div>
+        <div>Множитель сатиры: <b id="satireMult">x1.00</b></div>
+      </div>
+      <h3 class="section-title" style="margin-top:10px">Древо ачивок</h3>
+      <div id="achTree" class="tree"></div>
+    </div>
+
+    <div class="panel">
+      <h3 class="section-title">Официальные приказы и происшествия</h3>
+      <div id="log" class="subtitle" style="line-height:1.35"></div>
+    </div>
+  </aside>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+(function(){
+  // ====== СОСТОЯНИЕ ======
+  const state = {
+    version: 4, // новый формат — не подхватываем старые сейвы (фикс «500 очков со старта»)
+    score: 0,
+    baseCPC: 1,
+    bonusCPC: 0,
+    cpcMult: 1,
+    cps: 0,
+    totalClicks: 0,
+    satireStacks: 0,
+    audioOn: true,
+    activeBuffs: [], // {id,name,multCPS,multCPC,until,bad,onExpire}
+    achievements: {}, // id: {progress, done}
+    season: null, // {name, tag, goodBias}
+    nextSeasonEventAt: 0,
+    stats: { eventGood:0, eventBad:0 },
+    items:{
+      mods:[
+        { id:'whip',  name:'Плеть Генерал-сержанта Уокера', emoji:'🏵️', desc:'Ритм плети ускоряет бюрократию.', base:50,   cps:0.2, owned:0, scale:1.15 },
+        { id:'goats', name:'Ручные козлопасы из Валентайна', emoji:'🐐', desc:'Дешёвые и шумные — но полезные.', base:150,  cps:1,   owned:0, scale:1.15 },
+        { id:'sheriff',name:'Шериф-вурдалак с большой земли', emoji:'🧟‍♂️', desc:'Патрулирует даже после отбоя.', base:900,  cps:6,   owned:0, scale:1.16 },
+        { id:'medal', name:'Наградная медаль Леруа Мерлен',   emoji:'🎖️', desc:'Блеск дисциплинирует всех.',    base:3500, cps:25,  owned:0, scale:1.17 },
+        { id:'beer',  name:'Ящик пива «Пиклз»',               emoji:'🍺', desc:'Мораль ↑, производительность ↑.',base:15000,cps:120, owned:0, scale:1.18 },
+        { id:'donkeys',name:'Ослиная кавалерия Гуармы',       emoji:'🐴', desc:'Смешно выглядит, страшно работает.', base:80000,cps:600, owned:0, scale:1.19 },
+      ],
+      clickups:[
+        { id:'tumble', name:'Путёвки из Тамблвида (+1)', emoji:'🎫', desc:'Ещё один объект для клика.', add:1,  base:100,  owned:0, scale:1.35 },
+        { id:'cells',  name:'Дополнительные клетки (+2)',  emoji:'🗂️', desc:'Отчёты расширены.',           add:2,  base:600,  owned:0, scale:1.4 },
+        { id:'ark',    name:'Ковчег правосудия (+10)',     emoji:'🛳️', desc:'Вместимость +10.',            add:10, base:4000, owned:0, scale:1.45 },
+      ]
+    }
+  };
+
+  // ====== НЕЙТРАЛЬНАЯ ЦЕЛЬ КЛИКА ======
+  document.getElementById('clickEmoji').textContent = '👨🏿';
+
+  // ====== АУДИО ======
+  let AC;
+  function ensureAC(){ if(!state.audioOn) return null; if(!AC) AC = new (window.AudioContext||window.webkitAudioContext)(); return AC; }
+  function clickSound(){
+    if(!ensureAC()) return;
+    const ctx=AC,o=ctx.createOscillator(),g=ctx.createGain();
+    o.type='triangle'; o.frequency.setValueAtTime(480,ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(220, ctx.currentTime+.06);
+    g.gain.setValueAtTime(.14,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+.08);
+    o.connect(g).connect(ctx.destination); o.start(); o.stop(ctx.currentTime+.09);
+  }
+  function rewardSound(){
+    if(!ensureAC()) return;
+    const ctx=AC,o1=ctx.createOscillator(),o2=ctx.createOscillator(),g=ctx.createGain();
+    o1.type='sine';o2.type='sine';g.gain.value=.12;o1.connect(g);o2.connect(g);g.connect(ctx.destination);
+    o1.frequency.value=660;o2.frequency.value=880;o1.start();o2.start();
+    o1.frequency.exponentialRampToValueAtTime(990, ctx.currentTime+.2);
+    o2.frequency.exponentialRampToValueAtTime(1320, ctx.currentTime+.2);
+    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+.25);
+    o1.stop(ctx.currentTime+.26); o2.stop(ctx.currentTime+.26);
+  }
+
+  // ====== UI ======
+  const els = {
+    score: q('#score'), cpc: q('#cpc'), cps: q('#cps'),
+    target: q('#clickTarget'), buffs: q('#buffs'), buffsCenter: q('#buffsCenter'),
+    mods: q('#mods'), clickups: q('#clickups'),
+    log: q('#log'), toast: q('#toast'),
+    totalClicks: q('#totalClicks'), bought: q('#bought'),
+    cpcStat: q('#cpcStat'), satireMult: q('#satireMult'),
+    saveBtn: q('#saveBtn'), wipeBtn: q('#wipeBtn'),
+    muteBtn: q('#muteBtn'), seasonTag: q('#seasonTag'), seasonTimer: q('#seasonTimer'),
+    achTree: q('#achTree')
+  };
+  function q(s){return document.querySelector(s)}
+  const fmt = n => Math.floor(Math.max(0,n)).toLocaleString('ru-RU');
+  const softFmt = n => n >= 1000 ? Intl.NumberFormat('ru-RU',{notation:'compact',maximumFractionDigits:2}).format(n) : Math.round(n*100)/100;
+
+  // ====== Экономика и мультипликаторы ======
+  function satireMultiplier(){ return 1 + (Math.floor(state.satireStacks/20))*0.05; }
+  function price(base, scale, owned){ return Math.ceil(base * Math.pow(scale, owned)); }
+  function buffsMult(kind){
+    const now=performance.now();
+    return state.activeBuffs.filter(b=>b.until>now).reduce((m,b)=> m * (kind==='cps'?(b.multCPS??1):(b.multCPC??1)), 1);
+  }
+  function currentCPC(){ return (state.baseCPC + state.bonusCPC) * state.cpcMult * buffsMult('cpc'); }
+  function currentCPS(){ return state.cps * satireMultiplier() * buffsMult('cps'); }
+
+  // ====== Магазин ======
+  function renderShops(){
+    els.clickups.innerHTML='';
+    state.items.clickups.forEach(it=>{
+      const cost=price(it.base,it.scale,it.owned);
+      const row=document.createElement('div'); row.className='item';
+      row.innerHTML=`
+        <div class="emoji">${it.emoji}</div>
+        <div><div class="name">${it.name}</div>
+          <div class="desc">${it.desc}<br><span class="subtitle">+${it.add} к силе клика • Владение: ${it.owned}</span></div></div>
+        <div><div class="price">${fmt(cost)}</div>
+          <button class="btn" ${state.score<cost?'disabled':''}>Купить</button></div>`;
+      row.querySelector('button').onclick=()=>buyClickup(it.id);
+      els.clickups.appendChild(row);
+    });
+
+    els.mods.innerHTML='';
+    state.items.mods.forEach(it=>{
+      const cost=price(it.base,it.scale,it.owned);
+      const row=document.createElement('div'); row.className='item';
+      row.innerHTML=`
+        <div class="emoji">${it.emoji}</div>
+        <div><div class="name">${it.name}</div>
+          <div class="desc">${it.desc}<br><span class="subtitle">+${it.cps}/сек • Владение: ${it.owned}</span></div></div>
+        <div><div class="price">${fmt(cost)}</div>
+          <button class="btn" ${state.score<cost?'disabled':''}>Купить</button></div>`;
+      row.querySelector('button').onclick=()=>buyMod(it.id);
+      els.mods.appendChild(row);
+    });
+  }
+  function buyMod(id){
+    const it=state.items.mods.find(x=>x.id===id);
+    const cost=price(it.base,it.scale,it.owned); if(state.score<cost) return;
+    state.score-=cost; it.owned++; state.cps+=it.cps; state.satireStacks++;
+    addLog(`Закуплено: <b>${it.name}</b>. Производство +${it.cps}/сек.`);
+    updateUI(); save();
+  }
+  function buyClickup(id){
+    const it=state.items.clickups.find(x=>x.id===id);
+    const cost=price(it.base,it.scale,it.owned); if(state.score<cost) return;
+    state.score-=cost; it.owned++; state.bonusCPC+=it.add; state.satireStacks++;
+    addLog(`Усилен клик: <b>${it.name}</b> (+${it.add}).`);
+    updateUI(); save();
+  }
+
+  // ====== Клик ======
+  const GOLD_CHANCE = 0.012; // ~1.2% на клик
+  function clickGain(e){
+    // шанс «золотого клика»
+    if(Math.random() < GOLD_CHANCE){
+      triggerDedBaldyozh();
+    }
+    const gain=currentCPC();
+    state.score+=gain; state.totalClicks++; clickSound();
+    spawnFloat(e.clientX,e.clientY,'+'+softFmt(gain));
+    updateUI();
+  }
+  function spawnFloat(x,y,text){
+    const f=document.createElement('div'); f.className='floating';
+    f.style.left=(x-10)+'px'; f.style.top=(y-18)+'px'; f.textContent=text;
+    document.body.appendChild(f); setTimeout(()=>f.remove(),900);
+  }
+
+  // ====== «ЗОЛОТОЙ КЛИК»: ДедБалдёж ======
+  function triggerDedBaldyozh(){
+    // большой буст 7с, потом лёгкий дебафф 9с
+    const ms=7000;
+    const debuffMs=9000;
+    const startMsg='💥 ДедБалдёж в расстрельной команде! CPC ×77 и CPS ×3 на 7 сек';
+    const endMsg='🚫 ДедБалдёж получил пермач, вурдалаки спрятались (CPS −10% на 9 сек)';
+
+    // визуальный эффект на кнопку
+    els.target.classList.add('golden');
+
+    // основной буст
+    temporaryBoost(3, ms, startMsg, false, 'cps', // CPS ×3
+      // onExpire:
+      ()=>{ 
+        els.target.classList.remove('golden');
+        addLog('🕯️ ' + endMsg);
+        toast(endMsg);
+        // небольшой дебафф после
+        temporaryBoost(0.9, debuffMs, '⚠️ Послевкусие Балдёжа', true, 'cps');
+      },
+      77 // multCPC
+    );
+    rewardSound();
+  }
+
+  // ====== Сезоны Гуармы ======
+  const SEASONS = [
+    { id:'dry',  months:[12,1,2,3,4,5], name:'Сухой сезон', tag:'☀️ Сухо', goodBias:0.65,
+      events:[
+        {name:'Карнавальная неделя', mult:1.18, ms:16000, affect:'cps', good:true, text:'Праздник, но работать веселее.'},
+        {name:'Парад Генерал-сержанта', mult:1.15, ms:12000, affect:'cpc', good:true, text:'Мишени полированы и легко попадают.'},
+        {name:'Пыльные тропы', mult:0.93, ms:14000, affect:'cps', good:false, text:'Транспорт замедлен.'}
+      ]},
+    { id:'wet',  months:[6,7,8,9,10,11], name:'Дождевой сезон', tag:'🌧️ Дожди', goodBias:0.45,
+      events:[
+        {name:'Тропический ливень', mult:0.9,  ms:16000, affect:'cps', good:false, text:'Производство буксует в грязи.'},
+        {name:'Гроза «Санто-Доминго»', mult:1.12, ms:12000, affect:'cpc', good:true, text:'Клики искрят бодрее.'},
+        {name:'Шторм «Клара»', mult:0.88, ms:18000, affect:'cps', good:false, text:'Лодки швартуются. Всё медленнее.'},
+        {name:'Кокосовый урожай', mult:1.2,  ms:15000, affect:'cps', good:true, text:'Склад пополнился кокосами.'}
+      ]}
+  ];
+  function detectSeason(){
+    const m=(new Date()).getMonth()+1;
+    const s=SEASONS.find(s=>s.months.includes(m)) || SEASONS[0];
+    state.season=s; els.seasonTag.textContent='Сезон: '+s.name; els.seasonTag.className='pill';
+  }
+  function scheduleNextSeasonEvent(now){ state.nextSeasonEventAt = now + (12000 + Math.random()*15000); }
+  function rollSeasonEvent(now){
+    if(now < state.nextSeasonEventAt) return;
+    scheduleNextSeasonEvent(now);
+    const pool=state.season.events;
+    const goodPool=pool.filter(e=>e.good), badPool=pool.filter(e=>!e.good);
+    const pickGood=Math.random() < state.season.goodBias;
+    const list = pickGood ? goodPool : badPool;
+    const e=list[Math.floor(Math.random()*list.length)];
+    const sign=e.mult>1?'+':'';
+    temporaryBoost(e.mult,e.ms,`${pickGood?'✅':'⚠️'} ${e.name}: ${e.text} (${sign}${Math.round((e.mult-1)*100)}% на ${Math.round(e.ms/1000)}с)`, !e.good, e.affect);
+  }
+
+  // ====== Баффы ======
+  function temporaryBoost(mult, ms, message, bad=false, affect='cps', onExpire=null, multCPC_opt=null){
+    const id='buff_'+Math.random().toString(36).slice(2), until=performance.now()+ms;
+    const b={id,name:message,multCPS:affect==='cps'?mult:1,multCPC:affect==='cpc'?(multCPC_opt||mult): (multCPC_opt||1),until,bad,onExpire};
+    state.activeBuffs.push(b); addLog((bad?'⚠️ ':'✅ ')+message); updateBuffsUI();
+    setTimeout(()=>{ 
+      // снять бафф
+      state.activeBuffs=state.activeBuffs.filter(x=>x.id!==id); 
+      updateBuffsUI(); 
+      if(typeof b.onExpire==='function') b.onExpire();
+    }, ms+80);
+  }
+  function updateBuffsUI(){
+    const now=performance.now(); els.buffs.innerHTML=''; els.buffsCenter.innerHTML='';
+    state.activeBuffs.filter(b=>b.until>now).forEach(b=>{
+      const left=Math.max(0,Math.round((b.until-now)/1000));
+      const el=document.createElement('div'); el.className='buff '+(b.bad?'bad':'good');
+      el.textContent=b.name.replace(/^✅ |^⚠️ /,'')+' · '+left+'с';
+      els.buffs.appendChild(el.cloneNode(true));
+      els.buffsCenter.appendChild(el);
+    });
+  }
+
+  // ====== Лог/тост ======
+  function addLog(text){
+    const stamps=['«Указ №'+(100+Math.floor(Math.random()*900))+' подписан»','«Ситуация под контролем»','«План Б? Скорее В»','«Министерство юмора согласно»','«Гуармия гордится вами!»'];
+    const line=`<div>🗞️ ${text} <span class="subtitle">— ${stamps[Math.floor(Math.random()*stamps.length)]}</span></div>`;
+    els.log.insertAdjacentHTML('afterbegin', line);
+  }
+  function toast(msg){ els.toast.textContent=msg; els.toast.classList.add('show'); setTimeout(()=>els.toast.classList.remove('show'),1600); }
+
+  // ====== Древо ачивок ======
+  const achTreeSpec = [
+    { id:'branch_clicks', name:'Клики', icon:'🖱️', nodes:[
+      { id:'clicks_50',  name:'Проверочный палец', icon:'☝️', goal:50,   get: s=>s.totalClicks },
+      { id:'clicks_500', name:'Палец отчётности',  icon:'✌️', goal:500,  get: s=>s.totalClicks },
+      { id:'clicks_5k',  name:'Палец Генерал-сержанта', icon:'🖖', goal:5000, get: s=>s.totalClicks },
+    ]},
+    { id:'branch_econ', name:'Экономика', icon:'💰', nodes:[
+      { id:'score_10k', name:'Казна Гуармы', icon:'🏦', goal:1e4,  get: s=>s.score },
+      { id:'score_1m',  name:'Золотой кокос', icon:'🥥', goal:1e6, get: s=>s.score },
+    ]},
+    { id:'branch_shop', name:'Магазин', icon:'🧾', nodes:[
+      { id:'buy_total_10', name:'Закупочный указ', icon:'📝', goal:10, get: s=> totalOwned() },
+      { id:'donkeys_5',    name:'Штаб-ослятник',   icon:'🐴', goal:5,  get: s=> getOwned('donkeys') },
+      { id:'mods_fullset', name:'Комплект снабжения', icon:'🎖️', goal:1, get: s=> allBoughtOnce()?1:0 },
+    ]},
+    { id:'branch_events', name:'События', icon:'🎪', nodes:[
+      { id:'ev_good3', name:'Праздник дисциплины', icon:'🎺', goal:3, get: s=>s.stats.eventGood },
+      { id:'ev_bad3',  name:'Гуармская стойкость', icon:'🛡️', goal:3, get: s=>s.stats.eventBad },
+    ]},
+    { id:'branch_season', name:'Сезоны', icon:'🌴', nodes:[
+      { id:'season_first', name:'Дети тропиков', icon:'🌦️', goal:1, get: s=>s.stats.eventGood+s.stats.eventBad>0?1:0 },
+      { id:'season_master', name:'Штормовой капитан', icon:'🌪️', goal:10, get: s=>s.stats.eventGood+s.stats.eventBad },
+    ]}
+  ];
+  function totalOwned(){return state.items.mods.reduce((a,b)=>a+b.owned,0)+state.items.clickups.reduce((a,b)=>a+b.owned,0)}
+  function getOwned(id){const m=state.items.mods.concat(state.items.clickups).find(x=>x.id===id); return m?m.owned:0}
+  function allBoughtOnce(){return state.items.mods.every(x=>x.owned>=1)}
+
+  function buildAchTree(){
+    els.achTree.innerHTML='';
+    achTreeSpec.forEach(branch=>{
+      const box=document.createElement('div'); box.className='branch';
+      box.innerHTML=`<h4>${branch.icon} ${branch.name}</h4>`;
+      branch.nodes.forEach(n=>{
+        const cur=n.get(state); const pct=Math.max(0,Math.min(100, Math.floor((cur/n.goal)*100)));
+        const done=pct>=100;
+        state.achievements[n.id] = {progress: cur, done: done || (state.achievements[n.id]?.done||false)};
+        const ach=document.createElement('div'); ach.className='ach'+(state.achievements[n.id].done?' done':'');
+        ach.innerHTML = `
+          <div class="ach-head">
+            <div class="ach-icon">${n.icon}</div>
+            <div class="ach-name">${n.name}</div>
+            <div class="ach-req">${fmt(Math.min(cur,n.goal))} / ${fmt(n.goal)}</div>
+          </div>
+          <div class="bar" aria-label="Прогресс"><span style="width:${pct}%"></span></div>
+          <div class="ach-note">${state.achievements[n.id].done?'Завершено':'В процессе'}</div>`;
+        box.appendChild(ach);
+      });
+      els.achTree.appendChild(box);
+    });
+  }
+
+  // ====== Сохранение ======
+  function save(){ localStorage.setItem('guarma_save_v4', JSON.stringify(state)); }
+  function load(){
+    const raw=localStorage.getItem('guarma_save_v4'); // НЕ мигрируем старые — фиксируем «500 со старта»
+    if(!raw) return;
+    try{
+      const s=JSON.parse(raw);
+      if(s.version!==4) return; // старый формат — игнор
+      Object.assign(state,s);
+      // пересчёт cps по модификаторам (на случай изменения версий)
+      state.cps=0; state.items.mods.forEach(it=> state.cps += it.cps * it.owned);
+      if(!(state.score>=0)) state.score=0; // подстраховка
+    }catch(e){ console.warn('save load fail', e) }
+  }
+
+  // ====== Обновление UI ======
+  function updateUI(){
+    els.score.textContent=fmt(state.score);
+    els.cpc.textContent=softFmt(currentCPC());
+    els.cps.textContent=softFmt(currentCPS());
+    els.totalClicks.textContent=fmt(state.totalClicks);
+    els.bought.textContent=fmt(totalOwned());
+    els.cpcStat.textContent='+'+softFmt(state.bonusCPC);
+    els.satireMult.textContent='x'+satireMultiplier().toFixed(2);
+    renderShops(); updateBuffsUI(); buildAchTree();
+  }
+  function updateUIShallow(){
+    els.score.textContent=fmt(state.score);
+    els.cps.textContent=softFmt(currentCPS());
+    updateBuffsUI();
+    const left=Math.max(0, Math.round((state.nextSeasonEventAt - performance.now())/1000));
+    els.seasonTimer.textContent = left>0 ? ('След. ивент через ' + left + 'с') : 'Скоро ивент';
+  }
+
+  // ====== Основной цикл ======
+  let last=performance.now();
+  function loop(now){
+    const dt=(now-last)/1000; last=now;
+    state.score += currentCPS()*dt;
+    if(Math.random()<0.004){
+      const lines=['«Каждый клик — шаг к порядку!»','«Ослиная кавалерия просит морковь-надбавку»','«Шериф-вурдалак оформил ночной протокол»','«Медаль блестит — показатели растут»','«Козлопасы опять утащили табурет»','«Ковчег правосудия доверху укомплектован»'];
+      addLog(lines[Math.floor(Math.random()*lines.length)]);
+    }
+    rollSeasonEvent(now);
+    if((Math.floor(now/1000)%2)===0) renderShops();
+    updateUIShallow();
+    requestAnimationFrame(loop);
+  }
+
+  // ====== Слушатели ======
+  els.target.addEventListener('click', clickGain);
+  els.saveBtn.onclick = ()=>{ save(); toast('Сохранено!') };
+  els.wipeBtn.onclick = ()=>{ if(confirm('Сбросить прогресс?')){ localStorage.removeItem('guarma_save_v4'); location.reload(); } };
+  els.muteBtn.onclick = ()=>{ state.audioOn=!state.audioOn; els.muteBtn.textContent=state.audioOn?'🔊 Звук':'🔇 Тихо'; if(state.audioOn) ensureAC(); save(); };
+
+  // ====== Инициализация ======
+  function detectSeason(){ /* уже определено выше (переносим сюда для hoist) */ }
+  // (переопределяем детектор — из-за hoisting)
+  const _detectSeason = function(){
+    const m=(new Date()).getMonth()+1;
+    const s=SEASONS.find(s=>s.months.includes(m)) || SEASONS[0];
+    state.season=s; els.seasonTag.textContent='Сезон: '+s.name; els.seasonTag.className='pill';
+  };
+  load(); _detectSeason(); scheduleNextSeasonEvent(performance.now()); ensureAC(); updateUI(); requestAnimationFrame(loop);
+
+  // Вспомогательные
+  function scheduleNextSeasonEvent(now){ state.nextSeasonEventAt = now + (12000 + Math.random()*15000); }
+})();
+</script>
+</body>
+</html>
