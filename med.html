@@ -8,7 +8,7 @@
 <style>
   /* ===== светлая, читаемая тема — без «белого на белом» ===== */
   :root{
-    color-scheme: light; /* фиксируем светлую схему для читаемых селектов */
+    color-scheme: light; /* стартовая схема; переключатель ниже задаёт нужную */
     --bg:#f7f8fb;
     --paper:#ffffff;
     --ink:#1f2328;
@@ -25,21 +25,21 @@
     --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
     --input-bg:#ffffff;
   }
-/* Тёмная тема — просто переопределение переменных */
-:root[data-theme="dark"]{
-  color-scheme: dark;               /* корректные нативные цвета форм */
-  --bg:#0f1115;
-  --paper:#12151b;
-  --ink:#e7ecf3;
-  --muted:#9aa3ad;
-  --line:#1f2430;
-  --accent:#5aa2ff;
-  --accent-2:#7db6ff;
-  --danger:#ff6b5f;
-  --ok:#3cb179;
-  --input-bg:#181c24;
-}
-/* селекты и option используют те же переменные, так что читаемость сохранится */
+  /* ===== тёмная тема — только переопределение переменных ===== */
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --bg:#0f1115;
+    --paper:#12151b;
+    --ink:#e7ecf3;
+    --muted:#9aa3ad;
+    --line:#1f2430;
+    --accent:#5aa2ff;
+    --accent-2:#7db6ff;
+    --danger:#ff6b5f;
+    --ok:#3cb179;
+    --input-bg:#181c24;
+  }
+
   html,body{height:100%}
   body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 var(--font);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
   .wrap{max-width:1100px;margin:28px auto;padding:0 16px}
@@ -56,7 +56,7 @@
   @media (max-width:960px){.grid{grid-template-columns:1fr}}
   label{display:block;margin:8px 0 6px;font-weight:600}
   input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--input-bg);color:var(--ink);font:inherit;outline:none}
-  select,option{color:var(--ink);background:var(--input-bg)} /* ⬅️ фикс читаемости селекта */
+  select,option{color:var(--ink);background:var(--input-bg)} /* читаемый селект и в светлой, и в тёмной теме */
   input:focus,select:focus{box-shadow:0 0 0 3px rgba(10,124,255,.18);border-color:var(--accent)}
   table{width:100%;border-collapse:collapse}
   th,td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
@@ -81,15 +81,14 @@
 <div class="wrap">
   <header>
     <div class="brand">
-	<button id="toggleTheme" class="tab" aria-pressed="false" style="border:1px solid var(--line);">
-   	 Тема
- 	 </button>
       <div class="logo" aria-hidden="true"></div>
       <div>
         <h1>Помощник доктора на Hate RP (пособие для дегенератов)</h1>
         <div class="sub">Точный калькулятор крафта · Прейскурант · Памятка врача (ок. 1900)</div>
       </div>
     </div>
+    <!-- ⇩⇩⇩ добавлена только эта кнопка -->
+    <button id="toggleTheme" class="tab" aria-pressed="false" style="border:1px solid var(--line);">Тема</button>
   </header>
 
   <nav class="tabs" role="tablist">
@@ -142,7 +141,7 @@
   </section>
 
   <!-- ====================== ЦЕНЫ ====================== -->
-  <section id="" class="card" role="tabpanel" aria-labelledby="tab-" hidden>
+  <section id="prices" class="card" role="tabpanel" aria-labelledby="tab-prices" hidden>
     <h3 style="margin:4px 0 12px">Стоимость услуг</h3>
     <table>
       <thead><tr><th>Услуга</th><th class="right">Цена</th></tr></thead>
@@ -156,39 +155,41 @@
       <thead><tr><th>Товар</th><th class="right">Цена</th><th>Примечание</th></tr></thead>
       <tbody id="goods"></tbody>
     </table>
+
+    <!-- ⇩⇩⇩ добавлен только этот блок калькулятора оплаты -->
+    <div class="hr"></div>
+
+    <h3 style="margin:12px 0">Калькулятор оплаты</h3>
+    <div class="toolbar">
+      <select id="payItem"></select>
+      <input id="payQty" type="number" min="1" step="1" value="1" style="max-width:120px">
+      <button id="payAdd" class="btn">Добавить</button>
+      <button id="payClear" class="btn danger">Очистить чек</button>
+    </div>
+    <p class="small muted">Скидки за опт применяются автоматически (например, ≥10 шт для бинтов, настоек и тоника).</p>
+
+    <table id="payTable" style="margin-top:8px">
+      <thead>
+        <tr>
+          <th>Позиция</th>
+          <th class="right">Кол-во</th>
+          <th class="right">Цена за ед.</th>
+          <th class="right">Скидка</th>
+          <th class="right">Итого</th>
+          <th class="right">Действия</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+      <tfoot>
+        <tr>
+          <th colspan="4" class="right">Итого к оплате:</th>
+          <th class="right mono" id="payTotal">$0.00</th>
+          <th></th>
+        </tr>
+      </tfoot>
+    </table>
+    <!-- ↑↑↑ конец добавленного блока -->
   </section>
-
-<div class="hr"></div>
-
-<h3 style="margin:12px 0">Калькулятор оплаты</h3>
-<div class="toolbar">
-  <select id="payItem"></select>
-  <input id="payQty" type="number" min="1" step="1" value="1" style="max-width:120px">
-  <button id="payAdd" class="btn">Добавить</button>
-  <button id="payClear" class="btn danger">Очистить чек</button>
-</div>
-<p class="small muted">Скидки за опт применяются автоматически (например, ≥10 шт для бинтов, настоек и тоника).</p>
-
-<table id="payTable" style="margin-top:8px">
-  <thead>
-    <tr>
-      <th>Позиция</th>
-      <th class="right">Кол-во</th>
-      <th class="right">Цена за ед.</th>
-      <th class="right">Скидка</th>
-      <th class="right">Итого</th>
-      <th class="right">Действия</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-  <tfoot>
-    <tr>
-      <th colspan="4" class="right">Итого к оплате:</th>
-      <th class="right mono" id="payTotal">$0.00</th>
-      <th></th>
-    </tr>
-  </tfoot>
-</table>
 
   <!-- ====================== ПАМЯТКА (ДЕТАЛЬНО) ====================== -->
   <section id="aid" class="card" role="tabpanel" aria-labelledby="tab-aid" hidden>
@@ -198,7 +199,6 @@
     </div>
     <p class="small muted">Это историзированные практики эпохи Листера (антисептика, кипячение, опиаты, эфир/хлороформ). Антибиотиков ещё нет. Только для RP на сервере — не руководство по реальной медицине.</p>
 
-    <!-- Огромный, подробный текст — статично, без ломких виджетов -->
     <article id="aidContent">
       <h4>Общие принципы</h4>
       <ul>
@@ -554,9 +554,9 @@ function aggregate(leaves){
   }).sort((a,b)=> a.name.localeCompare(b.name));
 }
 
-/* -------------------- UI: Табы -------------------- */
+/* -------------------- Табы -------------------- */
 (function(){
-  const map = {"tab-calc":"calc","tab-":"","tab-aid":"aid"};
+  const map = {"tab-calc":"calc","tab-prices":"prices","tab-aid":"aid"};
   Object.keys(map).forEach(id=>{
     $("#"+id).addEventListener("click", ()=>{
       Object.keys(map).forEach(k=>{
@@ -567,6 +567,31 @@ function aggregate(leaves){
       $("#"+map[id]).hidden = false;
     });
   });
+})();
+
+/* -------------------- Переключатель темы (с сохранением) -------------------- */
+(function(){
+  const KEY = "hrp_theme";
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const saved = localStorage.getItem(KEY);
+  const start = saved || (prefersDark ? "dark" : "light");
+
+  function apply(theme){
+    document.documentElement.setAttribute("data-theme", theme);
+    document.documentElement.style.colorScheme = (theme === "dark") ? "dark" : "light";
+    localStorage.setItem(KEY, theme);
+    const btn = document.getElementById("toggleTheme");
+    if(btn) btn.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+  }
+  apply(start);
+
+  const btn = document.getElementById("toggleTheme");
+  if(btn){
+    btn.addEventListener("click", ()=>{
+      const cur = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+      apply(cur === "dark" ? "light" : "dark");
+    });
+  }
 })();
 
 /* -------------------- Калькулятор -------------------- */
@@ -635,10 +660,11 @@ function initCalc(){
 }
 initCalc();
 
-/* -------------------- Цены -------------------- */
+/* -------------------- Цены (таблицы) -------------------- */
 (function(){
   $("#services").innerHTML = SERVICES.map(([n,p])=>`<tr><td>${n}</td><td class="right mono">${p}</td></tr>`).join("");
   $("#goods").innerHTML = GOODS.map(([n,p,note])=>`<tr><td>${n}</td><td class="right mono">${p}</td><td class="small muted">${note||""}</td></tr>`).join("");
+})();
 
 /* ==================== Калькулятор оплаты (вкладка "Цены") ==================== */
 /* Явная прайс-модель — не парсим строки из таблицы, чтобы исключить ошибки */
@@ -746,38 +772,6 @@ document.getElementById("payClear").addEventListener("click", ()=>{ payCart.leng
 // первичный рендер
 renderPay();
 
-})();
-
-
-
-// ====== Переключатель темы (с сохранением) ======
-(function(){
-  const KEY = "hrp_theme";
-  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const saved = localStorage.getItem(KEY);
-  const start = saved || (prefersDark ? "dark" : "light");
-
-  function apply(theme){
-    document.documentElement.setAttribute("data-theme", theme);
-    // для корректной отрисовки нативных контролов
-    document.documentElement.style.colorScheme = (theme === "dark") ? "dark" : "light";
-    localStorage.setItem(KEY, theme);
-    const btn = document.getElementById("toggleTheme");
-    if(btn) btn.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
-  }
-
-  apply(start);
-
-  const btn = document.getElementById("toggleTheme");
-  if(btn){
-    btn.addEventListener("click", ()=>{
-      const cur = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
-      apply(cur === "dark" ? "light" : "dark");
-    });
-  }
-})();
-
-
 /* -------------------- Памятка: поиск (простой) -------------------- */
 $("#aidSearch").addEventListener("input", ()=>{
   const q = $("#aidSearch").value.trim().toLowerCase();
@@ -790,4 +784,3 @@ $("#aidSearch").addEventListener("input", ()=>{
 </script>
 </body>
 </html>
-
