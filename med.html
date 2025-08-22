@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Помощник доктора на Hate RP (пособие для дегенератов)</title>
+<meta name="description" content="Калькулятор крафта с точной развёрткой, прайс и подробная памятка врача (около 1900 года) для RP на Hate RP.">
+<style>
+  /* ===== светлая, читаемая тема — без «белого на белом» ===== */
+  :root{
+    color-scheme: light; /* фиксируем светлую схему для читаемых селектов */
+    --bg:#f7f8fb;
+    --paper:#ffffff;
+    --ink:#1f2328;
+    --muted:#6a717a;
+    --line:#e6e9ef;
+    --accent:#0a7cff;
+    --accent-2:#1f60ff;
+    --danger:#b3261e;
+    --ok:#1a7f5a;
+    --radius:14px;
+    --radius-sm:10px;
+    --shadow:0 10px 30px rgba(0,0,0,.06);
+    --font: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    --input-bg:#ffffff;
+  }
+/* Тёмная тема — просто переопределение переменных */
+:root[data-theme="dark"]{
+  color-scheme: dark;               /* корректные нативные цвета форм */
+  --bg:#0f1115;
+  --paper:#12151b;
+  --ink:#e7ecf3;
+  --muted:#9aa3ad;
+  --line:#1f2430;
+  --accent:#5aa2ff;
+  --accent-2:#7db6ff;
+  --danger:#ff6b5f;
+  --ok:#3cb179;
+  --input-bg:#181c24;
+}
+/* селекты и option используют те же переменные, так что читаемость сохранится */
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 var(--font);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  .wrap{max-width:1100px;margin:28px auto;padding:0 16px}
+  header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:12px}
+  .brand{display:flex;gap:12px;align-items:center}
+  .logo{width:40px;height:40px;border-radius:12px;background:conic-gradient(from 200deg,#9ec2ff,#0a7cff 45%,#d7e5ff 85%,#9ec2ff);box-shadow:var(--shadow)}
+  h1{font-size:20px;margin:0}
+  .sub{color:var(--muted);font-size:13px}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px}
+  .tab{padding:10px 14px;border:1px solid var(--line);border-radius:999px;background:transparent;color:inherit;cursor:pointer}
+  .tab[aria-selected="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media (max-width:960px){.grid{grid-template-columns:1fr}}
+  label{display:block;margin:8px 0 6px;font-weight:600}
+  input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--input-bg);color:var(--ink);font:inherit;outline:none}
+  select,option{color:var(--ink);background:var(--input-bg)} /* ⬅️ фикс читаемости селекта */
+  input:focus,select:focus{box-shadow:0 0 0 3px rgba(10,124,255,.18);border-color:var(--accent)}
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .right{text-align:right}
+  .muted{color:var(--muted)}
+  .small{font-size:12px}
+  .mono{font-family:var(--mono)}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .btn{appearance:none;border:1px solid var(--accent);background:var(--accent);color:#fff;padding:10px 14px;border-radius:10px;cursor:pointer}
+  .btn.ghost{background:transparent;color:var(--accent)}
+  .btn.danger{background:var(--danger);border-color:var(--danger)}
+  .btn.ok{background:var(--ok);border-color:var(--ok)}
+  .pill{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:999px;padding:8px 12px}
+  .section-title{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:8px 0}
+  .space{height:10px}
+  .hr{height:1px;background:var(--line);margin:8px 0}
+  .toc a{color:inherit;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+	<button id="toggleTheme" class="tab" aria-pressed="false" style="border:1px solid var(--line);">
+   	 Тема
+ 	 </button>
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <h1>Помощник доктора на Hate RP (пособие для дегенератов)</h1>
+        <div class="sub">Точный калькулятор крафта · Прейскурант · Памятка врача (ок. 1900)</div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab" id="tab-calc" aria-controls="calc" aria-selected="true">Калькулятор</button>
+    <button class="tab" id="tab-prices" aria-controls="prices" aria-selected="false">Цены</button>
+    <button class="tab" id="tab-aid" aria-controls="aid" aria-selected="false">Памятка (1900)</button>
+  </nav>
+
+  <!-- ====================== КАЛЬКУЛЯТОР ====================== -->
+  <section id="calc" class="card" role="tabpanel" aria-labelledby="tab-calc">
+    <div class="grid">
+      <div>
+        <div class="section-title">
+          <h3 style="margin:0">Сформировать заказ</h3>
+          <span class="small muted">/ — поиск, Enter — добавить</span>
+        </div>
+
+        <label for="recipe">Рецепт</label>
+        <select id="recipe"></select>
+
+        <div class="toolbar">
+          <input id="qty" type="number" min="1" step="1" value="1" style="max-width:120px">
+          <button id="addLine" class="btn">Добавить</button>
+          <button id="clearOrder" class="btn danger">Очистить</button>
+        </div>
+
+        <div class="space"></div>
+        <table id="orderTable">
+          <thead><tr><th>Рецепт</th><th class="right">Кол-во</th><th class="right">Выход / 1</th><th class="right">Действия</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div>
+        <div class="section-title">
+          <h3 style="margin:0">Итог по материалам</h3>
+          <label class="pill small" title="При включении — разложит вложенные изделия до сырья. Исключения ниже не разворачиваются.">
+            <input id="expandRaw" type="checkbox" checked> Разворачивать до сырья
+          </label>
+        </div>
+        <div class="small muted">Не разворачиваем: <b>Яд</b>, <b>Противоядие</b>, <b>Бинт стерильный</b> (лёгкая настройка сервера, чтобы аптечка на опиуме считалась как 3 мака, а не 13).</div>
+
+        <div class="space"></div>
+        <table id="totalsTable">
+          <thead><tr><th>Ингредиент</th><th class="right">Кол-во</th><th>Ед.</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== ЦЕНЫ ====================== -->
+  <section id="prices" class="card" role="tabpanel" aria-labelledby="tab-prices" hidden>
+    <h3 style="margin:4px 0 12px">Стоимость услуг</h3>
+    <table>
+      <thead><tr><th>Услуга</th><th class="right">Цена</th></tr></thead>
+      <tbody id="services"></tbody>
+    </table>
+
+    <div class="hr"></div>
+
+    <h3 style="margin:12px 0">Продажи</h3>
+    <table>
+      <thead><tr><th>Товар</th><th class="right">Цена</th><th>Примечание</th></tr></thead>
+      <tbody id="goods"></tbody>
+    </table>
+  </section>
+
+  <!-- ====================== ПАМЯТКА (ДЕТАЛЬНО) ====================== -->
+  <section id="aid" class="card" role="tabpanel" aria-labelledby="tab-aid" hidden>
+    <div class="section-title">
+      <h3 style="margin:0">Памятка врача (около 1900)</h3>
+      <input id="aidSearch" type="text" placeholder="Поиск по памятке (пулевые, жгут, ожоги…)" style="max-width:360px">
+    </div>
+    <p class="small muted">Это историзированные практики эпохи Листера (антисептика, кипячение, опиаты, эфир/хлороформ). Антибиотиков ещё нет. Только для RP на сервере — не руководство по реальной медицине.</p>
+
+    <!-- Огромный, подробный текст — статично, без ломких виджетов -->
+    <article id="aidContent">
+      <h4>Общие принципы</h4>
+      <ul>
+        <li><b>Чистота и антисептика:</b> руки — мыло с тёплой водой → протирка спиртом или слабым фенольным раствором; инструменты кипятить 15–20 минут или обжигать; чистые простыни/марля.</li>
+        <li><b>Обработка кожи:</b> промыть кипячёной водой/солевым раствором, затем спирт/борная вода/слабая карболка.</li>
+        <li><b>Повязки:</b> стерильная марля/бинт; припудривать йодоформом или борной кислотой — характерно для того времени.</li>
+        <li><b>Шок:</b> покой, укрыть и согреть, ноги чуть выше, тёплое питьё; нашатырь для стимуляции.</li>
+        <li><b>Жгут:</b> при артериальном кровотечении конечности; записывать время, ослаблять когда возможно.</li>
+        <li><b>Швы:</b> чистые резаные — первичный шов шёлком/кетгутом; рваные/грязные/огнестрельные — отсроченное закрытие, дренаж.</li>
+        <li><b>Обезболивание:</b> лауданум/морфин/героин (осторожно с дыханием), местно — кокаиновые аппликации; эфир/хлороформ для «операции» в больнице.</li>
+      </ul>
+
+      <h4>Кровотечения</h4>
+      <h5>Артериальное (алая кровь, пульсирующая струя)</h5>
+      <ol>
+        <li>Давящая повязка, конечность выше.</li>
+        <li>Если продолжается — жгут выше раны; отметить время; ослаблять при возможности.</li>
+        <li>Очистка вокруг, временная тампонада, далее — перевязка/перевязка сосуда в стационаре.</li>
+      </ol>
+      <h5>Венозное (тёмная, равномерное течение)</h5>
+      <ol>
+        <li>Давящая повязка, возвышение.</li>
+        <li>Непрерывное давление 10–15 минут без «подглядываний».</li>
+      </ol>
+      <h5>Капиллярное (ссадины)</h5>
+      <ul>
+        <li>Промыть, борный/салициловый порошок, тонкий слой салициловой мази, повязка.</li>
+      </ul>
+      <h5>Носовое кровотечение</h5>
+      <ul>
+        <li>Посадить, наклон вперёд; холод к переносице; прижимать крылья 10 минут. Упорно — тампон с борной водой/квасцами.</li>
+      </ul>
+
+      <h4>Пулевые ранения</h4>
+      <p><b>Главное:</b> любая огнестрельная — грязная. Опасны инфекция и шок, а не «пуля сама по себе».</p>
+      <ol>
+        <li>Оценка входа/выхода, кровопотери и шока → остановка крови.</li>
+        <li>Обезболивание лауданумом/морфином умеренно.</li>
+        <li>Антисептика: промыть кипячёной/солевой водой; кожу — спирт/фенол.</li>
+        <li>Минимум зондирования: извлекать только доступные поверхностные пули/осколки.</li>
+        <li>Загрязнение — расширить, иссечь нежизнеспособные ткани, дренаж; не закрывать герметично; йодоформная марля.</li>
+        <li>Иммобилизация при переломе; наблюдать признаки инфекции — жар, покраснение, «красные полосы» по лимфе — тогда расширить/дренировать.</li>
+      </ol>
+
+      <h4>Ножевые и колотые раны</h4>
+      <ol>
+        <li>Не вынимать застрявший предмет — фиксировать вокруг бинтами.</li>
+        <li>Остановить кровотечение (давящая, жгут по необходимости).</li>
+        <li>Широкое промывание; чистые резаные — первично ушить; грязные/колотые — дренаж и отсроченное закрытие.</li>
+        <li>Ранения живота/груди — ничего внутрь, срочно в «операционную» (в лоре больницы).</li>
+      </ol>
+
+      <h4>ЧМТ (черепно-мозговая травма)</h4>
+      <p><b>Тревожные признаки:</b> потеря сознания, многократная рвота, судороги, неравные зрачки, кровь/ликвор из носа/уха.</p>
+      <ul>
+        <li>Покой в тихой тёмной комнате, голова приподнята; холод на голову.</li>
+        <li>Опиаты осторожно; при сильной боли — малые дозы.</li>
+        <li>Раны кожи головы — антисептика, швы, ежедневные перевязки.</li>
+        <li>Нарастание симптомов — стационар; трепанация описывается как редкая больничная процедура.</li>
+      </ul>
+
+      <h4>Удар копытом лошади / размозжение</h4>
+      <ul>
+        <li>Проверить грудь/живот/таз/конечности; искать признаки внутреннего кровотечения (бледность, холодный пот, слабый пульс).</li>
+        <li>Шок — согреть, ноги выше, покой.</li>
+        <li>Мягкие ткани — холод 12–24 часа, затем сухое тепло.</li>
+        <li>Рёбра — тугая повязка на выдохе.</li>
+        <li>Открытые раны — как рваные/колотые.</li>
+      </ul>
+
+      <h4>Падения с высоты/с лошади</h4>
+      <ul>
+        <li>Подозрение на позвоночник — жёсткая доска, минимум движений.</li>
+        <li>Переломы — шины, фиксировать два ближайших сустава.</li>
+        <li>Таз — стяжка простынёй/ремнём.</li>
+        <li>Голова/живот — как при ЧМТ/внутреннем кровотечении.</li>
+      </ul>
+
+      <h4>Переломы, вывихи, растяжения</h4>
+      <h5>Переломы</h5>
+      <ol>
+        <li>Иммобилизация подручными шинами (доски/ветви).</li>
+        <li>Открытый перелом — антисептика, стерильная повязка, затем шина.</li>
+        <li>Бедро — осторожная тяга, транспортировка в стационар.</li>
+      </ol>
+      <h5>Вывих</h5>
+      <ul><li>Холод, иммобилизация; вправление опытным; после — косыночная/пращевидная повязка.</li></ul>
+      <h5>Растяжение</h5>
+      <ul><li>Покой, холод → потом бинт/поддержка, возвышение.</li></ul>
+
+      <h4>Ожоги</h4>
+      <ul>
+        <li>1–2 степень — охлаждать чистой прохладной водой; пузыри не вскрывать.</li>
+        <li>Повязка: стерильная марля; исторично — «карроновое масло» (известковая вода + льняное масло) или сухая повязка.</li>
+        <li>Обширные — риск шока: согреть, сладкий чай; перевязки часто и чисто.</li>
+      </ul>
+
+      <h4>Инфекции ран (без антибиотиков)</h4>
+      <ul>
+        <li>Ежедневные перевязки; при гное — рассечь и дренировать, не закупоривать.</li>
+        <li>Промывания: тёплая кипячёная/солевая вода, борная вода/слабая карболка.</li>
+        <li>Йодоформная марля в полость — распространённый приём эпохи.</li>
+        <li>Столбняк: вакцин почти нет — тщательная очистка и антисептика — лучшая защита; сыворотка встречается редко.</li>
+      </ul>
+
+      <h4>Отравления, укусы и передозировки</h4>
+      <h5>Опиаты/лауданум/героин — передозировка</h5>
+      <ul>
+        <li>Признаки: сонливость, узкие зрачки, редкое/поверхностное дыхание.</li>
+        <li>Действия: обеспечить проходимость дыхательных путей, нашатырь, холодные обтирания, крепкий кофе/чай, согреть.</li>
+        <li>Если недавно проглочено — промывание желудка. Антагонистов нет; в RP — «детокс-препарат» как выдуманная сыворотка.</li>
+      </ul>
+      <h5>Алкогольные/растительные</h5>
+      <ul><li>Эметики, промывание, наблюдение; поить водой/чаем.</li></ul>
+      <h5>Змеиный укус</h5>
+      <ul>
+        <li>Покой, иммобилизация; лигатура выше укуса (не жгут).</li>
+        <li>Разрез/прижигание/высасывание — практиковалось тогда; в RP допустимо с оговоркой о рисках.</li>
+        <li>Местная антисептика, повязка. В лоре — «противоядие»; сыворотка — если больница «продвинутая».</li>
+      </ul>
+
+      <h4>Раны груди и кровохаркание</h4>
+      <ul>
+        <li>Проникающее — сделать герметичную повязку: марля, сверху ткань, смазанная жиром/маслом, закрепить; полусидя.</li>
+        <li>Переломы рёбер — круговая повязка на выдохе.</li>
+      </ul>
+
+      <h4>Раны мягких тканей</h4>
+      <ul>
+        <li>Ссадины/мелкие порезы — промыть, борный порошок, тонкий слой салициловой мази, стерильная повязка.</li>
+        <li>Рваные/грязные — промыть, карболка, рыхлая тампонада йодоформной марлей, дренаж; шов позже.</li>
+        <li>Укусы животных — обильное промывание, не зашивать наглухо; перевязки ежедневно.</li>
+      </ul>
+
+      <h4>Типовые протоколы RP</h4>
+      <h5>«Реанимация» аптечкой</h5>
+      <ol>
+        <li>Проверяю сознание/дыхание → очищаю дыхательные пути; нашатырь; укрыть и согреть.</li>
+        <li>Останавливаю кровотечение; фиксирую переломы/вывихи.</li>
+        <li>Обезболиваю умеренно; при подозрении на опиоидный передоз — без доп. опиатов; «детокс», крепкий кофе.</li>
+        <li>Накладываю стерильные повязки; везу в больницу.</li>
+      </ol>
+      <h5>«Операция» при тяжёлой травме</h5>
+      <ol>
+        <li>Готовлю поле: мою руки, спирт/карболка; инструменты кипячу; чистые простыни.</li>
+        <li>Эфир/хлороформ; ассистент следит за дыханием.</li>
+        <li>Иссечение грязных тканей; гемостаз; дренаж.</li>
+        <li>Шов, если чисто; иначе — отсроченное закрытие. Ежедневные перевязки.</li>
+      </ol>
+
+      <h4>РП-детали для атмосферы</h4>
+      <ul>
+        <li>«Пахнет карболкой», «щипцы кипятятся», «жгут записан: 12:20».</li>
+        <li>Реакция на опиаты: «замедлился, стихла боль, потеплел».</li>
+        <li>Перевязка: «припудрил йодоформом», «поставил дренаж», «повязка сухая».</li>
+      </ul>
+    </article>
+  </section>
+
+  <footer class="small muted" style="margin:18px 0">© Материалы — только для RP на Hate RP (RDR2). Не используйте для реальной медицины.</footer>
+</div>
+
+<script>
+/* -------------------- ДАННЫЕ -------------------- */
+const CRAFTS = [
+  {"id":"toniziruyushchiy-tonik","name":"Тонизирующий тоник","output":1,"ingredients":[
+    {"name":"Черная смородина","qty":3,"unit":"шт"},
+    {"name":"Дикая мята","qty":1,"unit":"шт"},
+    {"name":"Аляскинский женьшень","qty":2,"unit":"шт"},
+    {"name":"Стеклянная бутылка","qty":1,"unit":"шт"},
+    {"name":"Сахар","qty":2,"unit":"шт"},
+    {"name":"Агава","qty":2,"unit":"шт"}
+  ]},
+  {"id":"aptechka-na-geroine","name":"Аптечка на героине","output":1,"ingredients":[
+    {"name":"Героин","qty":1,"unit":"шт"},
+    {"name":"Противоядие","qty":1,"unit":"шт"},
+    {"name":"Бинт стерильный","qty":1,"unit":"шт"}
+  ]},
+  {"id":"salitsilovaya-maz","name":"Салициловая мазь","output":1,"ingredients":[
+    {"name":"Мягкая древесина","qty":2,"unit":"шт"},
+    {"name":"Животный жир","qty":1,"unit":"шт"},
+    {"name":"Шалфей олеандровый","qty":3,"unit":"шт"}
+  ]},
+  {"id":"laudanum","name":"Лауданум","output":1,"ingredients":[
+    {"name":"Спирт","qty":1,"unit":"шт"},
+    {"name":"Змеиный яд","qty":2,"unit":"шт"},
+    {"name":"Алоэ","qty":3,"unit":"шт"},
+    {"name":"Опиум","qty":2,"unit":"шт"}
+  ]},
+  {"id":"aptechka-na-opiume","name":"Аптечка на опиуме","output":1,"ingredients":[
+    {"name":"Опиум","qty":1,"unit":"шт"},
+    {"name":"Противоядие","qty":1,"unit":"шт"},
+    {"name":"Бинт стерильный","qty":1,"unit":"шт"}
+  ]},
+  {"id":"opium","name":"Опиум","output":1,"ingredients":[
+    {"name":"Прерийный мак","qty":3,"unit":"шт"},
+    {"name":"Стеклянная бутылка","qty":1,"unit":"шт"},
+    {"name":"Яд","qty":2,"unit":"шт"}
+  ]},
+  {"id":"bint-prostoy","name":"Бинт простой","output":1,"ingredients":[
+    {"name":"Вода","qty":1,"unit":"шт"},
+    {"name":"Волокна древесные","qty":1,"unit":"шт"},
+    {"name":"Алоэ","qty":2,"unit":"шт"},
+    {"name":"Мёд","qty":1,"unit":"шт"}
+  ]},
+  {"id":"tonik-s-hininom-spirt","name":"Тоник с хинином (на спирту)","output":1,"ingredients":[
+    {"name":"Спирт","qty":1,"unit":"шт"},
+    {"name":"Стеклянная бутылка","qty":1,"unit":"шт"},
+    {"name":"Алоэ","qty":3,"unit":"шт"},
+    {"name":"Мягкая древесина","qty":3,"unit":"шт"}
+  ]},
+  {"id":"hirurgicheskiy-nabor","name":"Хирургический набор","output":1,"ingredients":[
+    {"name":"Вода","qty":1,"unit":"шт"},
+    {"name":"Спирт","qty":1,"unit":"шт"},
+    {"name":"Змеиный яд","qty":1,"unit":"шт"},
+    {"name":"Бинт простой","qty":1,"unit":"шт"},
+    {"name":"Опиум","qty":1,"unit":"шт"}
+  ]},
+  {"id":"geroin","name":"Героин","output":1,"ingredients":[
+    {"name":"Морфин","qty":2,"unit":"шт"},
+    {"name":"Яд","qty":2,"unit":"шт"},
+    {"name":"Красная малина","qty":4,"unit":"шт"}
+  ]},
+  {"id":"paratsetomol","name":"Парацетомол","output":1,"ingredients":[
+    {"name":"Агава","qty":2,"unit":"шт"},
+    {"name":"Стеклянная бутылка","qty":1,"unit":"шт"},
+    {"name":"Соль","qty":1,"unit":"шт"},
+    {"name":"Яд","qty":1,"unit":"шт"}
+  ]},
+  {"id":"protivoyadie","name":"Противоядие","output":1,"ingredients":[
+    {"name":"Змеиный яд","qty":1,"unit":"шт"},
+    {"name":"Чок Дейзи","qty":1,"unit":"шт"},
+    {"name":"Зимняя ягода","qty":1,"unit":"шт"}
+  ]},
+  {"id":"bint-sterilnyy","name":"Бинт стерильный","output":1,"ingredients":[
+    {"name":"Волокна древесные","qty":1,"unit":"шт"},
+    {"name":"Алоэ","qty":2,"unit":"шт"},
+    {"name":"Спирт","qty":1,"unit":"шт"}
+  ]},
+  {"id":"nastoyka-zdorovyy-zheludok","name":"Настойка \"здоровый желудок\"","output":1,"ingredients":[
+    {"name":"Прерийный мак","qty":2,"unit":"шт"},
+    {"name":"Алоэ","qty":2,"unit":"шт"},
+    {"name":"Тысячелистник","qty":2,"unit":"шт"},
+    {"name":"Аляскинский женьшень","qty":1,"unit":"шт"}
+  ]},
+  {"id":"nastoyka-krepkie-kosti","name":"Настойка \"крепкие кости\"","output":1,"ingredients":[
+    {"name":"Прерийный мак","qty":2,"unit":"шт"},
+    {"name":"Тысячелистник","qty":2,"unit":"шт"},
+    {"name":"Животный жир","qty":1,"unit":"шт"}
+  ]},
+  {"id":"yad","name":"Яд","output":1,"ingredients":[
+    {"name":"Прерийный мак","qty":5,"unit":"шт"},
+    {"name":"Змеиный яд","qty":1,"unit":"шт"},
+    {"name":"Нитрит","qty":4,"unit":"шт"}
+  ]},
+  {"id":"morfin","name":"Морфин","output":1,"ingredients":[
+    {"name":"Прерийный мак","qty":2,"unit":"шт"},
+    {"name":"Стеклянная бутылка","qty":1,"unit":"шт"},
+    {"name":"Спирт","qty":1,"unit":"шт"}
+  ]},
+  {"id":"otvar-na-travah","name":"Отвар на травах","output":1,"ingredients":[
+    {"name":"Получий тимьян","qty":2,"unit":"шт"},
+    {"name":"Английская булава","qty":2,"unit":"шт"},
+    {"name":"Гриб-зонтик","qty":2,"unit":"шт"},
+    {"name":"Алоэ","qty":2,"unit":"шт"}
+  ]},
+  {"id":"uspokaivayushchaya-nastoika","name":"Успокаивающая настойка","output":1,"ingredients":[
+    {"name":"Американский женьшень","qty":1,"unit":"шт"},
+    {"name":"Спирт","qty":1,"unit":"шт"},
+    {"name":"Алоэ","qty":2,"unit":"шт"},
+    {"name":"Дикая мята","qty":2,"unit":"шт"}
+  ]},
+  {"id":"preparat-detox","name":"Препарат детокс","output":1,"ingredients":[
+    {"name":"Вода","qty":1,"unit":"шт"},
+    {"name":"Кровавый цветок","qty":5,"unit":"шт"},
+    {"name":"Парацетомол","qty":2,"unit":"шт"},
+    {"name":"Шалфей олеандровый","qty":3,"unit":"шт"},
+    {"name":"Спирт","qty":3,"unit":"шт"},
+    {"name":"Змеиный яд","qty":1,"unit":"шт"},
+    {"name":"Молочай","qty":2,"unit":"шт"},
+    {"name":"Опиум","qty":2,"unit":"шт"}
+  ]},
+  {"id":"lechebnaya-maz","name":"Лечебная мазь","output":1,"ingredients":[
+    {"name":"Алоэ","qty":3,"unit":"шт"},
+    {"name":"Змеиный яд","qty":1,"unit":"шт"},
+    {"name":"Тысячелистник","qty":2,"unit":"шт"},
+    {"name":"Животный жир","qty":1,"unit":"шт"}
+  ]}
+];
+
+const SERVICES = [
+  ["Осмотр", "$2"],
+  ["Лечение аптечкой (реанимация)", "$15"],
+  ["Лечение тяжёлой травмы (операция)", "$18"],
+  ["Детокс", "$50"]
+];
+
+const GOODS = [
+  ["Бинты (розница)", "$3.5 /шт; от 10 шт — $3 /шт", ""],
+  ["Бинты (для полиции)", "$2.5 /шт; от 10 шт — $2 /шт", ""],
+  ["Тонизирующий тоник", "$4.5 /шт; от 10 шт — $4 /шт", ""],
+  ["Лечебная мазь", "$4 /шт", ""],
+  ["Салициловая мазь", "$3 /шт", ""],
+  ["Отвар на травах", "$3 /шт", ""],
+  ["Противоядие", "$3 /шт", ""],
+  ["Настойка «крепкие кости»", "$4 /шт; от 10 шт — $3.5 /шт", ""],
+  ["Настойка «крепкий желудок»", "$4 /шт; от 10 шт — $3.5 /шт", "в крафтах: «здоровый желудок»"],
+  ["Успокаивающая настойка", "$4 /шт; от 10 шт — $3.5 /шт", ""]
+];
+
+/* -------------------- ВСПОМОГАТЕЛЬНОЕ -------------------- */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const fmt = n => (Math.round((n + Number.EPSILON)*100)/100).toString().replace(".",",");
+
+function recipeById(id){ return CRAFTS.find(c=>c.id===id); }
+function recipeByName(name){ return CRAFTS.find(c=>c.name.toLowerCase()===name.toLowerCase()); }
+
+/* Режимы развёртки: включён/выключен, плюс стоп-список, чтобы НЕ разворачивать некоторые крафты */
+const DO_NOT_EXPAND = new Set(["yad","protivoyadie","bint-sterilnyy"]); // по требованиям сервера
+
+/* Точная развёртка с учётом output и защитой от циклов */
+function expandToLeaves(recipeId, qty, expandRaw, visited = new Set()){
+  const rec = recipeById(recipeId); if(!rec) return [];
+  const factor = qty / (rec.output || 1);
+  const leaves = [];
+
+  for(const ing of rec.ingredients){
+    const sub = recipeByName(ing.name);
+    const canExpand = expandRaw && sub && !DO_NOT_EXPAND.has(sub.id) && !visited.has(sub.id);
+
+    if(canExpand){
+      visited.add(sub.id);
+      const deeper = expandToLeaves(sub.id, ing.qty * factor, expandRaw, visited);
+      visited.delete(sub.id);
+      leaves.push(...deeper);
+    }else{
+      leaves.push({name: ing.name, unit: ing.unit || "", qty: ing.qty * factor});
+    }
+  }
+  return leaves;
+}
+
+function aggregate(leaves){
+  const map = new Map(); // key: name|unit -> qty
+  for(const x of leaves){
+    const key = x.name + "|" + (x.unit||"");
+    map.set(key, (map.get(key)||0) + x.qty);
+  }
+  return Array.from(map.entries()).map(([key,qty])=>{
+    const [name,unit] = key.split("|");
+    return {name,unit,qty};
+  }).sort((a,b)=> a.name.localeCompare(b.name));
+}
+
+/* -------------------- UI: Табы -------------------- */
+(function(){
+  const map = {"tab-calc":"calc","tab-prices":"prices","tab-aid":"aid"};
+  Object.keys(map).forEach(id=>{
+    $("#"+id).addEventListener("click", ()=>{
+      Object.keys(map).forEach(k=>{
+        $("#"+k).setAttribute("aria-selected","false");
+        $("#"+map[k]).hidden = true;
+      });
+      $("#"+id).setAttribute("aria-selected","true");
+      $("#"+map[id]).hidden = false;
+    });
+  });
+})();
+
+/* -------------------- Калькулятор -------------------- */
+let order = []; // [{id, qty}]
+
+function refreshRecipeList(filter=""){
+  const f = filter.trim().toLowerCase();
+  const list = CRAFTS.filter(c=>c.name.toLowerCase().includes(f)).sort((a,b)=>a.name.localeCompare(b.name));
+  $("#recipe").innerHTML = list.map(c=>`<option value="${c.id}">${c.name}</option>`).join("");
+}
+function renderOrder(){
+  const tb = $("#orderTable tbody");
+  tb.innerHTML = order.map((line,i)=>{
+    const rec = recipeById(line.id);
+    return `<tr>
+      <td>${rec ? rec.name : "<i class='muted'>не найдено</i>"}</td>
+      <td class="right">${line.qty}</td>
+      <td class="right">${rec?.output ?? 1}</td>
+      <td class="right">
+        <button class="btn ghost" data-act="inc" data-i="${i}">+1</button>
+        <button class="btn ghost" data-act="dec" data-i="${i}">−1</button>
+        <button class="btn danger" data-act="del" data-i="${i}">Удалить</button>
+      </td>
+    </tr>`;
+  }).join("");
+  tb.querySelectorAll("button").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      const i = +b.dataset.i, act = b.dataset.act;
+      if(act==="inc") order[i].qty++;
+      if(act==="dec") order[i].qty=Math.max(1,order[i].qty-1);
+      if(act==="del") order.splice(i,1);
+      renderOrder(); renderTotals();
+    });
+  });
+}
+function renderTotals(){
+  const expandRaw = $("#expandRaw").checked;
+  const leaves = [];
+  for(const line of order){
+    leaves.push(...expandToLeaves(line.id, line.qty, expandRaw, new Set([line.id])));
+  }
+  const totals = aggregate(leaves);
+  $("#totalsTable tbody").innerHTML = totals.map(t=>`<tr><td>${t.name}</td><td class="right">${fmt(t.qty)}</td><td>${t.unit}</td></tr>`).join("");
+}
+
+function initCalc(){
+  refreshRecipeList("");
+  renderOrder(); renderTotals();
+
+  $("#addLine").addEventListener("click", ()=>{
+    const id = $("#recipe").value;
+    const qty = Math.max(1, +$("#qty").value || 1);
+    if(!id) return;
+    const i = order.findIndex(l=>l.id===id);
+    if(i>=0) order[i].qty += qty; else order.push({id, qty});
+    renderOrder(); renderTotals();
+  });
+  $("#clearOrder").addEventListener("click", ()=>{ order = []; renderOrder(); renderTotals(); });
+  $("#expandRaw").addEventListener("change", renderTotals);
+
+  // быстрый поиск по рецептам
+  window.addEventListener("keydown", e=>{
+    if(e.key==="/"){ e.preventDefault(); $("#recipe").focus(); }
+    if(e.key==="Enter" && document.activeElement !== $("#aidSearch")){ $("#addLine").click(); }
+  });
+}
+initCalc();
+
+/* -------------------- Цены -------------------- */
+(function(){
+  $("#services").innerHTML = SERVICES.map(([n,p])=>`<tr><td>${n}</td><td class="right mono">${p}</td></tr>`).join("");
+  $("#goods").innerHTML = GOODS.map(([n,p,note])=>`<tr><td>${n}</td><td class="right mono">${p}</td><td class="small muted">${note||""}</td></tr>`).join("");
+})();
+
+// ====== Переключатель темы (с сохранением) ======
+(function(){
+  const KEY = "hrp_theme";
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const saved = localStorage.getItem(KEY);
+  const start = saved || (prefersDark ? "dark" : "light");
+
+  function apply(theme){
+    document.documentElement.setAttribute("data-theme", theme);
+    // для корректной отрисовки нативных контролов
+    document.documentElement.style.colorScheme = (theme === "dark") ? "dark" : "light";
+    localStorage.setItem(KEY, theme);
+    const btn = document.getElementById("toggleTheme");
+    if(btn) btn.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+  }
+
+  apply(start);
+
+  const btn = document.getElementById("toggleTheme");
+  if(btn){
+    btn.addEventListener("click", ()=>{
+      const cur = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+      apply(cur === "dark" ? "light" : "dark");
+    });
+  }
+})();
+
+
+/* -------------------- Памятка: поиск (простой) -------------------- */
+$("#aidSearch").addEventListener("input", ()=>{
+  const q = $("#aidSearch").value.trim().toLowerCase();
+  const secs = $("#aidContent").querySelectorAll("h4, h5, p, li");
+  secs.forEach(el=>{
+    const visible = !q || el.textContent.toLowerCase().includes(q);
+    el.style.display = visible ? "" : "none";
+  });
+});
+</script>
+</body>
+</html>
