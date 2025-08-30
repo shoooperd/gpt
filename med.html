@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Помощник доктора на Hate RP (ок. 1900) — крафт и памятка</title>
-<meta name="description" content="Витрина крафтов доктора с калькулятором материалов (группировка и порядок крафта), прайс и подробная историческая памятка (около 1900 года) для RP на Hate RP.">
+<meta name="description" content="Витрина крафтов доктора с калькулятором материалов (дерево состава, итог по сырью, порядок крафта), прайс и большая историческая памятка (около 1900 года) для RP на Hate RP.">
 <style>
   /* ===== базовая тема ===== */
   :root{
@@ -114,7 +114,7 @@
       <div class="logo" aria-hidden="true"></div>
       <div>
         <h1>Помощник доктора (Hate RP · ок. 1900)</h1>
-        <div class="sub">Витрина крафтов · Группировка материалов и порядок крафта · Прейскурант · Большая историческая памятка</div>
+        <div class="sub">Материалы и порядок сверху · Витрина крафтов · Прейскурант · Большая историческая памятка</div>
       </div>
     </div>
     <button id="toggleTheme" class="tab" aria-pressed="false" style="border:1px solid var(--line);" aria-label="Переключить тему">Тема</button>
@@ -126,13 +126,10 @@
     <button class="tab" id="tab-aid" role="tab" aria-controls="aid" aria-selected="false" tabindex="-1">Памятка (1900)</button>
   </nav>
 
-  <!-- ====================== КАЛЬКУЛЯТОР (ПЛИТКИ) ====================== -->
+  <!-- ====================== КАЛЬКУЛЯТОР (СНАЧАЛА ИТОГИ, ПОТОМ ПЛИТКИ) ====================== -->
   <section id="calc" class="card" role="tabpanel" aria-labelledby="tab-calc">
 
- <div id="tiles" class="tiles" aria-live="polite"></div>
-
-    <div class="hr"></div>
-
+    <!-- ===== материалы и порядок — СВЕРХУ ===== -->
     <div class="section-title">
       <h3 style="margin:0">Материалы и порядок</h3>
       <nav class="subtabs" role="tablist" aria-label="Вид итогов">
@@ -144,7 +141,9 @@
 
     <div class="two-cols">
       <!-- Дерево состава -->
-      <div id="matTree" class="tree" aria-live="polite"></div>
+      <div id="matTree" class="tree" aria-live="polite">
+        <div class="small muted">Нет выбранных крафтов — добавьте план на плитках ниже.</div>
+      </div>
 
       <!-- Справа — либо сводный итог, либо порядок крафта (переключается) -->
       <div>
@@ -158,7 +157,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr><td colspan="3" class="small muted">Нет выбранных крафтов — добавьте план на плитках слева.</td></tr>
+              <tr><td colspan="3" class="small muted">Нет выбранных крафтов — добавьте план на плитках ниже.</td></tr>
             </tbody>
           </table>
         </div>
@@ -175,26 +174,29 @@
               </tr>
             </thead>
             <tbody>
-              <tr><td colspan="5" class="small muted">Нет зависимостей — выберите крафты слева.</td></tr>
+              <tr><td colspan="5" class="small muted">Нет зависимостей — выберите крафты и включите разворачивание при необходимости.</td></tr>
             </tbody>
           </table>
-          <p class="smallnote">Крафтов (≈) — округление вверх до целого не применяется автоматически; ориентируйтесь на практику сервера.</p>
+          <p class="smallnote">Крафтов (≈) — дробное значение для ориентира; округляйте до целого исходя из правил сервера.</p>
         </div>
       </div>
     </div>
-    
+
+    <div class="hr"></div>
+
+    <!-- ===== витрина крафтов — НИЖЕ ===== -->
     <div class="section-title">
       <h3 style="margin:0">Крафты доктора</h3>
       <div class="toolbar" style="gap:12px; flex-wrap:wrap">
         <input id="craftSearch" type="text" placeholder="Поиск: мазь, опиум, яд…" style="max-width:260px">
-        <label class="pill small" title="Разложить вложенные изделия до сырья">
+        <label class="pill small" title="Разложить вложенные изделия до сырья (например, «Аптечка» → Опиум → Мак и т.д.)">
           <input id="expandToRaw" type="checkbox" checked> Разворачивать до сырья
         </label>
-        <span class="small muted">Задайте план на плитках — ниже появится дерево состава, итог по сырью и порядок крафта.</span>
+        <span class="small muted">Меняйте план на плитках — сводные таблицы и дерево сверху обновятся сразу.</span>
       </div>
     </div>
 
-   
+    <div id="tiles" class="tiles" aria-live="polite"></div>
   </section>
 
   <!-- ====================== ЦЕНЫ ====================== -->
@@ -386,7 +388,7 @@ const $  = s => document.querySelector(s);
 const $$ = s => Array.from(document.querySelectorAll(s));
 const fmt = n => (Math.round((n + Number.EPSILON)*100)/100).toString().replace(".",",");
 
-/* Нормализация имён для сопоставления (ё→е, мелкие унификации) */
+/* Нормализация имён для сопоставления */
 function normName(s){
   const x = String(s||"").toLowerCase().replace(/ё/g,"е").trim();
   return x
@@ -521,10 +523,10 @@ function fmtTime(sec){
 }
 
 /* -------------------- ВИТРИНА: план крафтов -------------------- */
-let plan = []; // [{id, qtyCrafts}] — qtyCrafts = число "крафтов" (раз запустить рецепт)
+let plan = []; // [{id, qty}] — qty = сколько РАЗ запустить рецепт
 const PLAN_KEY = "hrp_doctor_plan_v3";
 
-/* Вёрстка плитки */
+/* Плитка */
 function tileHTML(craft, plannedQty){
   const totalOut = plannedQty * (craft.output||1);
   return `
@@ -554,7 +556,7 @@ function tileHTML(craft, plannedQty){
   `;
 }
 
-/* Рендер витрины */
+/* Рендер плиток */
 function renderTiles(){
   const q = normName($("#craftSearch").value || "");
   const tiles = $("#tiles");
@@ -593,29 +595,25 @@ function renderTiles(){
 }
 
 /* -------------------- ПОСТРОЕНИЕ ДЕРЕВА, ИТОГА И ПОРЯДКА -------------------- */
-/* NB: план задаётся в «крафтах» (сколько раз запустить рецепт). */
-
 /* Узлы дерева:
   type: 'craft' | 'raw'
   name, unit, qty (для raw)
-  для craft: requiredItems (сколько предметов этого крафта требуется), craftsNeeded (в дробном виде), output, children[]
+  для craft: requiredItems (сколько предметов требуется), craftsNeeded (дробно), output, children[]
 */
 function makeTreeByCrafts(recipeId, craftsCount, expandRaw, visited=new Set()){
   const rec = craftById(recipeId); if(!rec) return null;
   const node = {type:'craft', id:rec.id, name:rec.name, output:rec.output, plannedCrafts:craftsCount, children:[]};
 
-  // На один "крафт" рецепта — ing.qty. На craftsCount — умножаем на craftsCount.
   for(const ing of rec.ing){
-    const requiredItems = ing.qty * craftsCount;
+    const requiredItems = ing.qty * craftsCount; // сколько предметов ингредиента нужно под итог
     const sub = craftByName(ing.name);
     const canExpand = expandRaw && sub && !DO_NOT_EXPAND.has(sub.id) && !visited.has(sub.id);
 
     if(canExpand){
       const craftsNeeded = requiredItems / sub.output; // дробно
       visited.add(sub.id);
-      const child = makeTreeByItems(sub.id, requiredItems, expandRaw, visited); // раскрываем по "нужно предметов"
+      const child = makeTreeByItems(sub.id, requiredItems, expandRaw, visited); // раскрываем глубже по предметам
       visited.delete(sub.id);
-      // обогащаем шапку узла-крафта для красивой строки
       child.craftsNeeded = craftsNeeded;
       child.requiredItems = requiredItems;
       node.children.push(child);
@@ -626,10 +624,10 @@ function makeTreeByCrafts(recipeId, craftsCount, expandRaw, visited=new Set()){
   return node;
 }
 
-/* Ветка, когда известна потребность в предметах под-крафта (а не число крафтов) */
+/* Ветка: известна потребность в предметах под-крафта */
 function makeTreeByItems(recipeId, itemsNeeded, expandRaw, visited=new Set()){
   const rec = craftById(recipeId); if(!rec) return null;
-  const craftsNeeded = itemsNeeded / rec.output; // дробно
+  const craftsNeeded = itemsNeeded / rec.output;
   const node = {type:'craft', id:rec.id, name:rec.name, output:rec.output, requiredItems:itemsNeeded, craftsNeeded, children:[]};
 
   for(const ing of rec.ing){
@@ -649,7 +647,7 @@ function makeTreeByItems(recipeId, itemsNeeded, expandRaw, visited=new Set()){
   return node;
 }
 
-/* Сбор «листьев» (сырья) из дерева */
+/* Сбор сырья */
 function collectLeaves(node, bag=new Map()){
   if(!node) return bag;
   if(node.type==='raw'){
@@ -663,23 +661,19 @@ function collectLeaves(node, bag=new Map()){
 function leavesToArray(bag){
   return Array.from(bag.entries()).map(([key,qty])=>{
     const [norm,unit] = key.split("|");
-    // ищем «красивое» имя как первое встреченное
-    const pretty = norm; // нормализованное имя уже ок
     const q = Math.round((qty + Number.EPSILON)*100)/100;
-    return {name: pretty.replace(/\b\w/g,m=>m.toUpperCase()).replace("Yad","Яд"), unit, qty:q};
+    return {name: norm, unit, qty:q};
   }).sort((a,b)=> a.name.localeCompare(b.name,'ru'));
 }
 
-/* Подсчёт потребностей в промежуточных крафтах + уровни (топология) */
+/* Потребности в промежуточных крафтах + граф зависимостей */
 function collectCraftNeeds(node, needs=new Map(), edges=new Map()){
   if(!node || node.type!=='craft' || !node.children) return {needs, edges};
   node.children.forEach(ch=>{
     if(ch.type==='craft'){
-      needs.set(ch.id, (needs.get(ch.id)||0) + (ch.requiredItems || 0)); // суммируем в предметах
-      // ребро: текущий craft зависит от ch
+      needs.set(ch.id, (needs.get(ch.id)||0) + (ch.requiredItems || 0));
       if(!edges.has(node.id)) edges.set(node.id, new Set());
       edges.get(node.id).add(ch.id);
-      // дальше в глубину
       collectCraftNeeds(ch, needs, edges);
     }
   });
@@ -687,8 +681,8 @@ function collectCraftNeeds(node, needs=new Map(), edges=new Map()){
 }
 function craftDepth(id, edges, memo=new Map()){
   if(memo.has(id)) return memo.get(id);
-  const childs = Array.from(edges.get(id)||[]);
-  const d = childs.length ? 1 + Math.max(...childs.map(cid=>craftDepth(cid, edges, memo))) : 1;
+  const deps = Array.from(edges.get(id)||[]);
+  const d = deps.length ? 1 + Math.max(...deps.map(cid=>craftDepth(cid, edges, memo))) : 1;
   memo.set(id,d); return d;
 }
 
@@ -699,14 +693,13 @@ function renderTree(){
   wrap.innerHTML = "";
 
   if(plan.length===0){
-    wrap.innerHTML = `<div class="small muted">Нет выбранных крафтов — добавьте план на плитках слева.</div>`;
+    wrap.innerHTML = `<div class="small muted">Нет выбранных крафтов — добавьте план на плитках ниже.</div>`;
     return;
   }
 
   for(const line of plan){
     const rec = craftById(line.id); if(!rec) continue;
     const tree = makeTreeByCrafts(line.id, line.qty, expandRaw, new Set([line.id]));
-
     const header = `<b>${rec.name}</b> — план: ×${line.qty}, выход за крафт ×${rec.output} → всего: <b>${line.qty*rec.output}</b>`;
     const group = document.createElement("div");
     group.className = "group";
@@ -727,7 +720,6 @@ function renderTree(){
     if(n.type==='raw'){
       return `<li>${n.name} — <b>${fmt(n.qty)}</b> ${n.unit} <span class="badge raw">сырьё</span></li>`;
     }
-    // craft-узел
     const approxCrafts = n.craftsNeeded ?? ( (n.requiredItems||0) / (n.output||1) );
     const head = `${n.name} — нужно предметов: <b>${fmt(n.requiredItems||0)}</b> · выход ×${n.output} → крафтов: <b>${fmt(approxCrafts)}</b> <span class="badge craft">крафт</span>`;
     return `<li>
@@ -749,7 +741,7 @@ function renderTotals(){
   const arr = leavesToArray(bag);
   const tb = $("#materialsTable tbody");
   if(arr.length===0){
-    tb.innerHTML = `<tr><td colspan="3" class="small muted">Нет выбранных крафтов — добавьте план.</td></tr>`;
+    tb.innerHTML = `<tr><td colspan="3" class="small muted">Нет выбранных крафтов — добавьте план на плитках ниже.</td></tr>`;
     return;
   }
   tb.innerHTML = arr.map(t=>`
@@ -762,15 +754,12 @@ function renderTotals(){
 
 function renderOrder(){
   const expandRaw = $("#expandToRaw").checked;
-  const needs = new Map(); // craftId -> itemsNeeded (сумма)
+  const needs = new Map(); // craftId -> itemsNeeded
   const edges = new Map(); // craftId -> Set(deps)
-  const memoTrees = [];
 
   for(const line of plan){
     const tree = makeTreeByCrafts(line.id, line.qty, expandRaw, new Set([line.id]));
-    memoTrees.push(tree);
     const {needs:n, edges:e} = collectCraftNeeds(tree);
-    // слияние
     n.forEach((v,k)=>needs.set(k, (needs.get(k)||0) + v));
     e.forEach((set,k)=>{
       if(!edges.has(k)) edges.set(k, new Set());
@@ -778,35 +767,27 @@ function renderOrder(){
     });
   }
 
-  // готовим строки
   let rows = [];
   needs.forEach((itemsNeeded, craftId)=>{
     const rec = craftById(craftId); if(!rec) return;
     const craftsApprox = itemsNeeded / (rec.output||1);
-    rows.push({
-      id:craftId, name:rec.name, items:itemsNeeded, out:rec.output, crafts:craftsApprox
-    });
+    rows.push({id:craftId, name:rec.name, items:itemsNeeded, out:rec.output, crafts:craftsApprox});
   });
 
+  const tb = $("#craftOrderTable tbody");
   if(rows.length===0){
-    $("#craftOrderTable tbody").innerHTML = `<tr><td colspan="5" class="small muted">Нет зависимостей — выберите крафты слева или включите разворачивание до сырья.</td></tr>`;
+    tb.innerHTML = `<tr><td colspan="5" class="small muted">Нет зависимостей — выберите крафты ниже или включите разворачивание до сырья.</td></tr>`;
     return;
   }
 
-  // вычисляем «глубину» (шаг крафта): чем глубже, тем раньше делать
+  // глубина (чем глубже — тем раньше шаг)
   const depthMemo = new Map();
-  // включим все узлы, где есть рёбра как ключи, иначе craftDepth не узнает о листьях
   rows.forEach(r=>{ if(!edges.has(r.id)) edges.set(r.id, new Set()); });
-
   rows.forEach(r=> r.depth = craftDepth(r.id, edges, depthMemo));
-  // Сортировка: от глубоких к поверхностным (чем больше depth, тем раньше шаг)
   rows.sort((a,b)=> b.depth - a.depth || a.name.localeCompare(b.name,'ru'));
 
-  // Пронумеруем шаги: одинаковая глубина = один шаг
   const uniqueDepths = Array.from(new Set(rows.map(r=>r.depth))).sort((a,b)=>b-a);
   const depthToStep = new Map(uniqueDepths.map((d,i)=>[d,i+1]));
-
-  const tb = $("#craftOrderTable tbody");
   tb.innerHTML = rows.map(r=>`
     <tr>
       <td class="right">${depthToStep.get(r.depth)}</td>
@@ -821,14 +802,12 @@ function renderOrder(){
 /* Главный рендер материалов с учётом подтаба */
 let MAT_MODE = "tree"; // 'tree' | 'totals' | 'order'
 function renderMaterials(){
-  // подтабы
   $$(".subtabs .tab").forEach(b=>{
     b.setAttribute("aria-selected", b.dataset.mode===MAT_MODE ? "true" : "false");
   });
   $("#totalsWrap").hidden = (MAT_MODE!=="totals");
   $("#orderWrap").hidden  = (MAT_MODE!=="order");
 
-  // рендер в любом случае — чтобы всё было актуально при переключениях
   renderTree();
   renderTotals();
   renderOrder();
@@ -851,7 +830,6 @@ function initDoctorTiles(){
   renderMaterials();
   $("#craftSearch").addEventListener("input", renderTiles);
   $("#expandToRaw").addEventListener("change", renderMaterials);
-  // подтабы
   $$(".subtabs .tab").forEach(b=>{
     b.addEventListener("click", ()=>{
       MAT_MODE = b.dataset.mode; renderMaterials();
@@ -884,7 +862,7 @@ const GOODS = [
   $("#goods").innerHTML = GOODS.map(([n,p,note])=>`<tr><td>${n}</td><td class="right mono">${p}</td><td class="small muted">${note||""}</td></tr>`).join("");
 })();
 
-/* Ценник — явная модель */
+/* Чёткая модель цен */
 const PRICING = [
   {id:"svc_osmotr", name:"Осмотр", type:"service", price: 2},
   {id:"svc_reanim", name:"Лечение аптечкой (реанимация)", type:"service", price: 15},
