@@ -126,7 +126,7 @@
     <button class="tab" id="tab-aid" role="tab" aria-controls="aid" aria-selected="false" tabindex="-1">Памятка (1900)</button>
   </nav>
 
-  <!-- ====================== КАЛЬКУЛЯТОР (СНАЧАЛА ИТОГИ, ПОТОМ ПЛИТКИ) ====================== -->
+  <!-- ======================  (СНАЧАЛА ИТОГИ, ПОТОМ ПЛИТКИ) ====================== -->
   <section id="calc" class="card" role="tabpanel" aria-labelledby="tab-calc">
 
     <!-- ===== материалы и порядок — СВЕРХУ ===== -->
@@ -201,23 +201,8 @@
 
   <!-- ====================== ЦЕНЫ ====================== -->
   <section id="prices" class="card" role="tabpanel" aria-labelledby="tab-prices" hidden>
-    <h3 style="margin:4px 0 12px">Стоимость услуг</h3>
-    <table>
-      <thead><tr><th scope="col">Услуга</th><th scope="col" class="right">Цена</th></tr></thead>
-      <tbody id="services"></tbody>
-    </table>
 
-    <div class="hr"></div>
-
-    <h3 style="margin:12px 0">Продажи</h3>
-    <table>
-      <thead><tr><th scope="col">Товар</th><th scope="col" class="right">Цена</th><th scope="col">Примечание</th></tr></thead>
-      <tbody id="goods"></tbody>
-    </table>
-
-    <div class="hr"></div>
-
-    <h3 style="margin:12px 0">Калькулятор оплаты</h3>
+<h3 style="margin:12px 0">Калькулятор оплаты</h3>
     <div class="toolbar">
       <select id="payItem" aria-label="Позиция для чека"></select>
       <input id="payQty" type="number" min="1" step="1" value="1" style="max-width:120px" aria-label="Количество">
@@ -245,6 +230,25 @@
           <th></th>
         </tr>
       </tfoot>
+
+
+    <h3 style="margin:4px 0 12px">Стоимость услуг</h3>
+    <table>
+      <thead><tr><th scope="col">Услуга</th><th scope="col" class="right">Цена</th></tr></thead>
+      <tbody id="services"></tbody>
+    </table>
+
+    <div class="hr"></div>
+
+    <h3 style="margin:12px 0">Продажи</h3>
+    <table>
+      <thead><tr><th scope="col">Товар</th><th scope="col" class="right">Цена</th><th scope="col">Примечание</th></tr></thead>
+      <tbody id="goods"></tbody>
+    </table>
+
+    <div class="hr"></div>
+
+    
     </table>
   </section>
 
@@ -962,3 +966,4 @@ $("#aidSearch").addEventListener("input", ()=>{
 </script>
 </body>
 </html>
+
