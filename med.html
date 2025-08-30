@@ -4,40 +4,25 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Помощник доктора на Hate RP (ок. 1900) — крафт и памятка</title>
-<meta name="description" content="Витрина крафтов доктора с калькулятором материалов, прайс и подробная историческая памятка (около 1900 года) для RP на Hate RP.">
+<meta name="description" content="Витрина крафтов доктора с калькулятором материалов (группировка и порядок крафта), прайс и подробная историческая памятка (около 1900 года) для RP на Hate RP.">
 <style>
-  /* ===== светлая, читаемая тема ===== */
+  /* ===== базовая тема ===== */
   :root{
     color-scheme: light;
-    --bg:#f7f8fb;
-    --paper:#ffffff;
-    --ink:#1f2328;
-    --muted:#6a717a;
-    --line:#e6e9ef;
-    --accent:#0a7cff;
-    --accent-2:#1f60ff;
-    --danger:#b3261e;
-    --ok:#1a7f5a;
-    --radius:14px;
-    --radius-sm:10px;
-    --shadow:0 10px 30px rgba(0,0,0,.06);
+    --bg:#f7f8fb; --paper:#ffffff; --ink:#1f2328; --muted:#6a717a;
+    --line:#e6e9ef; --accent:#0a7cff; --accent-2:#1f60ff;
+    --danger:#b3261e; --ok:#1a7f5a;
+    --radius:14px; --radius-sm:10px; --shadow:0 10px 30px rgba(0,0,0,.06);
     --font: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
     --input-bg:#ffffff;
   }
-  /* ===== тёмная тема — только переопределение переменных ===== */
+  /* ===== тёмная тема ===== */
   :root[data-theme="dark"]{
     color-scheme: dark;
-    --bg:#0f1115;
-    --paper:#12151b;
-    --ink:#e7ecf3;
-    --muted:#9aa3ad;
-    --line:#1f2430;
-    --accent:#5aa2ff;
-    --accent-2:#7db6ff;
-    --danger:#ff6b5f;
-    --ok:#3cb179;
-    --input-bg:#181c24;
+    --bg:#0f1115; --paper:#12151b; --ink:#e7ecf3; --muted:#9aa3ad;
+    --line:#1f2430; --accent:#5aa2ff; --accent-2:#7db6ff;
+    --danger:#ff6b5f; --ok:#3cb179; --input-bg:#181c24;
   }
 
   html,body{height:100%}
@@ -78,23 +63,17 @@
   .space{height:10px}
   .hr{height:1px;background:var(--line);margin:8px 0}
   .toc a{color:inherit;text-decoration:none}
+  mark{ background: #fff2a8; color: inherit; padding: 0 3px; border-radius: 3px; }
 
   /* ===== плитки крафтов ===== */
   .tiles{
     display:grid;
     grid-template-columns: repeat( auto-fill, minmax(280px, 1fr) );
-    gap:16px;
-    margin-top:8px;
+    gap:16px; margin-top:8px;
   }
   .tile{
-    background:var(--paper);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    box-shadow:var(--shadow);
-    padding:14px;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
+    background:var(--paper); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:14px; display:flex; flex-direction:column; gap:10px;
   }
   .tile h4{ margin:0; font-size:16px; }
   .meta{ display:flex; gap:8px; flex-wrap:wrap }
@@ -105,13 +84,27 @@
   .qtybar input{ max-width:90px; text-align:right }
   .qtybar .btn.ghost{ min-width:42px }
 
-  /* памятка — небольшие улучшения читаемости */
+  /* ===== материалы: подтабы и дерево ===== */
+  .subtabs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+  .subtabs .tab{padding:8px 12px}
+  .tree{display:flex;flex-direction:column;gap:12px}
+  .tree .group{border:1px solid var(--line);border-radius:12px;padding:10px}
+  .tree summary{cursor:pointer;user-select:none}
+  .tree ul{margin:6px 0 0 18px}
+  .badge{display:inline-block;border:1px solid var(--line);border-radius:8px;padding:2px 6px;font-size:12px;color:var(--muted);margin-left:6px}
+  .badge.craft{border-color:var(--accent);color:var(--accent)}
+  .badge.raw{border-color:var(--muted)}
+  .badge.warn{border-color:var(--danger);color:var(--danger)}
+  .smallnote{font-size:12px;color:var(--muted)}
+  .two-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media (max-width:960px){.two-cols{grid-template-columns:1fr}}
+
+  /* памятка — читаемость */
   #aidContent h4{ margin-top:18px }
   #aidContent h5{ margin-top:12px }
   #aidContent ul{ margin:6px 0 10px 20px }
   #aidContent ol{ margin:6px 0 10px 20px }
   #aidContent li + li{ margin-top:4px }
-  mark{ background: #fff2a8; color: inherit; padding: 0 3px; border-radius: 3px; }
 </style>
 </head>
 <body>
@@ -121,7 +114,7 @@
       <div class="logo" aria-hidden="true"></div>
       <div>
         <h1>Помощник доктора (Hate RP · ок. 1900)</h1>
-        <div class="sub">Витрина крафтов · Калькулятор материалов · Прейскурант · Большая историческая памятка</div>
+        <div class="sub">Витрина крафтов · Группировка материалов и порядок крафта · Прейскурант · Большая историческая памятка</div>
       </div>
     </div>
     <button id="toggleTheme" class="tab" aria-pressed="false" style="border:1px solid var(--line);" aria-label="Переключить тему">Тема</button>
@@ -135,37 +128,73 @@
 
   <!-- ====================== КАЛЬКУЛЯТОР (ПЛИТКИ) ====================== -->
   <section id="calc" class="card" role="tabpanel" aria-labelledby="tab-calc">
-    <div class="section-title">
-      <h3 style="margin:0">Крафты доктора</h3>
-      <div class="toolbar" style="gap:12px; flex-wrap:wrap">
-        <input id="craftSearch" type="text" placeholder="Поиск: мазь, опиум, яд…" style="max-width:260px">
-        <label class="pill small" title="Разложить вложенные изделия до сырья (например, «Аптечка» → Опиум → Мак и т.д.)">
-          <input id="expandToRaw" type="checkbox" checked> Разворачивать до сырья
-        </label>
-        <span class="small muted">Задайте план на плитках — итоговые материалы посчитаются ниже.</span>
-      </div>
-    </div>
 
-    <div id="tiles" class="tiles" aria-live="polite"></div>
+ <div id="tiles" class="tiles" aria-live="polite"></div>
 
     <div class="hr"></div>
 
     <div class="section-title">
-      <h3 style="margin:0">Итог по материалам</h3>
-      <span class="small muted">Суммируется по всем выбранным крафтам</span>
+      <h3 style="margin:0">Материалы и порядок</h3>
+      <nav class="subtabs" role="tablist" aria-label="Вид итогов">
+        <button class="tab" data-mode="tree" aria-selected="true">Дерево состава</button>
+        <button class="tab" data-mode="totals" aria-selected="false">Итог по сырью</button>
+        <button class="tab" data-mode="order" aria-selected="false">Порядок крафта</button>
+      </nav>
     </div>
-    <table id="materialsTable" aria-live="polite">
-      <thead>
-        <tr>
-          <th scope="col">Ингредиент</th>
-          <th scope="col" class="right">Кол-во</th>
-          <th scope="col">Ед.</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td colspan="3" class="small muted">Нет выбранных крафтов — добавьте план на плитках выше.</td></tr>
-      </tbody>
-    </table>
+
+    <div class="two-cols">
+      <!-- Дерево состава -->
+      <div id="matTree" class="tree" aria-live="polite"></div>
+
+      <!-- Справа — либо сводный итог, либо порядок крафта (переключается) -->
+      <div>
+        <div id="totalsWrap">
+          <table id="materialsTable" aria-live="polite">
+            <thead>
+              <tr>
+                <th scope="col">Ингредиент</th>
+                <th scope="col" class="right">Кол-во</th>
+                <th scope="col">Ед.</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="3" class="small muted">Нет выбранных крафтов — добавьте план на плитках слева.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div id="orderWrap" hidden>
+          <table id="craftOrderTable" aria-live="polite">
+            <thead>
+              <tr>
+                <th scope="col" class="right">Шаг</th>
+                <th scope="col">Рецепт</th>
+                <th scope="col" class="right">Нужно предметов</th>
+                <th scope="col" class="right">Выход за крафт</th>
+                <th scope="col" class="right">Крафтов (≈)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="5" class="small muted">Нет зависимостей — выберите крафты слева.</td></tr>
+            </tbody>
+          </table>
+          <p class="smallnote">Крафтов (≈) — округление вверх до целого не применяется автоматически; ориентируйтесь на практику сервера.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="section-title">
+      <h3 style="margin:0">Крафты доктора</h3>
+      <div class="toolbar" style="gap:12px; flex-wrap:wrap">
+        <input id="craftSearch" type="text" placeholder="Поиск: мазь, опиум, яд…" style="max-width:260px">
+        <label class="pill small" title="Разложить вложенные изделия до сырья">
+          <input id="expandToRaw" type="checkbox" checked> Разворачивать до сырья
+        </label>
+        <span class="small muted">Задайте план на плитках — ниже появится дерево состава, итог по сырью и порядок крафта.</span>
+      </div>
+    </div>
+
+   
   </section>
 
   <!-- ====================== ЦЕНЫ ====================== -->
@@ -193,7 +222,7 @@
       <button id="payAdd" class="btn">Добавить</button>
       <button id="payClear" class="btn danger">Очистить чек</button>
     </div>
-    <p class="small muted">Скидки за опт применяются автоматически (например, ≥10 шт для бинтов, настоек и тоника). Суммируется по позиции.</p>
+    <p class="small muted">Скидки за опт применяются автоматически (считаются по сумме позиции).</p>
 
     <table id="payTable" style="margin-top:8px">
       <thead>
@@ -217,168 +246,133 @@
     </table>
   </section>
 
-  <!-- ====================== ПАМЯТКА (БОЛЬШАЯ) ====================== -->
+  <!-- ====================== ПАМЯТКА (РАСШИРЕННАЯ) ====================== -->
   <section id="aid" class="card" role="tabpanel" aria-labelledby="tab-aid" hidden>
     <div class="section-title">
       <h3 style="margin:0">Памятка врача (около 1900) — расширенная</h3>
       <input id="aidSearch" type="text" placeholder="Поиск: переломы, пулевые, эфир, сепсис…" style="max-width:360px" aria-label="Поиск по памятке">
     </div>
-    <p class="small muted">Историзированные практики эпохи конца XIX — начала XX века (эпоха Листера: антисептика, кипячение, эфир/хлороформ, опиаты). Антибиотиков нет. Для RP на сервере — <b>не руководство</b> по реальной медицине.</p>
+    <p class="small muted">Историзированные практики эпохи конца XIX — начала XX века (антисептика, кипячение, эфир/хлороформ, опиаты). Антибиотиков нет. Для RP на сервере — <b>не руководство</b> по реальной медицине.</p>
 
     <article id="aidContent">
       <h4>1) Контекст и рамки эпохи</h4>
       <ul>
-        <li><b>Антисептика</b> уже известна: карболовая кислота (фенол), борная вода, спирт, йодоформ, кипячение инструментов.</li>
-        <li><b>Анестезия</b>: эфир и хлороформ — в больнице/под наблюдением; местно — кокаиновые аппликации; опиаты (лауданум, морфин) — для обезболивания, высокий риск угнетения дыхания и зависимости.</li>
-        <li><b>Антибиотиков нет</b>. Борьба с инфекцией — чистота, дренаж, открытое ведение грязных ран, частые перевязки.</li>
-        <li><b>Перевязочные материалы</b>: стерильная марля, бинты, йодоформная марля, карболовые растворы, салол, карболизированные нити.</li>
-        <li><b>Хирургические нити</b>: кетгут (рассасывающийся), шёлк; иглодержатели, шовный материал стерилизуют.</li>
+        <li><b>Антисептика</b>: карболовая кислота (фенол), борная вода, спирт, йодоформ, кипячение инструментов 15–20 минут.</li>
+        <li><b>Анестезия</b>: эфир/хлороформ (в стационаре с ассистентом); местно — кокаин; системное обезболивание — опиаты (лауданум, морфин, изредка героин).</li>
+        <li><b>Антибиотиков нет</b> — инфекция лечится чистотой, хирургической обработкой, дренажами и перевязками.</li>
+        <li><b>Перевязочные</b>: стерильная марля/бинты, йодоформная марля, карболовые растворы; нити — кетгут/шёлк.</li>
       </ul>
 
-      <h4>2) Инструменты и оснащение «полевого» доктора</h4>
+      <h4>2) Инструменты и оснащение</h4>
       <ul>
-        <li><b>Основное</b>: скальпель, ножницы, пинцеты (анатомический/хирургический), кровоостанавливающие зажимы (Кохера/Пеана), иглодержатель, иглы, зонды.</li>
-        <li><b>Костная хирургия</b>: костные щипцы, распатор, долота, пилы (для ампутаций — редко), шины (деревянные/проволочные), бинты для иммобилизации.</li>
-        <li><b>Ассистирующее</b>: жгуты, резиновые/тканевые дренажи, шприцы, бутылочки со спиртом/фенолом/борной водой, стерильные салфетки, лампы/клеёнка.</li>
-        <li><b>Стерилизация</b>: кипячение 15–20 минут; обжиг; хранение в чистых боксах; промывка спиртом; руки — мыло, щётка, затем спирт/карболка.</li>
-        <li><b>Анестезия</b>: маска для эфира/хлороформа; пульс/дыхание под наблюдением; местные аппликации кокаина; опиаты внутрь/подкожно (в лоре).</li>
+        <li><b>Основные</b>: скальпель, ножницы, пинцеты, зажимы (Кохера/Пеана), иглодержатель, иглы, зонды.</li>
+        <li><b>Костная хирургия</b>: щипцы, распатор, долото, пила; шины (дерево/проволока), бинты.</li>
+        <li><b>Ассистирующее</b>: жгут, дренажи, шприцы, спирт/фенол/борная вода, простыни, лампа.</li>
+        <li><b>Стерилизация</b>: кипячение/обжиг; хранение в чистых боксах; руки — мыло+щётка→спирт/карболка.</li>
       </ul>
 
       <h4>3) Базовые принципы ведения ран</h4>
       <ul>
-        <li><b>Гемостаз</b>: давящая повязка; при артериальном кровотечении — жгут <i>выше</i> раны, отметить время; сосудистые зажимы/лигатуры при доступности.</li>
-        <li><b>Антисептика кожи</b>: тёплая кипячёная вода/солевой раствор → спирт/борная вода/карболка; волосы вокруг раны срезать.</li>
-        <li><b>Ревизия</b>: щадящая, без «ковыряния»; инородные тела извлекать, если доступны; нежизнеспособные ткани иссечь.</li>
-        <li><b>Дренаж</b>: в грязных/рваных/огнестрельных ранах — дренажи, не закрывать герметично; ежедневные перевязки.</li>
-        <li><b>Швы</b>: чистые резаные — первичный шов (шёлк/кетгут); загрязнённые — отсроченное закрытие.</li>
+        <li><b>Гемостаз</b>: давящая повязка; при артериальном кровотечении — жгут выше раны, фиксировать время, ослаблять при возможности.</li>
+        <li><b>Антисептика</b> кожи: тёплая кипячёная/солевой раствор → спирт/борная вода/карболка; волосы вокруг раны срезать.</li>
+        <li><b>Ревизия</b>: извлекать доступные инородные тела; нежизнеспособные ткани иссекать.</li>
+        <li><b>Дренаж</b> в грязных/рваных/огнестрельных ранах; швы — первичные только в чистых и свежих.</li>
         <li><b>Иммобилизация</b> при травмах конечностей; покой, тепло, сладкий чай при риске шока.</li>
       </ul>
 
       <h4>4) Кровотечения</h4>
-      <h5>Артериальное (алая пульсирующая струя)</h5>
+      <h5>Артериальные</h5>
       <ol>
         <li>Давящая повязка, конечность выше.</li>
-        <li>Жгут выше раны; записать время наложения; ослаблять по возможности.</li>
-        <li>При доступе — зажим и лигатура сосуда; при невозможности — тампонада и срочная эвакуация.</li>
+        <li>Жгут выше раны, отметка времени; при доступе — лигатуры зажатыми сосудами.</li>
       </ol>
-      <h5>Венозное (тёмная, равномерная)</h5>
+      <h5>Венозные</h5>
       <ol>
-        <li>Давящая повязка, возвышение конечности.</li>
-        <li>Непрерывное давление 10–15 минут; не подглядывать.</li>
+        <li>Давящая повязка, возвышение; непрерывное давление 10–15 минут.</li>
       </ol>
-      <h5>Носовое</h5>
+      <h5>Носовые</h5>
       <ul>
-        <li>Посадить, наклон вперёд; холод к переносице; прижимать крылья 10 минут.</li>
-        <li>Упорное — турунды с борной водой/квасцами.</li>
+        <li>Посадить, наклон вперёд, холод к переносице; упорные — турунды с борной водой/квасцами.</li>
       </ul>
 
-      <h4>5) Пулевые ранения</h4>
+      <h4>5) Пулевые</h4>
       <ul>
-        <li><b>Грязные по определению</b>. Опасны инфекция и шок, не «пуля как таковая».</li>
-        <li>Оценить вход/выход; остановить кровотечение; умеренное обезболивание опиатами.</li>
-        <li>Антисептика: промывки кипячёной/солевой водой; кожа — спирт/фенол.</li>
-        <li>Зондирование минимально; поверхностные пули извлекают, глубокие без показаний — не трогают.</li>
-        <li>При загрязнении/размозжении: расширить, некрэктомия, дренаж; не закрывать плотно; йодоформная марля.</li>
-        <li>Иммобилизация при подозрении на перелом; наблюдение за признаками инфекции (жар, покраснение, лимфангит).</li>
+        <li>Всегда «грязные»: опасны инфекция и шок.</li>
+        <li>Оценка вход/выход, остановка крови, умеренное обезболивание.</li>
+        <li>Антисептика промывками; минимальное зондирование; глубокие пули рутинно не извлекают.</li>
+        <li>При загрязнении/размозжении — расширение, некрэктомия, дренаж; закрытие — отсроченно.</li>
       </ul>
 
       <h4>6) Ножевые/колотые/резаные</h4>
       <ul>
-        <li><b>Инородный предмет не удалять на месте</b> — зафиксировать бинтами вокруг.</li>
-        <li>Гемостаз; промывки; чистые резаные можно ушить первично; колотые/грязные — дренаж, отсроченный шов.</li>
-        <li>Ранения живота/грудной клетки — ничего внутрь не вливать, транспортировка в стационар.</li>
+        <li>Инородный предмет <b>не извлекать</b> на месте — фиксировать.</li>
+        <li>Гемостаз, промывка; чистые резаные — первичные швы; колотые/грязные — дренаж и отсроченное закрытие.</li>
       </ul>
 
-      <h4>7) Переломы, вывихи, растяжения</h4>
+      <h4>7) Переломы и вывихи</h4>
       <h5>Переломы</h5>
       <ol>
-        <li>Иммобилизация шинами (доски/ветви/проволочные шины), фиксировать два ближайших сустава.</li>
-        <li>Открытые — антисептика, стерильная повязка, затем шина; при сильном смещении — осторожная тракция.</li>
-        <li>Бедро/таз — осторожная транспортная тяга, при возможности — шина Дитерихса (в лоре — упрощённые аналоги).</li>
+        <li>Иммобилизация шинами (фиксировать два сустава); открытые — стерильная повязка и шина.</li>
+        <li>Бедро/таз — осторожная транспортная тяга; в стационаре — вытяжение.</li>
       </ol>
       <h5>Вывихи</h5>
       <ul>
-        <li>Холод, обезболивание, иммобилизация.</li>
-        <li>Вправление — опытным лицом; после — косыночная/пращевидная повязка, покой.</li>
-      </ul>
-      <h5>Растяжения</h5>
-      <ul>
-        <li>Покой, холод первые сутки → затем сухое тепло; повязка/бинт, возвышение.</li>
+        <li>Холод, обезболивание, иммобилизация; вправление — опытным, после — косынка/повязка.</li>
       </ul>
 
-      <h4>8) ЧМТ и травма шеи/спины</h4>
+      <h4>8) ЧМТ, шея/спина</h4>
       <ul>
-        <li><b>Тревожные признаки</b>: потеря сознания, многократная рвота, судороги, неравные зрачки, вытекание крови/ликвора из носа/уха.</li>
-        <li>Покой в тёмной комнате, голова приподнята; холод на голову; опиаты крайне осторожно.</li>
-        <li>Раны кожи головы — швы после антисептики; ежедневные перевязки.</li>
-        <li>Подозрение на повреждение позвоночника — жёсткая доска, минимум движений, воротник-импровизация.</li>
+        <li>Признаки опасности: потеря сознания, многократная рвота, судороги, анизокория, ликворея.</li>
+        <li>Покой, затемнение, холод на голову; минимум опиатов; подозрение на позвоночник — жёсткая фиксация.</li>
       </ul>
 
       <h4>9) Грудная клетка и живот</h4>
       <h5>Проникающее в грудь</h5>
       <ul>
-        <li>Герметичная (окклюзионная) повязка: марля, сверху ткань, смазанная жиром/маслом; положение полусидя.</li>
-        <li>Наблюдение за дыханием; боль — умеренно гасить; транспортировка.</li>
+        <li>Окклюзионная повязка (марля + ткань, смазанная жиром), полусидя; наблюдение за дыханием.</li>
       </ul>
       <h5>Живот</h5>
       <ul>
-        <li>Ничего внутрь; холод на живот; срочная эвакуация в больницу; вероятность перитонита высока.</li>
+        <li>Ничего внутрь; холод на живот; срочная эвакуация — риск перитонита высок.</li>
       </ul>
 
       <h4>10) Ожоги</h4>
       <ul>
-        <li>1–2 степень — охлаждение чистой прохладной водой; пузыри не вскрывать.</li>
-        <li>Повязки: стерильная марля; исторично — «карроновое масло» (известковая вода + льняное масло) или сухая повязка.</li>
-        <li>Обширные — риск шока и инфекции: согреть, сладкий чай, чистые частые перевязки.</li>
+        <li>1–2 степень — охлаждение чистой водой; пузыри не вскрывать.</li>
+        <li>Повязки: стерильная марля; характерно — «карроновое масло» или сухая повязка.</li>
       </ul>
 
-      <h4>11) Инфекции и гнойные процессы (без антибиотиков)</h4>
+      <h4>11) Инфекции и гной</h4>
       <ul>
-        <li><b>Дренирование</b> — основа: рассечь и обеспечить отток гноя; полости тампонируют йодоформной марлей.</li>
-        <li>Промывания тёплой кипячёной/солевой водой, борной водой, слабой карболкой.</li>
-        <li>Столбняк: профилактики почти нет — тщательная хирургическая обработка ран, особенно загрязнённых почвой.</li>
+        <li>Дренирование — основа; йодоформная марля в полость, частые перевязки.</li>
+        <li>Промывания: тёплая кипячёная/солевой, борная вода, слабая карболка.</li>
+        <li>Столбняк: вакцин почти нет → тщательная хирургическая обработка ран.</li>
       </ul>
 
-      <h4>12) Обезболивание и анестезия</h4>
+      <h4>12) Анестезия и обезболивание</h4>
       <ul>
-        <li><b>Опиаты</b> (лауданум/морфин/героин): снимают боль, угнетают дыхание; риск зависимости; дозы малые, наблюдение за дыханием.</li>
-        <li><b>Местная анестезия</b>: кокаиновые аппликации/инфильтрации на небольших участках (опасность токсичности).</li>
-        <li><b>Общий наркоз</b>: эфир/хлороформ — в «операционной» под присмотром ассистента: пульс, дыхание, цвет кожи; подготовка поля — карболка/спирт, чистое бельё, кипячёные инструменты.</li>
+        <li>Опиаты: снимают боль, но угнетают дыхание и вызывают зависимость.</li>
+        <li>Местная анестезия: кокаиновые аппликации/инфильтрации — токсичность реальна.</li>
+        <li>Общий наркоз: эфир/хлороформ под наблюдением ассистента (дыхание, пульс, цвет кожи).</li>
       </ul>
 
-      <h4>13) Наркозависимости и абстиненция</h4>
+      <h4>13) Наркозависимости и передозировки</h4>
       <ul>
-        <li><b>Опиоидная зависимость</b> в эпохе встречается; специфических антагонистов нет.</li>
-        <li>Симптомы передоза: сонливость, миоз, редкое/поверхностное дыхание. Поддерживающие меры: проходимость дыхательных путей, стимуляция (нашатырь), холодные обтирания, крепкий кофе/чай, согревание.</li>
-        <li><b>Отмена</b>: раздражительность, боли, потливость, бессонница; поддержка — покой, жидкости, отвары; в лоре — «детокс» как выдуманная сыворотка.</li>
+        <li>Антагонистов нет. Поддержка дыхания и стимуляция (нашатырь, холодные обтирания, крепкий кофе/чай).</li>
+        <li>Синдром отмены: раздражительность, боли, потливость, бессонница — покой, жидкости, отвары.</li>
       </ul>
 
-      <h4>14) Отравления, укусы</h4>
+      <h4>14) Отравления и укусы</h4>
       <ul>
-        <li><b>Алкоголь/травяные</b>: покой, промывание желудка (если недавно), поить водой/чаем, наблюдение.</li>
-        <li><b>Змеиный укус</b>: покой, иммобилизация, мягкая лигатура выше укуса (не жгут), местная антисептика; в лоре — «противоядие»/сыворотка при наличии.</li>
+        <li>Алкоголь/растительные: промывание желудка (если недавно), поить водой/чаем, наблюдение.</li>
+        <li>Змеиный укус: покой, иммобилизация, мягкая лигатура выше укуса, антисептика; в лоре — «противоядие/сыворотка».</li>
       </ul>
 
-      <h4>15) Удары/размозжение/падения</h4>
+      <h4>15) Детали для атмосферы</h4>
       <ul>
-        <li>Оценка внутренних кровотечений: бледность, холодный пот, слабый пульс, жажда; покой, тепло, возвышенное положение ног.</li>
-        <li>Мягкие ткани: холод 12–24 часа → сухое тепло.</li>
-        <li>Рёбра: тугая повязка на выдохе; боли — по возможности минимально.</li>
-      </ul>
-
-      <h4>16) Организация «операции» в лоре</h4>
-      <ol>
-        <li>Асептика: руки — мыло+щётка → спирт/карболка; инструменты — кипячение 15–20 мин; чистые простыни.</li>
-        <li>Анестезия: эфир/хлороформ; ассистент следит за дыханием/пульсом.</li>
-        <li>Оперативный этап: гемостаз зажимами/лигатурами; иссечение мёртвых тканей; дренаж.</li>
-        <li>Закрытие: шов при чистом поле; грязные — отсроченное закрытие; ежедневные перевязки.</li>
-      </ol>
-
-      <h4>17) Атмосферные детали RP</h4>
-      <ul>
-        <li>«Пахнет карболкой», «кипятит щипцы», «жгут наложен, время: 12:20».</li>
-        <li>«Йодоформной пылью припудрил полость», «дренаж оставлен», «повязка сухая, чистая».</li>
-        <li>Реакция на опиаты: «замедлился, стихла боль, лицо порозовело»; передоз — «дыхание редкое, зрачки булавочные».</li>
+        <li>«Пахнет карболкой», «кипятит щипцы», «жгут: 12:20».</li>
+        <li>«Припудрил йодоформом», «оставлен дренаж», «повязка сухая».</li>
+        <li>Опиаты: «замедлился, стихла боль»; передоз — «дыхание редкое, зрачки булавочные».</li>
       </ul>
     </article>
   </section>
@@ -392,7 +386,7 @@ const $  = s => document.querySelector(s);
 const $$ = s => Array.from(document.querySelectorAll(s));
 const fmt = n => (Math.round((n + Number.EPSILON)*100)/100).toString().replace(".",",");
 
-/* Нормализация имён для сопоставления (ё→е, подчистка опечаток «парацет[о|а]мол», «чёрная/черная» и т.п.) */
+/* Нормализация имён для сопоставления (ё→е, мелкие унификации) */
 function normName(s){
   const x = String(s||"").toLowerCase().replace(/ё/g,"е").trim();
   return x
@@ -400,7 +394,7 @@ function normName(s){
     .replace(/\bчёрная смородина\b/g,"черная смородина");
 }
 
-/* -------------------- ТАБЫ с улучшенной доступностью -------------------- */
+/* -------------------- ТАБЫ (ARIA) -------------------- */
 (function(){
   const order = ["tab-calc","tab-prices","tab-aid"];
   const map = {"tab-calc":"calc","tab-prices":"prices","tab-aid":"aid"};
@@ -418,7 +412,6 @@ function normName(s){
     const btn = $("#"+id);
     btn.addEventListener("click", ()=>{ activate(id); btn.focus(); });
   });
-  // клавиатура: стрелки/дом/энд
   $(".tabs").addEventListener("keydown", e=>{
     const tabs = order.map(id=>$("#"+id));
     const idx = tabs.indexOf(document.activeElement);
@@ -431,7 +424,7 @@ function normName(s){
   });
 })();
 
-/* -------------------- Переключатель темы (с сохранением) -------------------- */
+/* -------------------- Переключатель темы -------------------- */
 (function(){
   const KEY = "hrp_theme";
   const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -454,8 +447,7 @@ function normName(s){
   }
 })();
 
-/* -------------------- ДАННЫЕ: витрина докторских крафтов -------------------- */
-/* Делаем точное соответствие вашему списку (время в секундах). */
+/* -------------------- ДАННЫЕ: докторские крафты -------------------- */
 const DOCTOR_CRAFTS = [
   {id:"paracetamol", name:"Парацетомол", output:1, stack:10, timeSec:120, ing:[
     {name:"Яд",qty:1,unit:"шт"},{name:"Стеклянная бутылка",qty:1,unit:"шт"},
@@ -514,16 +506,10 @@ const DOCTOR_CRAFTS = [
     {name:"Листья коки",qty:4,unit:"шт"},{name:"Спирт",qty:1,unit:"шт"},{name:"Нитрит",qty:1,unit:"шт"},
     {name:"Сахар",qty:4,unit:"шт"},{name:"Вода",qty:1,unit:"шт"}]},
 ];
+const DO_NOT_EXPAND = new Set(["yad","protivoyadie","bint-steril"]); // серверные исключения
 
-/* Стоп-список для развёртки (как в старом калькуляторе) */
-const DO_NOT_EXPAND = new Set(["yad","protivoyadie","bint-steril"]);
-
-/* Поиск рецепта по названию (c нормализацией) и по id */
-function craftByName(name){
-  const n = normName(name);
-  return DOCTOR_CRAFTS.find(c=>normName(c.name)===n) || null;
-}
-function craftById(id){ return DOCTOR_CRAFTS.find(c=>c.id===id) || null; }
+const craftById   = id   => DOCTOR_CRAFTS.find(c=>c.id===id) || null;
+const craftByName = name => DOCTOR_CRAFTS.find(c=>normName(c.name)===normName(name)) || null;
 
 /* Человеческий формат времени */
 function fmtTime(sec){
@@ -534,44 +520,11 @@ function fmtTime(sec){
   return `${s} с`;
 }
 
-/* План крафтов: [{id, qty}] — сохраняем между сессиями */
-let plan = [];
-const PLAN_KEY = "hrp_doctor_plan_v2";
+/* -------------------- ВИТРИНА: план крафтов -------------------- */
+let plan = []; // [{id, qtyCrafts}] — qtyCrafts = число "крафтов" (раз запустить рецепт)
+const PLAN_KEY = "hrp_doctor_plan_v3";
 
-/* Развёртка до листьев (сырья) с защитой от циклов и учётом output */
-function expandToLeavesById(recipeId, qty, expandRaw, visited=new Set()){
-  const rec = craftById(recipeId); if(!rec) return [];
-  const factor = qty / (rec.output || 1);
-  const leaves = [];
-  for(const ing of rec.ing){
-    const sub = craftByName(ing.name);
-    const canExpand = expandRaw && sub && !DO_NOT_EXPAND.has(sub.id) && !visited.has(sub.id);
-    if(canExpand){
-      visited.add(sub.id);
-      const deeper = expandToLeavesById(sub.id, ing.qty * factor, expandRaw, visited);
-      visited.delete(sub.id);
-      leaves.push(...deeper);
-    }else{
-      leaves.push({name: ing.name, unit: ing.unit || "шт", qty: ing.qty * factor});
-    }
-  }
-  return leaves;
-}
-function aggregateLeaves(leaves){
-  const map = new Map();
-  for(const x of leaves){
-    const key = normName(x.name) + "|" + (x.unit||"");
-    map.set(key, (map.get(key)||0) + x.qty);
-  }
-  return Array.from(map.entries()).map(([key,qty])=>{
-    const [norm,unit] = key.split("|");
-    const original = leaves.find(l=>normName(l.name)===norm)?.name || norm;
-    const q = Math.round((qty + Number.EPSILON)*100)/100;
-    return {name: original, unit, qty: q};
-  }).sort((a,b)=> a.name.localeCompare(b.name, 'ru'));
-}
-
-/* Рендер плитки */
+/* Вёрстка плитки */
 function tileHTML(craft, plannedQty){
   const totalOut = plannedQty * (craft.output||1);
   return `
@@ -601,7 +554,7 @@ function tileHTML(craft, plannedQty){
   `;
 }
 
-/* Рендер списка плиток (с поиском) */
+/* Рендер витрины */
 function renderTiles(){
   const q = normName($("#craftSearch").value || "");
   const tiles = $("#tiles");
@@ -639,20 +592,167 @@ function renderTiles(){
   });
 }
 
-/* Итоговые материалы */
-function renderMaterials(){
-  const expandRaw = $("#expandToRaw").checked;
-  const leaves = [];
-  for(const line of plan){
-    leaves.push(...expandToLeavesById(line.id, line.qty, expandRaw, new Set([line.id])));
+/* -------------------- ПОСТРОЕНИЕ ДЕРЕВА, ИТОГА И ПОРЯДКА -------------------- */
+/* NB: план задаётся в «крафтах» (сколько раз запустить рецепт). */
+
+/* Узлы дерева:
+  type: 'craft' | 'raw'
+  name, unit, qty (для raw)
+  для craft: requiredItems (сколько предметов этого крафта требуется), craftsNeeded (в дробном виде), output, children[]
+*/
+function makeTreeByCrafts(recipeId, craftsCount, expandRaw, visited=new Set()){
+  const rec = craftById(recipeId); if(!rec) return null;
+  const node = {type:'craft', id:rec.id, name:rec.name, output:rec.output, plannedCrafts:craftsCount, children:[]};
+
+  // На один "крафт" рецепта — ing.qty. На craftsCount — умножаем на craftsCount.
+  for(const ing of rec.ing){
+    const requiredItems = ing.qty * craftsCount;
+    const sub = craftByName(ing.name);
+    const canExpand = expandRaw && sub && !DO_NOT_EXPAND.has(sub.id) && !visited.has(sub.id);
+
+    if(canExpand){
+      const craftsNeeded = requiredItems / sub.output; // дробно
+      visited.add(sub.id);
+      const child = makeTreeByItems(sub.id, requiredItems, expandRaw, visited); // раскрываем по "нужно предметов"
+      visited.delete(sub.id);
+      // обогащаем шапку узла-крафта для красивой строки
+      child.craftsNeeded = craftsNeeded;
+      child.requiredItems = requiredItems;
+      node.children.push(child);
+    }else{
+      node.children.push({type:'raw', name:ing.name, unit:ing.unit||"шт", qty:requiredItems});
+    }
   }
-  const totals = aggregateLeaves(leaves);
-  const tb = $("#materialsTable tbody");
-  if(totals.length===0){
-    tb.innerHTML = `<tr><td colspan="3" class="small muted">Нет выбранных крафтов — добавьте план на плитках выше.</td></tr>`;
+  return node;
+}
+
+/* Ветка, когда известна потребность в предметах под-крафта (а не число крафтов) */
+function makeTreeByItems(recipeId, itemsNeeded, expandRaw, visited=new Set()){
+  const rec = craftById(recipeId); if(!rec) return null;
+  const craftsNeeded = itemsNeeded / rec.output; // дробно
+  const node = {type:'craft', id:rec.id, name:rec.name, output:rec.output, requiredItems:itemsNeeded, craftsNeeded, children:[]};
+
+  for(const ing of rec.ing){
+    const subItems = ing.qty * craftsNeeded;
+    const sub = craftByName(ing.name);
+    const canExpand = expandRaw && sub && !DO_NOT_EXPAND.has(sub.id) && !visited.has(sub.id);
+
+    if(canExpand){
+      visited.add(sub.id);
+      const child = makeTreeByItems(sub.id, subItems, expandRaw, visited);
+      visited.delete(sub.id);
+      node.children.push(child);
+    }else{
+      node.children.push({type:'raw', name:ing.name, unit:ing.unit||"шт", qty:subItems});
+    }
+  }
+  return node;
+}
+
+/* Сбор «листьев» (сырья) из дерева */
+function collectLeaves(node, bag=new Map()){
+  if(!node) return bag;
+  if(node.type==='raw'){
+    const key = normName(node.name)+"|"+(node.unit||"");
+    bag.set(key, (bag.get(key)||0) + node.qty);
+    return bag;
+  }
+  if(node.children) node.children.forEach(ch=>collectLeaves(ch, bag));
+  return bag;
+}
+function leavesToArray(bag){
+  return Array.from(bag.entries()).map(([key,qty])=>{
+    const [norm,unit] = key.split("|");
+    // ищем «красивое» имя как первое встреченное
+    const pretty = norm; // нормализованное имя уже ок
+    const q = Math.round((qty + Number.EPSILON)*100)/100;
+    return {name: pretty.replace(/\b\w/g,m=>m.toUpperCase()).replace("Yad","Яд"), unit, qty:q};
+  }).sort((a,b)=> a.name.localeCompare(b.name,'ru'));
+}
+
+/* Подсчёт потребностей в промежуточных крафтах + уровни (топология) */
+function collectCraftNeeds(node, needs=new Map(), edges=new Map()){
+  if(!node || node.type!=='craft' || !node.children) return {needs, edges};
+  node.children.forEach(ch=>{
+    if(ch.type==='craft'){
+      needs.set(ch.id, (needs.get(ch.id)||0) + (ch.requiredItems || 0)); // суммируем в предметах
+      // ребро: текущий craft зависит от ch
+      if(!edges.has(node.id)) edges.set(node.id, new Set());
+      edges.get(node.id).add(ch.id);
+      // дальше в глубину
+      collectCraftNeeds(ch, needs, edges);
+    }
+  });
+  return {needs, edges};
+}
+function craftDepth(id, edges, memo=new Map()){
+  if(memo.has(id)) return memo.get(id);
+  const childs = Array.from(edges.get(id)||[]);
+  const d = childs.length ? 1 + Math.max(...childs.map(cid=>craftDepth(cid, edges, memo))) : 1;
+  memo.set(id,d); return d;
+}
+
+/* -------------------- РЕНДЕР «ДЕРЕВА», «ИТОГА», «ПОРЯДКА» -------------------- */
+function renderTree(){
+  const expandRaw = $("#expandToRaw").checked;
+  const wrap = $("#matTree");
+  wrap.innerHTML = "";
+
+  if(plan.length===0){
+    wrap.innerHTML = `<div class="small muted">Нет выбранных крафтов — добавьте план на плитках слева.</div>`;
     return;
   }
-  tb.innerHTML = totals.map(t=>`
+
+  for(const line of plan){
+    const rec = craftById(line.id); if(!rec) continue;
+    const tree = makeTreeByCrafts(line.id, line.qty, expandRaw, new Set([line.id]));
+
+    const header = `<b>${rec.name}</b> — план: ×${line.qty}, выход за крафт ×${rec.output} → всего: <b>${line.qty*rec.output}</b>`;
+    const group = document.createElement("div");
+    group.className = "group";
+    group.innerHTML = `
+      <details open>
+        <summary>${header}</summary>
+        ${renderTreeChildren(tree.children)}
+      </details>
+    `;
+    wrap.appendChild(group);
+  }
+
+  function renderTreeChildren(children){
+    if(!children || !children.length) return `<div class="small muted">— без ингредиентов —</div>`;
+    return `<ul>${children.map(renderNode).join("")}</ul>`;
+  }
+  function renderNode(n){
+    if(n.type==='raw'){
+      return `<li>${n.name} — <b>${fmt(n.qty)}</b> ${n.unit} <span class="badge raw">сырьё</span></li>`;
+    }
+    // craft-узел
+    const approxCrafts = n.craftsNeeded ?? ( (n.requiredItems||0) / (n.output||1) );
+    const head = `${n.name} — нужно предметов: <b>${fmt(n.requiredItems||0)}</b> · выход ×${n.output} → крафтов: <b>${fmt(approxCrafts)}</b> <span class="badge craft">крафт</span>`;
+    return `<li>
+      <details>
+        <summary>${head}</summary>
+        ${renderTreeChildren(n.children)}
+      </details>
+    </li>`;
+  }
+}
+
+function renderTotals(){
+  const expandRaw = $("#expandToRaw").checked;
+  const bag = new Map();
+  for(const line of plan){
+    const tree = makeTreeByCrafts(line.id, line.qty, expandRaw, new Set([line.id]));
+    collectLeaves(tree, bag);
+  }
+  const arr = leavesToArray(bag);
+  const tb = $("#materialsTable tbody");
+  if(arr.length===0){
+    tb.innerHTML = `<tr><td colspan="3" class="small muted">Нет выбранных крафтов — добавьте план.</td></tr>`;
+    return;
+  }
+  tb.innerHTML = arr.map(t=>`
     <tr>
       <td>${t.name}</td>
       <td class="right">${String(t.qty).replace(".", ",")}</td>
@@ -660,7 +760,81 @@ function renderMaterials(){
     </tr>`).join("");
 }
 
-/* Поиск, переключатели, восстановление */
+function renderOrder(){
+  const expandRaw = $("#expandToRaw").checked;
+  const needs = new Map(); // craftId -> itemsNeeded (сумма)
+  const edges = new Map(); // craftId -> Set(deps)
+  const memoTrees = [];
+
+  for(const line of plan){
+    const tree = makeTreeByCrafts(line.id, line.qty, expandRaw, new Set([line.id]));
+    memoTrees.push(tree);
+    const {needs:n, edges:e} = collectCraftNeeds(tree);
+    // слияние
+    n.forEach((v,k)=>needs.set(k, (needs.get(k)||0) + v));
+    e.forEach((set,k)=>{
+      if(!edges.has(k)) edges.set(k, new Set());
+      set.forEach(x=>edges.get(k).add(x));
+    });
+  }
+
+  // готовим строки
+  let rows = [];
+  needs.forEach((itemsNeeded, craftId)=>{
+    const rec = craftById(craftId); if(!rec) return;
+    const craftsApprox = itemsNeeded / (rec.output||1);
+    rows.push({
+      id:craftId, name:rec.name, items:itemsNeeded, out:rec.output, crafts:craftsApprox
+    });
+  });
+
+  if(rows.length===0){
+    $("#craftOrderTable tbody").innerHTML = `<tr><td colspan="5" class="small muted">Нет зависимостей — выберите крафты слева или включите разворачивание до сырья.</td></tr>`;
+    return;
+  }
+
+  // вычисляем «глубину» (шаг крафта): чем глубже, тем раньше делать
+  const depthMemo = new Map();
+  // включим все узлы, где есть рёбра как ключи, иначе craftDepth не узнает о листьях
+  rows.forEach(r=>{ if(!edges.has(r.id)) edges.set(r.id, new Set()); });
+
+  rows.forEach(r=> r.depth = craftDepth(r.id, edges, depthMemo));
+  // Сортировка: от глубоких к поверхностным (чем больше depth, тем раньше шаг)
+  rows.sort((a,b)=> b.depth - a.depth || a.name.localeCompare(b.name,'ru'));
+
+  // Пронумеруем шаги: одинаковая глубина = один шаг
+  const uniqueDepths = Array.from(new Set(rows.map(r=>r.depth))).sort((a,b)=>b-a);
+  const depthToStep = new Map(uniqueDepths.map((d,i)=>[d,i+1]));
+
+  const tb = $("#craftOrderTable tbody");
+  tb.innerHTML = rows.map(r=>`
+    <tr>
+      <td class="right">${depthToStep.get(r.depth)}</td>
+      <td>${r.name}</td>
+      <td class="right">${fmt(r.items)}</td>
+      <td class="right">×${r.out}</td>
+      <td class="right">${fmt(r.crafts)}</td>
+    </tr>
+  `).join("");
+}
+
+/* Главный рендер материалов с учётом подтаба */
+let MAT_MODE = "tree"; // 'tree' | 'totals' | 'order'
+function renderMaterials(){
+  // подтабы
+  $$(".subtabs .tab").forEach(b=>{
+    b.setAttribute("aria-selected", b.dataset.mode===MAT_MODE ? "true" : "false");
+  });
+  $("#totalsWrap").hidden = (MAT_MODE!=="totals");
+  $("#orderWrap").hidden  = (MAT_MODE!=="order");
+
+  // рендер в любом случае — чтобы всё было актуально при переключениях
+  renderTree();
+  renderTotals();
+  renderOrder();
+}
+
+/* Сохранение/восстановление плана */
 function persistPlan(){ localStorage.setItem(PLAN_KEY, JSON.stringify(plan)); }
 function restorePlan(){
   try{
@@ -669,16 +843,24 @@ function restorePlan(){
                                      .map(x=>({id:x.id, qty:Math.floor(+x.qty)}));
   }catch(e){ plan = []; }
 }
+
+/* Инициализация калькулятора */
 function initDoctorTiles(){
   restorePlan();
   renderTiles();
   renderMaterials();
   $("#craftSearch").addEventListener("input", renderTiles);
   $("#expandToRaw").addEventListener("change", renderMaterials);
+  // подтабы
+  $$(".subtabs .tab").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      MAT_MODE = b.dataset.mode; renderMaterials();
+    });
+  });
 }
 initDoctorTiles();
 
-/* -------------------- ПРАЙС: таблицы и калькулятор оплаты -------------------- */
+/* -------------------- ПРАЙС и калькулятор оплаты -------------------- */
 const SERVICES = [
   ["Осмотр", "$2"],
   ["Лечение аптечкой (реанимация)", "$15"],
@@ -702,34 +884,23 @@ const GOODS = [
   $("#goods").innerHTML = GOODS.map(([n,p,note])=>`<tr><td>${n}</td><td class="right mono">${p}</td><td class="small muted">${note||""}</td></tr>`).join("");
 })();
 
-/* Чёткая модель цен — не парсим строки из таблиц */
+/* Ценник — явная модель */
 const PRICING = [
-  // Услуги
   {id:"svc_osmotr", name:"Осмотр", type:"service", price: 2},
   {id:"svc_reanim", name:"Лечение аптечкой (реанимация)", type:"service", price: 15},
   {id:"svc_oper",   name:"Лечение тяжёлой травмы (операция)", type:"service", price: 18},
   {id:"svc_detox",  name:"Детокс", type:"service", price: 50},
-  // Товары (с оптом)
-  {id:"g_bandage_retail", name:"Бинт (розница)", type:"good",
-    pricing:{base:3.5, bulk:{threshold:10, price:3}}},
-  {id:"g_bandage_police", name:"Бинт (для полиции)", type:"good",
-    pricing:{base:2.5, bulk:{threshold:10, price:2}}},
-  {id:"g_tonik_toniz", name:"Тонизирующий тоник", type:"good",
-    pricing:{base:4.5, bulk:{threshold:10, price:4}}},
-  {id:"g_maz_lechebnaya", name:"Лечебная мазь", type:"good",
-    pricing:{base:4}},
-  {id:"g_maz_salic", name:"Салициловая мазь", type:"good",
-    pricing:{base:3}},
-  {id:"g_otvar", name:"Отвар на травах", type:"good",
-    pricing:{base:3}},
-  {id:"g_antidote", name:"Противоядие", type:"good",
-    pricing:{base:3}},
-  {id:"g_nast_kosti", name:'Настойка «крепкие кости»', type:"good",
-    pricing:{base:4, bulk:{threshold:10, price:3.5}}},
-  {id:"g_nast_zheludok", name:'Настойка «крепкий желудок»', type:"good",
-    pricing:{base:4, bulk:{threshold:10, price:3.5}}},
-  {id:"g_nast_uspok", name:"Успокаивающая настойка", type:"good",
-    pricing:{base:4, bulk:{threshold:10, price:3.5}}},
+
+  {id:"g_bandage_retail", name:"Бинт (розница)", type:"good", pricing:{base:3.5, bulk:{threshold:10, price:3}}},
+  {id:"g_bandage_police", name:"Бинт (для полиции)", type:"good", pricing:{base:2.5, bulk:{threshold:10, price:2}}},
+  {id:"g_tonik_toniz", name:"Тонизирующий тоник", type:"good", pricing:{base:4.5, bulk:{threshold:10, price:4}}},
+  {id:"g_maz_lechebnaya", name:"Лечебная мазь", type:"good", pricing:{base:4}},
+  {id:"g_maz_salic", name:"Салициловая мазь", type:"good", pricing:{base:3}},
+  {id:"g_otvar", name:"Отвар на травах", type:"good", pricing:{base:3}},
+  {id:"g_antidote", name:"Противоядие", type:"good", pricing:{base:3}},
+  {id:"g_nast_kosti", name:'Настойка «крепкие кости»', type:"good", pricing:{base:4, bulk:{threshold:10, price:3.5}}},
+  {id:"g_nast_zheludok", name:'Настойка «крепкий желудок»', type:"good", pricing:{base:4, bulk:{threshold:10, price:3.5}}},
+  {id:"g_nast_uspok", name:"Успокаивающая настойка", type:"good", pricing:{base:4, bulk:{threshold:10, price:3.5}}},
 ];
 // селектор с группировкой
 (function initPaySelect(){
@@ -803,11 +974,10 @@ $("#aidSearch").addEventListener("input", ()=>{
   secs.forEach(el=>{
     const visible = !q || normName(el.textContent).includes(q);
     el.style.display = visible ? "" : "none";
-    if(q && visible && el.nodeName!=="LI"){
-      // простенькая подсветка совпадений в H4/H5/P
+    if(q && visible && (el.tagName==="H4" || el.tagName==="H5" || el.tagName==="P")){
       el.innerHTML = el.textContent.replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),"gi"), m=>`<mark>${m}</mark>`);
     }else if(!q){
-      el.innerHTML = el.textContent; // снять подсветку
+      el.innerHTML = el.textContent;
     }
   });
 });
