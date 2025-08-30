@@ -126,7 +126,7 @@
     <button class="tab" id="tab-aid" role="tab" aria-controls="aid" aria-selected="false" tabindex="-1">Памятка (1900)</button>
   </nav>
 
-  <!-- ======================  (СНАЧАЛА ИТОГИ, ПОТОМ ПЛИТКИ) ====================== -->
+  <!-- ====================== КАЛЬКУЛЯТОР (СНАЧАЛА ИТОГИ, ПОТОМ ПЛИТКИ) ====================== -->
   <section id="calc" class="card" role="tabpanel" aria-labelledby="tab-calc">
 
     <!-- ===== материалы и порядок — СВЕРХУ ===== -->
@@ -189,7 +189,7 @@
       <h3 style="margin:0">Крафты доктора</h3>
       <div class="toolbar" style="gap:12px; flex-wrap:wrap">
         <input id="craftSearch" type="text" placeholder="Поиск: мазь, опиум, яд…" style="max-width:260px">
-        <label class="pill small" title="Разложить вложенные изделия до сырья (например, «Аптечка» → Опиум → Мак и т.д.)">
+        <label class="pill small" title="Разворачивать все крафтовые ингредиенты в дерево до самого сырья (например, «Аптечка на героине» → Героин, Противоядие, Бинт стерильный → …)">
           <input id="expandToRaw" type="checkbox" checked> Разворачивать до сырья
         </label>
         <span class="small muted">Меняйте план на плитках — сводные таблицы и дерево сверху обновятся сразу.</span>
@@ -201,8 +201,23 @@
 
   <!-- ====================== ЦЕНЫ ====================== -->
   <section id="prices" class="card" role="tabpanel" aria-labelledby="tab-prices" hidden>
+    <h3 style="margin:4px 0 12px">Стоимость услуг</h3>
+    <table>
+      <thead><tr><th scope="col">Услуга</th><th scope="col" class="right">Цена</th></tr></thead>
+      <tbody id="services"></tbody>
+    </table>
 
-<h3 style="margin:12px 0">Калькулятор оплаты</h3>
+    <div class="hr"></div>
+
+    <h3 style="margin:12px 0">Продажи</h3>
+    <table>
+      <thead><tr><th scope="col">Товар</th><th scope="col" class="right">Цена</th><th scope="col">Примечание</th></tr></thead>
+      <tbody id="goods"></tbody>
+    </table>
+
+    <div class="hr"></div>
+
+    <h3 style="margin:12px 0">Калькулятор оплаты</h3>
     <div class="toolbar">
       <select id="payItem" aria-label="Позиция для чека"></select>
       <input id="payQty" type="number" min="1" step="1" value="1" style="max-width:120px" aria-label="Количество">
@@ -230,25 +245,6 @@
           <th></th>
         </tr>
       </tfoot>
-
-
-    <h3 style="margin:4px 0 12px">Стоимость услуг</h3>
-    <table>
-      <thead><tr><th scope="col">Услуга</th><th scope="col" class="right">Цена</th></tr></thead>
-      <tbody id="services"></tbody>
-    </table>
-
-    <div class="hr"></div>
-
-    <h3 style="margin:12px 0">Продажи</h3>
-    <table>
-      <thead><tr><th scope="col">Товар</th><th scope="col" class="right">Цена</th><th scope="col">Примечание</th></tr></thead>
-      <tbody id="goods"></tbody>
-    </table>
-
-    <div class="hr"></div>
-
-    
     </table>
   </section>
 
@@ -512,7 +508,10 @@ const DOCTOR_CRAFTS = [
     {name:"Листья коки",qty:4,unit:"шт"},{name:"Спирт",qty:1,unit:"шт"},{name:"Нитрит",qty:1,unit:"шт"},
     {name:"Сахар",qty:4,unit:"шт"},{name:"Вода",qty:1,unit:"шт"}]},
 ];
-const DO_NOT_EXPAND = new Set(["yad","protivoyadie","bint-steril"]); // серверные исключения
+
+/* ВАЖНО: теперь разворачиваем ЛЮБЫЕ крафтовые ингредиенты — больше нет стоп-списка.
+   (Раньше здесь были исключения вроде Противоядия и Бинта стерильного.) */
+const DO_NOT_EXPAND = new Set([]);
 
 const craftById   = id   => DOCTOR_CRAFTS.find(c=>c.id===id) || null;
 const craftByName = name => DOCTOR_CRAFTS.find(c=>normName(c.name)===normName(name)) || null;
@@ -599,24 +598,19 @@ function renderTiles(){
 }
 
 /* -------------------- ПОСТРОЕНИЕ ДЕРЕВА, ИТОГА И ПОРЯДКА -------------------- */
-/* Узлы дерева:
-  type: 'craft' | 'raw'
-  name, unit, qty (для raw)
-  для craft: requiredItems (сколько предметов требуется), craftsNeeded (дробно), output, children[]
-*/
 function makeTreeByCrafts(recipeId, craftsCount, expandRaw, visited=new Set()){
   const rec = craftById(recipeId); if(!rec) return null;
   const node = {type:'craft', id:rec.id, name:rec.name, output:rec.output, plannedCrafts:craftsCount, children:[]};
 
   for(const ing of rec.ing){
-    const requiredItems = ing.qty * craftsCount; // сколько предметов ингредиента нужно под итог
+    const requiredItems = ing.qty * craftsCount;
     const sub = craftByName(ing.name);
     const canExpand = expandRaw && sub && !DO_NOT_EXPAND.has(sub.id) && !visited.has(sub.id);
 
     if(canExpand){
-      const craftsNeeded = requiredItems / sub.output; // дробно
+      const craftsNeeded = requiredItems / sub.output;
       visited.add(sub.id);
-      const child = makeTreeByItems(sub.id, requiredItems, expandRaw, visited); // раскрываем глубже по предметам
+      const child = makeTreeByItems(sub.id, requiredItems, expandRaw, visited);
       visited.delete(sub.id);
       child.craftsNeeded = craftsNeeded;
       child.requiredItems = requiredItems;
@@ -628,7 +622,6 @@ function makeTreeByCrafts(recipeId, craftsCount, expandRaw, visited=new Set()){
   return node;
 }
 
-/* Ветка: известна потребность в предметах под-крафта */
 function makeTreeByItems(recipeId, itemsNeeded, expandRaw, visited=new Set()){
   const rec = craftById(recipeId); if(!rec) return null;
   const craftsNeeded = itemsNeeded / rec.output;
@@ -966,4 +959,3 @@ $("#aidSearch").addEventListener("input", ()=>{
 </script>
 </body>
 </html>
-
