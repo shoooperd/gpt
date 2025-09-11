@@ -843,16 +843,16 @@ const SERVICES = [
   ["Детокс", "$50"]
 ];
 const GOODS = [
-  ["Бинты (розница)", "$3.5 /шт; от 10 шт — $3 /шт", ""],
-  ["Бинты (для полиции)", "$2.5 /шт; от 10 шт — $2 /шт", ""],
-  ["Тонизирующий тоник", "$4.5 /шт; от 10 шт — $4 /шт", ""],
+  ["Бинты (розница)", "$3 /шт", ""],
+  ["Бинты (для полиции)", "$2.5 /шт", ""],
+  ["Тонизирующий тоник", "$4 /шт", ""],
   ["Лечебная мазь", "$4 /шт", ""],
   ["Салициловая мазь", "$3 /шт", ""],
   ["Отвар на травах", "$3 /шт", ""],
   ["Противоядие", "$3 /шт", ""],
-  ["Настойка «крепкие кости»", "$4 /шт; от 10 шт — $3.5 /шт", ""],
-  ["Настойка «крепкий желудок»", "$4 /шт; от 10 шт — $3.5 /шт", "в крафтах: «Здоровый желудок»"],
-  ["Успокаивающая настойка", "$4 /шт; от 10 шт — $3.5 /шт", ""]
+  ["Настойка «крепкие кости»", "$4 /шт", ""],
+  ["Настойка «крепкий желудок»", "$4 /шт", "в крафтах: «Здоровый желудок»"],
+  ["Успокаивающая настойка", "$4 /шт", ""]
 ];
 (function(){
   $("#services").innerHTML = SERVICES.map(([n,p])=>`<tr><td>${n}</td><td class="right mono">${p}</td></tr>`).join("");
@@ -866,16 +866,16 @@ const PRICING = [
   {id:"svc_oper",   name:"Лечение тяжёлой травмы (операция)", type:"service", price: 18},
   {id:"svc_detox",  name:"Детокс", type:"service", price: 50},
 
-  {id:"g_bandage_retail", name:"Бинт (розница)", type:"good", pricing:{base:3.5, bulk:{threshold:10, price:3}}},
-  {id:"g_bandage_police", name:"Бинт (для полиции)", type:"good", pricing:{base:2.5, bulk:{threshold:10, price:2}}},
-  {id:"g_tonik_toniz", name:"Тонизирующий тоник", type:"good", pricing:{base:4.5, bulk:{threshold:10, price:4}}},
+  {id:"g_bandage_retail", name:"Бинт (розница)", type:"good", pricing:{base:3, bulk:{threshold:10, price:3}}},
+  {id:"g_bandage_police", name:"Бинт (для полиции)", type:"good", pricing:{base:2.5, bulk:{threshold:10, price:2.5}}},
+  {id:"g_tonik_toniz", name:"Тонизирующий тоник", type:"good", pricing:{base:4, bulk:{threshold:10, price:4}}},
   {id:"g_maz_lechebnaya", name:"Лечебная мазь", type:"good", pricing:{base:4}},
   {id:"g_maz_salic", name:"Салициловая мазь", type:"good", pricing:{base:3}},
   {id:"g_otvar", name:"Отвар на травах", type:"good", pricing:{base:3}},
   {id:"g_antidote", name:"Противоядие", type:"good", pricing:{base:3}},
-  {id:"g_nast_kosti", name:'Настойка «крепкие кости»', type:"good", pricing:{base:4, bulk:{threshold:10, price:3.5}}},
-  {id:"g_nast_zheludok", name:'Настойка «крепкий желудок»', type:"good", pricing:{base:4, bulk:{threshold:10, price:3.5}}},
-  {id:"g_nast_uspok", name:"Успокаивающая настойка", type:"good", pricing:{base:4, bulk:{threshold:10, price:3.5}}},
+  {id:"g_nast_kosti", name:'Настойка «крепкие кости»', type:"good", pricing:{base:4, bulk:{threshold:10, price:4}}},
+  {id:"g_nast_zheludok", name:'Настойка «крепкий желудок»', type:"good", pricing:{base:4, bulk:{threshold:10, price:4}}},
+  {id:"g_nast_uspok", name:"Успокаивающая настойка", type:"good", pricing:{base:4, bulk:{threshold:10, price:4}}},
 ];
 // селектор с группировкой
 (function initPaySelect(){
@@ -959,3 +959,4 @@ $("#aidSearch").addEventListener("input", ()=>{
 </script>
 </body>
 </html>
+
