@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Помощник доктора на Hate RP (ок. 1900) — крафт и памятка</title>
-<meta name="description" content="Витрина крафтов доктора с калькулятором материалов (дерево состава, итог по сырью, порядок крафта), прайс и большая историческая памятка (около 1900 года) для RP на Hate RP.">
+<title>Помощник доктора (ок. 1900) — крафты и цены</title>
+<meta name="description" content="Калькулятор крафтов доктора и прейскурант для RP на Hate RP (RDR2). Единый стиль, тёмная тема.">
 <style>
   /* ===== базовая тема ===== */
   :root{
@@ -34,11 +34,13 @@
   h1{font-size:20px;margin:0}
   .sub{color:var(--muted);font-size:13px}
 
-  /* Табы */
   .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px}
-  .tab{padding:10px 14px;border:1px solid var(--line);border-radius:999px;background:transparent;color:inherit;cursor:pointer}
+  .tab, .btn-link{padding:10px 14px;border:1px solid var(--line);border-radius:999px;background:transparent;color:inherit;cursor:pointer;text-decoration:none;display:inline-block}
   .tab[aria-selected="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
-
+  .btn{appearance:none;border:1px solid var(--accent);background:var(--accent);color:#fff;padding:10px 14px;border-radius:10px;cursor:pointer}
+  .btn.ghost{background:transparent;color:var(--accent)}
+  .btn.danger{background:var(--danger);border-color:var(--danger)}
+  .pill{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:999px;padding:8px 12px}
   .card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   @media (max-width:960px){.grid{grid-template-columns:1fr}}
@@ -54,37 +56,16 @@
   .small{font-size:12px}
   .mono{font-family:var(--mono)}
   .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-  .btn{appearance:none;border:1px solid var(--accent);background:var(--accent);color:#fff;padding:10px 14px;border-radius:10px;cursor:pointer}
-  .btn.ghost{background:transparent;color:var(--accent)}
-  .btn.danger{background:var(--danger);border-color:var(--danger)}
-  .btn.ok{background:var(--ok);border-color:var(--ok)}
-  .pill{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:999px;padding:8px 12px}
-  .section-title{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:8px 0}
-  .space{height:10px}
   .hr{height:1px;background:var(--line);margin:8px 0}
-  .toc a{color:inherit;text-decoration:none}
-  mark{ background: #fff2a8; color: inherit; padding: 0 3px; border-radius: 3px; }
 
-  /* ===== плитки крафтов ===== */
-  .tiles{
-    display:grid;
-    grid-template-columns: repeat( auto-fill, minmax(280px, 1fr) );
-    gap:16px; margin-top:8px;
-  }
-  .tile{
-    background:var(--paper); border:1px solid var(--line); border-radius:var(--radius);
-    box-shadow:var(--shadow); padding:14px; display:flex; flex-direction:column; gap:10px;
-  }
-  .tile h4{ margin:0; font-size:16px; }
-  .meta{ display:flex; gap:8px; flex-wrap:wrap }
-  .chip{ border:1px solid var(--line); border-radius:999px; padding:4px 8px; font-size:12px; color:var(--muted) }
-  .ing{ margin:0; padding-left:16px; }
-  .ing li{ margin:0 0 4px 0; }
-  .qtybar{ display:flex; gap:8px; align-items:center; }
-  .qtybar input{ max-width:90px; text-align:right }
-  .qtybar .btn.ghost{ min-width:42px }
-
-  /* ===== материалы: подтабы и дерево ===== */
+  /* плитки */
+  .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:8px}
+  .tile{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;display:flex;flex-direction:column;gap:10px}
+  .tile h4{margin:0;font-size:16px}
+  .chip{border:1px solid var(--line);border-radius:999px;padding:4px 8px;font-size:12px;color:var(--muted)}
+  .ing{margin:0;padding-left:16px}
+  .qtybar{display:flex;gap:8px;align-items:center}
+  .qtybar input{max-width:90px;text-align:right}
   .subtabs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
   .subtabs .tab{padding:8px 12px}
   .tree{display:flex;flex-direction:column;gap:12px}
@@ -94,17 +75,10 @@
   .badge{display:inline-block;border:1px solid var(--line);border-radius:8px;padding:2px 6px;font-size:12px;color:var(--muted);margin-left:6px}
   .badge.craft{border-color:var(--accent);color:var(--accent)}
   .badge.raw{border-color:var(--muted)}
-  .badge.warn{border-color:var(--danger);color:var(--danger)}
-  .smallnote{font-size:12px;color:var(--muted)}
+
   .two-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   @media (max-width:960px){.two-cols{grid-template-columns:1fr}}
-
-  /* памятка — читаемость */
-  #aidContent h4{ margin-top:18px }
-  #aidContent h5{ margin-top:12px }
-  #aidContent ul{ margin:6px 0 10px 20px }
-  #aidContent ol{ margin:6px 0 10px 20px }
-  #aidContent li + li{ margin-top:4px }
+  footer{margin:18px 0}
 </style>
 </head>
 <body>
@@ -113,23 +87,23 @@
     <div class="brand">
       <div class="logo" aria-hidden="true"></div>
       <div>
-        <h1>Помощник доктора (Hate RP · ок. 1900)</h1>
-        <div class="sub">Материалы и порядок сверху · Витрина крафтов · Прейскурант · Большая историческая памятка</div>
+        <h1>Помощник доктора (ок. 1900) — крафт и цены</h1>
+        <div class="sub">Материалы и порядок · Витрина крафтов · Калькулятор оплаты</div>
       </div>
     </div>
-    <button id="toggleTheme" class="tab" aria-pressed="false" style="border:1px solid var(--line);" aria-label="Переключить тему">Тема</button>
+    <div class="toolbar">
+      <a class="tab btn-link" href="doctor_reference_1900.html" title="Перейти к подробному справочнику">Справочник</a>
+      <button id="toggleTheme" class="tab" aria-pressed="false" style="border:1px solid var(--line);" aria-label="Переключить тему">Тема</button>
+    </div>
   </header>
 
   <nav class="tabs" role="tablist" aria-label="Разделы">
     <button class="tab" id="tab-calc" role="tab" aria-controls="calc" aria-selected="true" tabindex="0">Крафты</button>
     <button class="tab" id="tab-prices" role="tab" aria-controls="prices" aria-selected="false" tabindex="-1">Цены</button>
-    <button class="tab" id="tab-aid" role="tab" aria-controls="aid" aria-selected="false" tabindex="-1">Памятка (1900)</button>
   </nav>
 
-  <!-- ====================== КАЛЬКУЛЯТОР (СНАЧАЛА ИТОГИ, ПОТОМ ПЛИТКИ) ====================== -->
+  <!-- ====================== КАЛЬКУЛЯТОР ====================== -->
   <section id="calc" class="card" role="tabpanel" aria-labelledby="tab-calc">
-
-    <!-- ===== материалы и порядок — СВЕРХУ ===== -->
     <div class="section-title">
       <h3 style="margin:0">Материалы и порядок</h3>
       <nav class="subtabs" role="tablist" aria-label="Вид итогов">
@@ -140,59 +114,45 @@
     </div>
 
     <div class="two-cols">
-      <!-- Дерево состава -->
       <div id="matTree" class="tree" aria-live="polite">
         <div class="small muted">Нет выбранных крафтов — добавьте план на плитках ниже.</div>
       </div>
-
-      <!-- Справа — либо сводный итог, либо порядок крафта (переключается) -->
       <div>
         <div id="totalsWrap">
           <table id="materialsTable" aria-live="polite">
             <thead>
-              <tr>
-                <th scope="col">Ингредиент</th>
-                <th scope="col" class="right">Кол-во</th>
-                <th scope="col">Ед.</th>
-              </tr>
+              <tr><th>Ингредиент</th><th class="right">Кол-во</th><th>Ед.</th></tr>
             </thead>
             <tbody>
               <tr><td colspan="3" class="small muted">Нет выбранных крафтов — добавьте план на плитках ниже.</td></tr>
             </tbody>
           </table>
         </div>
-
         <div id="orderWrap" hidden>
           <table id="craftOrderTable" aria-live="polite">
             <thead>
-              <tr>
-                <th scope="col" class="right">Шаг</th>
-                <th scope="col">Рецепт</th>
-                <th scope="col" class="right">Нужно предметов</th>
-                <th scope="col" class="right">Выход за крафт</th>
-                <th scope="col" class="right">Крафтов (≈)</th>
-              </tr>
+              <tr><th class="right">Шаг</th><th>Рецепт</th><th class="right">Нужно предметов</th><th class="right">Выход</th><th class="right">Крафтов (≈)</th></tr>
             </thead>
             <tbody>
               <tr><td colspan="5" class="small muted">Нет зависимостей — выберите крафты и включите разворачивание при необходимости.</td></tr>
             </tbody>
           </table>
-          <p class="smallnote">Крафтов (≈) — дробное значение для ориентира; округляйте до целого исходя из правил сервера.</p>
+          <p class="small muted">Значение «Крафтов (≈)» — дробное, округляйте до целого по правилам сервера.</p>
         </div>
       </div>
     </div>
 
     <div class="hr"></div>
 
-    <!-- ===== витрина крафтов — НИЖЕ ===== -->
     <div class="section-title">
       <h3 style="margin:0">Крафты доктора</h3>
-      <div class="toolbar" style="gap:12px; flex-wrap:wrap">
+      <div class="toolbar" style="gap:12px;flex-wrap:wrap">
         <input id="craftSearch" type="text" placeholder="Поиск: мазь, опиум, яд…" style="max-width:260px">
-        <label class="pill small" title="Разворачивать все крафтовые ингредиенты в дерево до самого сырья (например, «Аптечка на героине» → Героин, Противоядие, Бинт стерильный → …)">
+        <label class="pill small" title="Разворачивать все крафтовые ингредиенты в дерево до сырья">
           <input id="expandToRaw" type="checkbox" checked> Разворачивать до сырья
         </label>
-        <span class="small muted">Меняйте план на плитках — сводные таблицы и дерево сверху обновятся сразу.</span>
+        <button id="planClearAll" class="btn danger" title="Очистить все планы крафта">Очистить всё</button>
+        <span class="small muted">Меняйте план на плитках — сводные таблицы обновятся сразу.</span>
       </div>
     </div>
 
@@ -203,20 +163,16 @@
   <section id="prices" class="card" role="tabpanel" aria-labelledby="tab-prices" hidden>
     <h3 style="margin:4px 0 12px">Стоимость услуг</h3>
     <table>
-      <thead><tr><th scope="col">Услуга</th><th scope="col" class="right">Цена</th></tr></thead>
+      <thead><tr><th>Услуга</th><th class="right">Цена</th></tr></thead>
       <tbody id="services"></tbody>
     </table>
-
     <div class="hr"></div>
-
     <h3 style="margin:12px 0">Продажи</h3>
     <table>
-      <thead><tr><th scope="col">Товар</th><th scope="col" class="right">Цена</th><th scope="col">Примечание</th></tr></thead>
+      <thead><tr><th>Товар</th><th class="right">Цена</th><th>Примечание</th></tr></thead>
       <tbody id="goods"></tbody>
     </table>
-
     <div class="hr"></div>
-
     <h3 style="margin:12px 0">Калькулятор оплаты</h3>
     <div class="toolbar">
       <select id="payItem" aria-label="Позиция для чека"></select>
@@ -224,182 +180,48 @@
       <button id="payAdd" class="btn">Добавить</button>
       <button id="payClear" class="btn danger">Очистить чек</button>
     </div>
-    <p class="small muted">Скидки за опт применяются автоматически (считаются по сумме позиции).</p>
-
+    <p class="small muted">Скидки за опт применяются автоматически по каждой позиции.</p>
     <table id="payTable" style="margin-top:8px">
       <thead>
         <tr>
-          <th scope="col">Позиция</th>
-          <th scope="col" class="right">Кол-во</th>
-          <th scope="col" class="right">Цена за ед.</th>
-          <th scope="col" class="right">Скидка</th>
-          <th scope="col" class="right">Итого</th>
-          <th scope="col" class="right">Действия</th>
+          <th>Позиция</th><th class="right">Кол-во</th><th class="right">Цена за ед.</th><th class="right">Скидка</th><th class="right">Итого</th><th class="right">Действия</th>
         </tr>
       </thead>
       <tbody></tbody>
       <tfoot>
-        <tr>
-          <th colspan="4" class="right">Итого к оплате:</th>
-          <th class="right mono" id="payTotal" aria-live="polite">$0.00</th>
-          <th></th>
-        </tr>
+        <tr><th colspan="4" class="right">Итого к оплате:</th><th class="right mono" id="payTotal" aria-live="polite">$0.00</th><th></th></tr>
       </tfoot>
     </table>
   </section>
 
-  <!-- ====================== ПАМЯТКА (РАСШИРЕННАЯ) ====================== -->
-  <section id="aid" class="card" role="tabpanel" aria-labelledby="tab-aid" hidden>
-    <div class="section-title">
-      <h3 style="margin:0">Памятка врача (около 1900) — расширенная</h3>
-      <input id="aidSearch" type="text" placeholder="Поиск: переломы, пулевые, эфир, сепсис…" style="max-width:360px" aria-label="Поиск по памятке">
-    </div>
-    <p class="small muted">Историзированные практики эпохи конца XIX — начала XX века (антисептика, кипячение, эфир/хлороформ, опиаты). Антибиотиков нет. Для RP на сервере — <b>не руководство</b> по реальной медицине.</p>
-
-    <article id="aidContent">
-      <h4>1) Контекст и рамки эпохи</h4>
-      <ul>
-        <li><b>Антисептика</b>: карболовая кислота (фенол), борная вода, спирт, йодоформ, кипячение инструментов 15–20 минут.</li>
-        <li><b>Анестезия</b>: эфир/хлороформ (в стационаре с ассистентом); местно — кокаин; системное обезболивание — опиаты (лауданум, морфин, изредка героин).</li>
-        <li><b>Антибиотиков нет</b> — инфекция лечится чистотой, хирургической обработкой, дренажами и перевязками.</li>
-        <li><b>Перевязочные</b>: стерильная марля/бинты, йодоформная марля, карболовые растворы; нити — кетгут/шёлк.</li>
-      </ul>
-
-      <h4>2) Инструменты и оснащение</h4>
-      <ul>
-        <li><b>Основные</b>: скальпель, ножницы, пинцеты, зажимы (Кохера/Пеана), иглодержатель, иглы, зонды.</li>
-        <li><b>Костная хирургия</b>: щипцы, распатор, долото, пила; шины (дерево/проволока), бинты.</li>
-        <li><b>Ассистирующее</b>: жгут, дренажи, шприцы, спирт/фенол/борная вода, простыни, лампа.</li>
-        <li><b>Стерилизация</b>: кипячение/обжиг; хранение в чистых боксах; руки — мыло+щётка→спирт/карболка.</li>
-      </ul>
-
-      <h4>3) Базовые принципы ведения ран</h4>
-      <ul>
-        <li><b>Гемостаз</b>: давящая повязка; при артериальном кровотечении — жгут выше раны, фиксировать время, ослаблять при возможности.</li>
-        <li><b>Антисептика</b> кожи: тёплая кипячёная/солевой раствор → спирт/борная вода/карболка; волосы вокруг раны срезать.</li>
-        <li><b>Ревизия</b>: извлекать доступные инородные тела; нежизнеспособные ткани иссекать.</li>
-        <li><b>Дренаж</b> в грязных/рваных/огнестрельных ранах; швы — первичные только в чистых и свежих.</li>
-        <li><b>Иммобилизация</b> при травмах конечностей; покой, тепло, сладкий чай при риске шока.</li>
-      </ul>
-
-      <h4>4) Кровотечения</h4>
-      <h5>Артериальные</h5>
-      <ol>
-        <li>Давящая повязка, конечность выше.</li>
-        <li>Жгут выше раны, отметка времени; при доступе — лигатуры зажатыми сосудами.</li>
-      </ol>
-      <h5>Венозные</h5>
-      <ol>
-        <li>Давящая повязка, возвышение; непрерывное давление 10–15 минут.</li>
-      </ol>
-      <h5>Носовые</h5>
-      <ul>
-        <li>Посадить, наклон вперёд, холод к переносице; упорные — турунды с борной водой/квасцами.</li>
-      </ul>
-
-      <h4>5) Пулевые</h4>
-      <ul>
-        <li>Всегда «грязные»: опасны инфекция и шок.</li>
-        <li>Оценка вход/выход, остановка крови, умеренное обезболивание.</li>
-        <li>Антисептика промывками; минимальное зондирование; глубокие пули рутинно не извлекают.</li>
-        <li>При загрязнении/размозжении — расширение, некрэктомия, дренаж; закрытие — отсроченно.</li>
-      </ul>
-
-      <h4>6) Ножевые/колотые/резаные</h4>
-      <ul>
-        <li>Инородный предмет <b>не извлекать</b> на месте — фиксировать.</li>
-        <li>Гемостаз, промывка; чистые резаные — первичные швы; колотые/грязные — дренаж и отсроченное закрытие.</li>
-      </ul>
-
-      <h4>7) Переломы и вывихи</h4>
-      <h5>Переломы</h5>
-      <ol>
-        <li>Иммобилизация шинами (фиксировать два сустава); открытые — стерильная повязка и шина.</li>
-        <li>Бедро/таз — осторожная транспортная тяга; в стационаре — вытяжение.</li>
-      </ol>
-      <h5>Вывихи</h5>
-      <ul>
-        <li>Холод, обезболивание, иммобилизация; вправление — опытным, после — косынка/повязка.</li>
-      </ul>
-
-      <h4>8) ЧМТ, шея/спина</h4>
-      <ul>
-        <li>Признаки опасности: потеря сознания, многократная рвота, судороги, анизокория, ликворея.</li>
-        <li>Покой, затемнение, холод на голову; минимум опиатов; подозрение на позвоночник — жёсткая фиксация.</li>
-      </ul>
-
-      <h4>9) Грудная клетка и живот</h4>
-      <h5>Проникающее в грудь</h5>
-      <ul>
-        <li>Окклюзионная повязка (марля + ткань, смазанная жиром), полусидя; наблюдение за дыханием.</li>
-      </ul>
-      <h5>Живот</h5>
-      <ul>
-        <li>Ничего внутрь; холод на живот; срочная эвакуация — риск перитонита высок.</li>
-      </ul>
-
-      <h4>10) Ожоги</h4>
-      <ul>
-        <li>1–2 степень — охлаждение чистой водой; пузыри не вскрывать.</li>
-        <li>Повязки: стерильная марля; характерно — «карроновое масло» или сухая повязка.</li>
-      </ul>
-
-      <h4>11) Инфекции и гной</h4>
-      <ul>
-        <li>Дренирование — основа; йодоформная марля в полость, частые перевязки.</li>
-        <li>Промывания: тёплая кипячёная/солевой, борная вода, слабая карболка.</li>
-        <li>Столбняк: вакцин почти нет → тщательная хирургическая обработка ран.</li>
-      </ul>
-
-      <h4>12) Анестезия и обезболивание</h4>
-      <ul>
-        <li>Опиаты: снимают боль, но угнетают дыхание и вызывают зависимость.</li>
-        <li>Местная анестезия: кокаиновые аппликации/инфильтрации — токсичность реальна.</li>
-        <li>Общий наркоз: эфир/хлороформ под наблюдением ассистента (дыхание, пульс, цвет кожи).</li>
-      </ul>
-
-      <h4>13) Наркозависимости и передозировки</h4>
-      <ul>
-        <li>Антагонистов нет. Поддержка дыхания и стимуляция (нашатырь, холодные обтирания, крепкий кофе/чай).</li>
-        <li>Синдром отмены: раздражительность, боли, потливость, бессонница — покой, жидкости, отвары.</li>
-      </ul>
-
-      <h4>14) Отравления и укусы</h4>
-      <ul>
-        <li>Алкоголь/растительные: промывание желудка (если недавно), поить водой/чаем, наблюдение.</li>
-        <li>Змеиный укус: покой, иммобилизация, мягкая лигатура выше укуса, антисептика; в лоре — «противоядие/сыворотка».</li>
-      </ul>
-
-      <h4>15) Детали для атмосферы</h4>
-      <ul>
-        <li>«Пахнет карболкой», «кипятит щипцы», «жгут: 12:20».</li>
-        <li>«Припудрил йодоформом», «оставлен дренаж», «повязка сухая».</li>
-        <li>Опиаты: «замедлился, стихла боль»; передоз — «дыхание редкое, зрачки булавочные».</li>
-      </ul>
-    </article>
-  </section>
-
-  <footer class="small muted" style="margin:18px 0">© Материалы — только для RP на Hate RP (RDR2). Не используйте для реальной медицины.</footer>
+  <footer class="small muted">
+    © Для RP на Hate RP (RDR2). <b>Не руководство</b> по реальной медицине.
+    <span style="float:right">
+      <a class="btn-link" href="doctor_reference_1900.html" title="Подробный справочник">Открыть справочник →</a>
+    </span>
+  </footer>
 </div>
 
 <script>
 /* -------------------- УТИЛИТЫ -------------------- */
 const $  = s => document.querySelector(s);
 const $$ = s => Array.from(document.querySelectorAll(s));
-const fmt = n => (Math.round((n + Number.EPSILON)*100)/100).toString().replace(".",",");
+const fmt = n => {
+  const x = Math.round((Number(n)||0 + Number.EPSILON)*100)/100;
+  return String(x).replace(".", ",");
+};
 
 /* Нормализация имён для сопоставления */
 function normName(s){
-  const x = String(s||"").toLowerCase().replace(/ё/g,"е").trim();
-  return x
+  return String(s||"").toLowerCase().replace(/ё/g,"е").trim()
     .replace(/\bпарацетомол\b/g,"парацетамол")
     .replace(/\bчёрная смородина\b/g,"черная смородина");
 }
 
 /* -------------------- ТАБЫ (ARIA) -------------------- */
 (function(){
-  const order = ["tab-calc","tab-prices","tab-aid"];
-  const map = {"tab-calc":"calc","tab-prices":"prices","tab-aid":"aid"};
+  const order = ["tab-calc","tab-prices"];
+  const map = {"tab-calc":"calc","tab-prices":"prices"};
   function activate(id){
     order.forEach(k=>{
       const btn = $("#"+k);
@@ -410,23 +232,19 @@ function normName(s){
       panel.hidden = !active;
     });
   }
-  order.forEach(id=>{
-    const btn = $("#"+id);
-    btn.addEventListener("click", ()=>{ activate(id); btn.focus(); });
-  });
+  order.forEach(id=> $("#"+id).addEventListener("click", ()=>{ activate(id); $("#"+id).focus(); }));
   $(".tabs").addEventListener("keydown", e=>{
     const tabs = order.map(id=>$("#"+id));
     const idx = tabs.indexOf(document.activeElement);
     if(idx<0) return;
-    let n = idx;
-    if(e.key==="ArrowRight"){ e.preventDefault(); n=(idx+1)%tabs.length; tabs[n].click(); }
-    if(e.key==="ArrowLeft"){ e.preventDefault(); n=(idx-1+tabs.length)%tabs.length; tabs[n].click(); }
+    if(e.key==="ArrowRight"){ e.preventDefault(); tabs[(idx+1)%tabs.length].click(); }
+    if(e.key==="ArrowLeft"){ e.preventDefault(); tabs[(idx-1+tabs.length)%tabs.length].click(); }
     if(e.key==="Home"){ e.preventDefault(); tabs[0].click(); }
     if(e.key==="End"){ e.preventDefault(); tabs[tabs.length-1].click(); }
   });
 })();
 
-/* -------------------- Переключатель темы -------------------- */
+/* -------------------- Переключатель темы (общий ключ) -------------------- */
 (function(){
   const KEY = "hrp_theme";
   const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -441,12 +259,10 @@ function normName(s){
   }
   apply(start);
   const btn = document.getElementById("toggleTheme");
-  if(btn){
-    btn.addEventListener("click", ()=>{
-      const cur = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
-      apply(cur === "dark" ? "light" : "dark");
-    });
-  }
+  btn && btn.addEventListener("click", ()=>{
+    const cur = document.documentElement.getAttribute("data-theme")==="dark"?"dark":"light";
+    apply(cur==="dark"?"light":"dark");
+  });
 })();
 
 /* -------------------- ДАННЫЕ: докторские крафты -------------------- */
@@ -508,9 +324,6 @@ const DOCTOR_CRAFTS = [
     {name:"Листья коки",qty:4,unit:"шт"},{name:"Спирт",qty:1,unit:"шт"},{name:"Нитрит",qty:1,unit:"шт"},
     {name:"Сахар",qty:4,unit:"шт"},{name:"Вода",qty:1,unit:"шт"}]},
 ];
-
-/* ВАЖНО: теперь разворачиваем ЛЮБЫЕ крафтовые ингредиенты — больше нет стоп-списка.
-   (Раньше здесь были исключения вроде Противоядия и Бинта стерильного.) */
 const DO_NOT_EXPAND = new Set([]);
 
 const craftById   = id   => DOCTOR_CRAFTS.find(c=>c.id===id) || null;
@@ -532,17 +345,14 @@ const PLAN_KEY = "hrp_doctor_plan_v3";
 /* Плитка */
 function tileHTML(craft, plannedQty){
   const totalOut = plannedQty * (craft.output||1);
+  const overflow = craft.stack ? (totalOut > craft.stack) : false;
   return `
     <article class="tile" data-id="${craft.id}">
       <div style="display:flex; justify-content:space-between; gap:8px; align-items:flex-start">
         <h4>${craft.name}</h4>
         <span class="chip" title="Макс. стак">${craft.stack ? ("стак "+craft.stack) : "—"}</span>
       </div>
-      <div class="meta">
-        <span class="chip" title="Выход за 1 крафт">выход: ×${craft.output}</span>
-        <span class="chip" title="Время крафта">⏱ ${fmtTime(craft.timeSec)}</span>
-        <span class="chip" title="Планируется крафтов">план: ×<span class="planN">${plannedQty}</span> → всего: <b class="totalOut">${totalOut}</b></span>
-      </div>
+      <div class="chip" title="Выход и план">⏱ ${fmtTime(craft.timeSec)} · выход: ×${craft.output} · план: ×<span class="planN">${plannedQty}</span> → всего: <b class="totalOut">${totalOut}</b>${overflow? ' <span class="badge" style="border-color: var(--danger); color: var(--danger)">>стак</span>' : ''}</div>
       <div>
         <div class="small muted" style="margin-bottom:4px">Ингредиенты на 1 крафт:</div>
         <ul class="ing">
@@ -621,7 +431,6 @@ function makeTreeByCrafts(recipeId, craftsCount, expandRaw, visited=new Set()){
   }
   return node;
 }
-
 function makeTreeByItems(recipeId, itemsNeeded, expandRaw, visited=new Set()){
   const rec = craftById(recipeId); if(!rec) return null;
   const craftsNeeded = itemsNeeded / rec.output;
@@ -644,23 +453,25 @@ function makeTreeByItems(recipeId, itemsNeeded, expandRaw, visited=new Set()){
   return node;
 }
 
-/* Сбор сырья */
+/* Сбор сырья: сохраняем «красивое» имя, ключ — нормализованное */
 function collectLeaves(node, bag=new Map()){
   if(!node) return bag;
   if(node.type==='raw'){
     const key = normName(node.name)+"|"+(node.unit||"");
-    bag.set(key, (bag.get(key)||0) + node.qty);
+    const prev = bag.get(key) || {name: node.name, unit: node.unit||"шт", qty:0};
+    prev.qty += node.qty;
+    bag.set(key, prev);
     return bag;
   }
   if(node.children) node.children.forEach(ch=>collectLeaves(ch, bag));
   return bag;
 }
 function leavesToArray(bag){
-  return Array.from(bag.entries()).map(([key,qty])=>{
-    const [norm,unit] = key.split("|");
-    const q = Math.round((qty + Number.EPSILON)*100)/100;
-    return {name: norm, unit, qty:q};
-  }).sort((a,b)=> a.name.localeCompare(b.name,'ru'));
+  return Array.from(bag.values()).map(it=>({
+    name: it.name,
+    unit: it.unit,
+    qty: Math.round((it.qty + Number.EPSILON)*100)/100
+  })).sort((a,b)=> a.name.localeCompare(b.name,'ru'));
 }
 
 /* Потребности в промежуточных крафтах + граф зависимостей */
@@ -697,7 +508,7 @@ function renderTree(){
   for(const line of plan){
     const rec = craftById(line.id); if(!rec) continue;
     const tree = makeTreeByCrafts(line.id, line.qty, expandRaw, new Set([line.id]));
-    const header = `<b>${rec.name}</b> — план: ×${line.qty}, выход за крафт ×${rec.output} → всего: <b>${line.qty*rec.output}</b>`;
+    const header = `<b>${rec.name}</b> — план: ×${line.qty}, выход ×${rec.output} → всего: <b>${line.qty*rec.output}</b>`;
     const group = document.createElement("div");
     group.className = "group";
     group.innerHTML = `
@@ -727,7 +538,6 @@ function renderTree(){
     </li>`;
   }
 }
-
 function renderTotals(){
   const expandRaw = $("#expandToRaw").checked;
   const bag = new Map();
@@ -744,11 +554,10 @@ function renderTotals(){
   tb.innerHTML = arr.map(t=>`
     <tr>
       <td>${t.name}</td>
-      <td class="right">${String(t.qty).replace(".", ",")}</td>
+      <td class="right">${fmt(t.qty)}</td>
       <td>${t.unit}</td>
     </tr>`).join("");
 }
-
 function renderOrder(){
   const expandRaw = $("#expandToRaw").checked;
   const needs = new Map(); // craftId -> itemsNeeded
@@ -799,15 +608,10 @@ function renderOrder(){
 /* Главный рендер материалов с учётом подтаба */
 let MAT_MODE = "tree"; // 'tree' | 'totals' | 'order'
 function renderMaterials(){
-  $$(".subtabs .tab").forEach(b=>{
-    b.setAttribute("aria-selected", b.dataset.mode===MAT_MODE ? "true" : "false");
-  });
+  $$(".subtabs .tab").forEach(b=> b.setAttribute("aria-selected", b.dataset.mode===MAT_MODE ? "true" : "false"));
   $("#totalsWrap").hidden = (MAT_MODE!=="totals");
   $("#orderWrap").hidden  = (MAT_MODE!=="order");
-
-  renderTree();
-  renderTotals();
-  renderOrder();
+  renderTree(); renderTotals(); renderOrder();
 }
 
 /* Сохранение/восстановление плана */
@@ -827,10 +631,13 @@ function initDoctorTiles(){
   renderMaterials();
   $("#craftSearch").addEventListener("input", renderTiles);
   $("#expandToRaw").addEventListener("change", renderMaterials);
-  $$(".subtabs .tab").forEach(b=>{
-    b.addEventListener("click", ()=>{
-      MAT_MODE = b.dataset.mode; renderMaterials();
-    });
+  $$(".subtabs .tab").forEach(b=> b.addEventListener("click", ()=>{ MAT_MODE = b.dataset.mode; renderMaterials(); }));
+  // Очистить всё
+  $("#planClearAll").addEventListener("click", ()=>{
+    plan = [];
+    persistPlan();
+    renderTiles();
+    renderMaterials();
   });
 }
 initDoctorTiles();
@@ -859,25 +666,24 @@ const GOODS = [
   $("#goods").innerHTML = GOODS.map(([n,p,note])=>`<tr><td>${n}</td><td class="right mono">${p}</td><td class="small muted">${note||""}</td></tr>`).join("");
 })();
 
-/* Чёткая модель цен */
+/* Чёткая модель цен (для калькулятора) */
 const PRICING = [
   {id:"svc_osmotr", name:"Осмотр", type:"service", price: 2},
   {id:"svc_reanim", name:"Лечение аптечкой (реанимация)", type:"service", price: 15},
   {id:"svc_oper",   name:"Лечение тяжёлой травмы (операция)", type:"service", price: 18},
   {id:"svc_detox",  name:"Детокс", type:"service", price: 50},
 
-  {id:"g_bandage_retail", name:"Бинт (розница)", type:"good", pricing:{base:3, bulk:{threshold:10, price:3}}},
-  {id:"g_bandage_police", name:"Бинт (для полиции)", type:"good", pricing:{base:2.5, bulk:{threshold:10, price:2.5}}},
-  {id:"g_tonik_toniz", name:"Тонизирующий тоник", type:"good", pricing:{base:4, bulk:{threshold:10, price:3}}},
+  {id:"g_bandage_retail", name:"Бинт (розница)", type:"good", pricing:{base:3}},
+  {id:"g_bandage_police", name:"Бинт (для полиции)", type:"good", pricing:{base:2.5}},
+  {id:"g_tonik_toniz", name:"Тонизирующий тоник", type:"good", pricing:{base:3}}, /* синхронизировано с витриной */
   {id:"g_maz_lechebnaya", name:"Лечебная мазь", type:"good", pricing:{base:4}},
   {id:"g_maz_salic", name:"Салициловая мазь", type:"good", pricing:{base:3}},
   {id:"g_otvar", name:"Отвар на травах", type:"good", pricing:{base:3}},
   {id:"g_antidote", name:"Противоядие", type:"good", pricing:{base:3}},
-  {id:"g_nast_kosti", name:'Настойка «крепкие кости»', type:"good", pricing:{base:4, bulk:{threshold:10, price:4}}},
-  {id:"g_nast_zheludok", name:'Настойка «крепкий желудок»', type:"good", pricing:{base:4, bulk:{threshold:10, price:4}}},
-  {id:"g_nast_uspok", name:"Успокаивающая настойка", type:"good", pricing:{base:4, bulk:{threshold:10, price:4}}},
+  {id:"g_nast_kosti", name:'Настойка «крепкие кости»', type:"good", pricing:{base:4}},
+  {id:"g_nast_zheludok", name:'Настойка «крепкий желудок»', type:"good", pricing:{base:4}},
+  {id:"g_nast_uspok", name:"Успокаивающая настойка", type:"good", pricing:{base:4}},
 ];
-// селектор с группировкой
 (function initPaySelect(){
   const sel = document.getElementById("payItem");
   const groups = {service: document.createElement("optgroup"), good: document.createElement("optgroup")};
@@ -891,14 +697,11 @@ const PRICING = [
   sel.appendChild(groups.good);
 })();
 const payCart = []; // [{id, qty}]
-function formatMoney(n){ return "$" + n.toFixed(2); }
+function formatMoney(n){ return "$" + (Number(n)||0).toFixed(2); }
 function findPriceItem(id){ return PRICING.find(p=>p.id===id); }
 function unitPriceFor(item, qty){
   if(item.type === "service"){ return {unit: item.price, note: ""}; }
   const rule = item.pricing || {base:0};
-  if(rule.bulk && qty >= rule.bulk.threshold){
-    return {unit: rule.bulk.price, note: `опт ≥${rule.bulk.threshold}`};
-  }
   return {unit: rule.base, note: ""};
 }
 function renderPay(){
@@ -941,23 +744,6 @@ document.getElementById("payAdd").addEventListener("click", ()=>{
 });
 document.getElementById("payClear").addEventListener("click", ()=>{ payCart.length = 0; renderPay(); });
 renderPay();
-
-/* -------------------- Поиск по памятке -------------------- */
-$("#aidSearch").addEventListener("input", ()=>{
-  const q = normName($("#aidSearch").value);
-  const secs = $("#aidContent").querySelectorAll("h4, h5, p, li");
-  secs.forEach(el=>{
-    const visible = !q || normName(el.textContent).includes(q);
-    el.style.display = visible ? "" : "none";
-    if(q && visible && (el.tagName==="H4" || el.tagName==="H5" || el.tagName==="P")){
-      el.innerHTML = el.textContent.replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),"gi"), m=>`<mark>${m}</mark>`);
-    }else if(!q){
-      el.innerHTML = el.textContent;
-    }
-  });
-});
 </script>
 </body>
 </html>
-
-
