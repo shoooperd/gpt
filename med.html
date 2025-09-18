@@ -161,7 +161,28 @@
 
   <!-- ====================== ЦЕНЫ ====================== -->
   <section id="prices" class="card" role="tabpanel" aria-labelledby="tab-prices" hidden>
-    <h3 style="margin:4px 0 12px">Стоимость услуг</h3>
+    <h3 style="margin:4px 0 12px">Калькулятор оплаты</h3>
+    <div class="toolbar">
+      <select id="payItem" aria-label="Позиция для чека"></select>
+      <input id="payQty" type="number" min="1" step="1" value="1" style="max-width:120px" aria-label="Количество">
+      <button id="payAdd" class="btn">Добавить</button>
+      <button id="payClear" class="btn danger">Очистить чек</button>
+    </div>
+    <table id="payTable" style="margin-top:8px">
+      <thead>
+        <tr>
+          <th>Позиция</th><th class="right">Кол-во</th><th class="right">Цена за ед.</th><th class="right">Итого</th><th class="right">Действия</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+      <tfoot>
+        <tr><th colspan="3" class="right">Итого к оплате:</th><th class="right mono" id="payTotal" aria-live="polite">$0.00</th><th></th></tr>
+      </tfoot>
+    </table>
+
+    <div class="hr"></div>
+
+    <h3 style="margin:12px 0">Стоимость услуг</h3>
     <table>
       <thead><tr><th>Услуга</th><th class="right">Цена</th></tr></thead>
       <tbody id="services"></tbody>
@@ -171,26 +192,6 @@
     <table>
       <thead><tr><th>Товар</th><th class="right">Цена</th><th>Примечание</th></tr></thead>
       <tbody id="goods"></tbody>
-    </table>
-    <div class="hr"></div>
-    <h3 style="margin:12px 0">Калькулятор оплаты</h3>
-    <div class="toolbar">
-      <select id="payItem" aria-label="Позиция для чека"></select>
-      <input id="payQty" type="number" min="1" step="1" value="1" style="max-width:120px" aria-label="Количество">
-      <button id="payAdd" class="btn">Добавить</button>
-      <button id="payClear" class="btn danger">Очистить чек</button>
-    </div>
-    <p class="small muted">Скидки за опт применяются автоматически по каждой позиции.</p>
-    <table id="payTable" style="margin-top:8px">
-      <thead>
-        <tr>
-          <th>Позиция</th><th class="right">Кол-во</th><th class="right">Цена за ед.</th><th class="right">Скидка</th><th class="right">Итого</th><th class="right">Действия</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-      <tfoot>
-        <tr><th colspan="4" class="right">Итого к оплате:</th><th class="right mono" id="payTotal" aria-live="polite">$0.00</th><th></th></tr>
-      </tfoot>
     </table>
   </section>
 
@@ -644,7 +645,6 @@ initDoctorTiles();
 
 /* -------------------- ПРАЙС и калькулятор оплаты -------------------- */
 const SERVICES = [
-  ["Осмотр", "$2"],
   ["Лечение аптечкой (реанимация)", "$15"],
   ["Лечение тяжёлой травмы (операция)", "$18"],
   ["Детокс", "$50"]
@@ -659,7 +659,9 @@ const GOODS = [
   ["Противоядие", "$3 /шт", ""],
   ["Настойка «крепкие кости»", "$4 /шт", ""],
   ["Настойка «крепкий желудок»", "$4 /шт", "в крафтах: «Здоровый желудок»"],
-  ["Успокаивающая настойка", "$4 /шт", ""]
+  ["Успокаивающая настойка", "$4 /шт", ""],
+  ["Сироп Доктора Кафа", "$6 /шт", ""],
+  ["Кровь Вождя", "$6 /шт", ""]
 ];
 (function(){
   $("#services").innerHTML = SERVICES.map(([n,p])=>`<tr><td>${n}</td><td class="right mono">${p}</td></tr>`).join("");
@@ -668,14 +670,14 @@ const GOODS = [
 
 /* Чёткая модель цен (для калькулятора) */
 const PRICING = [
-  {id:"svc_osmotr", name:"Осмотр", type:"service", price: 2},
+  // {id:"svc_osmotr", name:"Осмотр", type:"service", price: 2}, // удалено
   {id:"svc_reanim", name:"Лечение аптечкой (реанимация)", type:"service", price: 15},
   {id:"svc_oper",   name:"Лечение тяжёлой травмы (операция)", type:"service", price: 18},
   {id:"svc_detox",  name:"Детокс", type:"service", price: 50},
 
   {id:"g_bandage_retail", name:"Бинт (розница)", type:"good", pricing:{base:3}},
   {id:"g_bandage_police", name:"Бинт (для полиции)", type:"good", pricing:{base:2.5}},
-  {id:"g_tonik_toniz", name:"Тонизирующий тоник", type:"good", pricing:{base:3}}, /* синхронизировано с витриной */
+  {id:"g_tonik_toniz", name:"Тонизирующий тоник", type:"good", pricing:{base:3}},
   {id:"g_maz_lechebnaya", name:"Лечебная мазь", type:"good", pricing:{base:4}},
   {id:"g_maz_salic", name:"Салициловая мазь", type:"good", pricing:{base:3}},
   {id:"g_otvar", name:"Отвар на травах", type:"good", pricing:{base:3}},
@@ -683,6 +685,8 @@ const PRICING = [
   {id:"g_nast_kosti", name:'Настойка «крепкие кости»', type:"good", pricing:{base:4}},
   {id:"g_nast_zheludok", name:'Настойка «крепкий желудок»', type:"good", pricing:{base:4}},
   {id:"g_nast_uspok", name:"Успокаивающая настойка", type:"good", pricing:{base:4}},
+  {id:"g_syrop_kaf", name:"Сироп Доктора Кафа", type:"good", pricing:{base:6}},
+  {id:"g_krov_vozhdya", name:"Кровь Вождя", type:"good", pricing:{base:6}}
 ];
 (function initPaySelect(){
   const sel = document.getElementById("payItem");
@@ -699,23 +703,22 @@ const PRICING = [
 const payCart = []; // [{id, qty}]
 function formatMoney(n){ return "$" + (Number(n)||0).toFixed(2); }
 function findPriceItem(id){ return PRICING.find(p=>p.id===id); }
-function unitPriceFor(item, qty){
-  if(item.type === "service"){ return {unit: item.price, note: ""}; }
+function unitPriceFor(item){ // скидок нет
+  if(item.type === "service"){ return item.price; }
   const rule = item.pricing || {base:0};
-  return {unit: rule.base, note: ""};
+  return rule.base;
 }
 function renderPay(){
   const tb = document.querySelector("#payTable tbody");
   let total = 0;
   tb.innerHTML = payCart.map((line, i)=>{
     const item = findPriceItem(line.id);
-    const {unit, note} = unitPriceFor(item, line.qty);
+    const unit = unitPriceFor(item);
     const sum = unit * line.qty; total += sum;
     return `<tr>
       <td>${item.name}</td>
       <td class="right">${line.qty}</td>
       <td class="right mono">${formatMoney(unit)}</td>
-      <td class="right small muted">${note || "—"}</td>
       <td class="right mono">${formatMoney(sum)}</td>
       <td class="right">
         <button class="btn ghost" data-act="inc" data-i="${i}">+1</button>
