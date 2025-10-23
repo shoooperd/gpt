@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ROBCO INDUSTRIES™ TERMLINK PROTOCOL // ADVANCED</title>
+<style>
+  :root{ --crt:#001900; --phosphor:#8aff80; --dim:#5fbf59; --accent:#b1ffb0; --warn:#ffe18a; --bad:#ff9a9a; --ok:#aaffaa; }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;background:#000}
+  body{color:var(--phosphor);font-family:ui-monospace, Menlo, Consolas, "Liberation Mono", monospace;display:flex;align-items:center;justify-content:center;padding:14px}
+  .term{width:min(1120px,96vw);height:min(760px,94vh);background:radial-gradient(1200px 700px at 50% -10%, #052c05 0%, var(--crt) 60%);
+        border:4px solid #0a2a0a;border-radius:14px;position:relative;overflow:hidden;box-shadow:0 0 40px rgba(0,255,0,.2), inset 0 0 120px rgba(0,0,0,.6)}
+  .scanlines{position:absolute;inset:0;pointer-events:none;opacity:.08;background:repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,.35) 2px, rgba(0,0,0,0) 4px);mix-blend-mode:multiply}
+  .glow{ text-shadow:0 0 8px rgba(138,255,128,.35), 0 0 22px rgba(138,255,128,.18) }
+  .flicker{ animation:flicker 2.5s infinite steps(60) } @keyframes flicker{0%,100%{opacity:1}10%{opacity:.97}20%{opacity:1}25%{opacity:.95}40%{opacity:1}70%{opacity:.98}85%{opacity:.96}}
+  .header{padding:10px 14px;border-bottom:1px solid #0f3c0f;background:rgba(0,40,0,.25)}
+  .title{font-weight:800;letter-spacing:.6px}
+  .sub{color:var(--dim);font-size:12px}
+  .wrap{display:grid;grid-template-columns:300px 1fr;height:calc(100% - 44px)}
+  @media (max-width:900px){.wrap{grid-template-columns:1fr;grid-auto-rows:auto 1fr}}
+  .sidebar{border-right:1px solid #0f3c0f;padding:12px;overflow:auto}
+  .screen{position:relative;padding:12px;overflow:auto}
+  .panel{border:1px solid #0f3c0f;border-radius:10px;padding:12px;margin-bottom:12px;background:rgba(0,40,0,.15)}
+  .btn{display:block;width:100%;text-align:left;margin:8px 0;padding:10px 12px;background:rgba(0,80,0,.18);border:1px solid #1a601a;border-radius:8px;color:var(--phosphor);cursor:pointer;font-weight:700}
+  .btn:hover{background:rgba(0,120,0,.2)} .btn:active{transform:translateY(1px)}
+  .badge{display:inline-block;padding:2px 8px;border:1px solid #1a601a;border-radius:99px;background:rgba(0,80,0,.18);font-weight:800}
+  .kbd{display:inline-block;padding:2px 6px;border:1px solid #1a601a;border-radius:6px;background:rgba(0,40,0,.25)}
+  .muted{color:var(--dim)} .small{font-size:12px} .ok{color:var(--ok)} .err{color:var(--bad)} .hint{color:var(--warn)}
+  .tokens{display:flex;gap:8px;flex-wrap:wrap} .token{padding:4px 10px;border:1px solid #1a601a;border-radius:999px;background:rgba(0,80,0,.12)}
+  .progress{height:8px;border:1px solid #1a601a;border-radius:6px;overflow:hidden;background:rgba(0,40,0,.25)} .bar{height:100%;background:linear-gradient(90deg,#47ff47,#b3ffb3);width:0%}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+  .cell{aspect-ratio:1;border:1px solid #1a601a;border-radius:6px;background:rgba(0,40,0,.25);cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:800}
+  .cell.hot{background:rgba(80,200,80,.35)} .cell.warm{background:rgba(80,200,80,.18)} .cell.cold{background:rgba(0,40,0,.35)}
+  .code{display:inline-block;padding:6px 10px;border:1px solid #1a601a;border-radius:6px;background:rgba(0,40,0,.25);font-weight:800}
+  .input, .slider{width:100%;background:rgba(0,20,0,.5);color:var(--phosphor);border:1px solid #1a601a;border-radius:8px;padding:10px;outline:none}
+  .slider{appearance:none;height:6px;padding:0}
+  .slider::-webkit-slider-thumb{appearance:none;width:16px;height:16px;border-radius:50%;background:#53ff53;border:1px solid #0a2a0a}
+  .wordgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+  .wbtn{padding:8px 10px;border:1px solid #1a601a;border-radius:8px;background:rgba(0,40,0,.25);cursor:pointer;color:var(--phosphor);font-weight:800}
+  .wbtn.used{opacity:.6}
+  .terminal{font-size:13px;white-space:pre-wrap;line-height:1.5;max-height:220px;overflow:auto}
+  .garbage{font-size:12px;line-height:1.35;background:rgba(0,20,0,.35);border:1px solid #1a601a;border-radius:8px;padding:8px;user-select:none}
+  .gb-bracket{cursor:pointer;text-decoration:underline}
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;padding:20px}
+  .overlay.show{display:flex}
+  .modal{max-width:720px;width:min(720px,92vw);background:radial-gradient(700px 360px at 50% -10%, #0b2a0b 0%, #031803 60%);border:3px solid #164c16;border-radius:14px;padding:22px 22px 16px;text-align:center;box-shadow:0 0 60px rgba(0,255,0,.2)}
+  .big{font-size:26px;font-weight:900;margin:0 0 12px}
+  .msg{white-space:pre-wrap;line-height:1.8;letter-spacing:.2px;text-align:left;margin:0 auto;max-width:640px}
+</style>
+</head>
+<body>
+<div class="term glow flicker">
+  <div class="header">
+    <div class="title">ROBCO INDUSTRIES™ TERMLINK PROTOCOL // ADVANCED</div>
+    <div class="sub">WELCOME USER: <span class="ok">GUEST</span> · ACCESS LEVEL <span class="kbd">OVERRIDE-01</span> · “War. War never changes.”</div>
+  </div>
+
+  <div class="wrap">
+    <div class="sidebar">
+      <div class="panel">
+        <div class="row" style="justify-content:space-between">
+          <div>Фрагменты ключа</div><div class="badge">α β γ</div>
+        </div>
+        <div class="tokens" style="margin-top:8px">
+          <div id="alphaTag" class="token muted">α: неизвестно</div>
+          <div id="betaTag"  class="token muted">β: неизвестно</div>
+          <div id="gammaTag" class="token muted">γ: неизвестно</div>
+        </div>
+        <div class="progress" style="margin-top:10px"><div id="prog" class="bar"></div></div>
+      </div>
+
+      <button class="btn" id="btnScan">[SCAN+] Секторная разведка</button>
+      <button class="btn" id="btnCipher">[CIPHER+] Дешифратор</button>
+      <button class="btn" id="btnWords">[WORDS] Терминал-взлом</button>
+      <button class="btn" id="btnLogs">[LOGS] Системные логи</button>
+      <button class="btn" id="btnUnlock">[UNLOCK] Разблокировка</button>
+      <button class="btn" id="btnReset">[RESET] Новая сессия</button>
+
+      <div class="panel small">
+        <div class="muted">Подсказка:</div>
+        <div>Собери α, β, γ — и введи <span class="kbd">alpha-beta-gamma</span>. Бонус-скобки (как в Fallout) помогают в WORDS.</div>
+      </div>
+    </div>
+
+    <div class="screen">
+      <div id="viewWelcome" class="panel">
+        <div class="row" style="justify-content:space-between">
+          <div><strong>TERMLINK</strong> // Добро пожаловать</div>
+          <div class="muted small" id="timer">session 00:00</div>
+        </div>
+        <div class="small" style="margin-top:10px">
+          Используй панели: <span class="kbd">SCAN+</span>, <span class="kbd">CIPHER+</span>, <span class="kbd">WORDS</span>, <span class="kbd">LOGS</span>, затем <span class="kbd">UNLOCK</span>.  
+          Немного дедукции — и двери откроются, как ВОЛЬТ-дверь 101. Пип-Бой из Убежища 69 найден не просто так…
+        </div>
+      </div>
+
+      <div id="viewScan" class="panel" style="display:none">
+        <div class="row" style="justify-content:space-between">
+          <div><strong>[SCAN+]</strong> Сектор 10.0.0.0/24 — найдите «горячую» точку</div>
+          <div class="small muted">попыток: <span id="scanLeft">6</span></div>
+        </div>
+        <div class="grid5" id="scanGrid" style="margin-top:8px"></div>
+        <div id="scanMsg" class="small" style="margin-top:8px"></div>
+      </div>
+
+      <div id="viewCipher" class="panel" style="display:none">
+        <div class="row" style="justify-content:space-between">
+          <div><strong>[CIPHER+]</strong> Дешифратор</div>
+          <div class="small muted">возможна комбинация протоколов…</div>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <div style="flex:1">
+            <div class="small muted">входной</div>
+            <div class="code" id="cipherIn">hexo</div><!-- LOVE -> +7 -> svcl -> ATBASH -> hexo -->
+          </div>
+          <div style="width:280px">
+            <div class="row small" style="justify-content:space-between">
+              <label><input id="atbash" type="checkbox" /> ATBASH</label>
+              <span>сдвиг: <span id="shiftVal">0</span></span>
+            </div>
+            <input id="shift" class="slider" type="range" min="0" max="25" value="0" />
+            <div class="row small" style="justify-content:space-between">
+              <span class="muted">подберите параметры</span>
+              <button class="btn" id="autoShift" style="padding:6px 10px" disabled>AUTO</button>
+            </div>
+          </div>
+          <div style="flex:1">
+            <div class="small muted">результат</div>
+            <div class="code" id="cipherOut">hexo</div>
+          </div>
+        </div>
+        <div id="cipherMsg" class="small" style="margin-top:8px"></div>
+      </div>
+
+      <div id="viewWords" class="panel" style="display:none">
+        <div class="row" style="justify-content:space-between">
+          <div><strong>[WORDS]</strong> Термлинк-взлом (угадать слово)</div>
+          <div class="small">попыток: <span id="triesLeft">4</span></div>
+        </div>
+        <div class="row small hint" style="margin-top:4px">Нажимай слова. Появится LIKES=… (совпадения по позициям). «Скобки» дают редкие бонусы.</div>
+        <div class="row" style="margin-top:8px">
+          <div style="flex:1"><div class="wordgrid" id="wordList"></div></div>
+          <div style="width:360px">
+            <div class="terminal" id="wordLog"></div>
+            <div class="garbage" id="garbage" style="margin-top:6px"></div>
+          </div>
+        </div>
+        <div id="wordsMsg" class="small" style="margin-top:6px"></div>
+      </div>
+
+      <div id="viewLogs" class="panel" style="display:none">
+        <div><strong>[LOGS]</strong> Системные сообщения</div>
+        <div id="logBox" class="terminal" style="margin-top:6px"></div>
+        <div class="small hint" style="margin-top:6px">Собери все фрагменты лога — станет доступен AUTO в CIPHER и появится подсказка.</div>
+      </div>
+
+      <div id="viewUnlock" class="panel" style="display:none">
+        <div><strong>[UNLOCK]</strong> Разблокировка узла</div>
+        <div class="small muted" style="margin-top:6px">введите ключ в формате <span class="kbd">alpha-beta-gamma</span></div>
+        <div class="row" style="margin-top:10px">
+          <input id="keyInput" class="input" placeholder="alpha-beta-gamma" />
+          <button id="goUnlock" class="btn">Открыть</button>
+        </div>
+        <div id="unlockMsg" class="small" style="margin-top:8px"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scanlines"></div>
+</div>
+
+<div class="overlay" id="win">
+  <div class="modal glow">
+    <div class="big">ACCESS GRANTED</div>
+    <p id="finalText" class="msg"></p>
+    <div class="row" style="margin-top:10px;justify-content:center">
+      <button id="again" class="btn">NEW SESSION</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ====== Конфиг ====== */
+const FRAG_ALPHA="CATWIFE", FRAG_BETA="LOVE", FRAG_GAMMA="MAGIC";
+const EXPECTED_KEY=`${FRAG_ALPHA}-${FRAG_BETA}-${FRAG_GAMMA}`.toLowerCase();
+const FINAL_MESSAGE=`Моя дорогая кошкажена, Лена! 
+Я заметил или по крайней мере мне показалось что ты любишь сеттинг фаллаута, поэтому мне хотелось сделать это предложение таким вот необычным образом при помощи головоломки!
+Я уже несколько дней ощущаю будто мы итак состоим в отношениях и чувствую себя рядом с тобой превосходно и комфортно
+Я рад каждой минуте проведенной вместе с тобой, именно поэтому я хотел бы сделать тебе небольшое предложение...
+Лена, я хотел бы построить с тобой отношения, быть рядом с тобой сейчас и дальше.
+Дорогая моя кошкажена, ты станешь моей девушкой? Котомуж будет вести себя хорошо и продолжать приносить улыбку на твоем прекрасном лице и радоваться твоему прекрасному смеху!`;
+
+/* ====== Общие DOM/состояние ====== */
+const progBar=gid('prog'), alphaTag=gid('alphaTag'), betaTag=gid('betaTag'), gammaTag=gid('gammaTag');
+let haveA=false, haveB=false, haveC=false;
+function updateProgress(){
+  const got=(haveA?1:0)+(haveB?1:0)+(haveC?1:0);
+  progBar.style.width=(got/3*100)+'%';
+  alphaTag.textContent=haveA?`α: ${FRAG_ALPHA}`:'α: неизвестно';
+  betaTag.textContent=haveB?`β: ${FRAG_BETA}`:'β: неизвестно';
+  gammaTag.textContent=haveC?`γ: ${FRAG_GAMMA}`:'γ: неизвестно';
+  alphaTag.classList.toggle('muted',!haveA); betaTag.classList.toggle('muted',!haveB); gammaTag.classList.toggle('muted',!haveC);
+}
+
+/* ====== Навигация/таймер ====== */
+const views={welcome:gid('viewWelcome'),scan:gid('viewScan'),cipher:gid('viewCipher'),words:gid('viewWords'),logs:gid('viewLogs'),unlock:gid('viewUnlock')};
+function show(n){Object.values(views).forEach(v=>v.style.display='none');views[n].style.display='block';}
+gid('btnScan').onclick=()=>show('scan');
+gid('btnCipher').onclick=()=>show('cipher');
+gid('btnWords').onclick=()=>show('words');
+gid('btnLogs').onclick=()=>show('logs');
+gid('btnUnlock').onclick=()=>show('unlock');
+gid('btnReset').onclick=resetSession;
+const timerEl=gid('timer'); let startTime=Date.now();
+setInterval(()=>{const ms=Date.now()-startTime;const m=String(Math.floor(ms/60000)).padStart(2,'0');const s=String(Math.floor(ms/1000)%60).padStart(2,'0');timerEl.textContent=`session ${m}:${s}`;},1000);
+
+/* ====== SCAN+ ====== */
+const scanGrid=gid('scanGrid'), scanMsg=gid('scanMsg'), scanLeftEl=gid('scanLeft');
+let hotspot, scanLeft;
+function manhattan(i,j,w=5){const ax=i%w, ay=(i/w|0), bx=j%w, by=(j/w|0); return Math.abs(ax-bx)+Math.abs(ay-by); }
+function buildScan(){
+  hotspot=Math.floor(Math.random()*25);
+  scanLeft=6; scanLeftEl.textContent=scanLeft; scanMsg.textContent='';
+  scanGrid.innerHTML='';
+  for(let i=0;i<25;i++){
+    const cell=document.createElement('div');
+    cell.className='cell'; cell.textContent='■';
+    cell.onclick=()=>{
+      if(scanLeft<=0||haveA) return;
+      scanLeft--; scanLeftEl.textContent=scanLeft;
+      const d=manhattan(i,hotspot,5);
+      cell.classList.remove('hot','warm','cold');
+      if(d===0){
+        cell.classList.add('hot'); cell.textContent='α';
+        scanMsg.innerHTML=`Сигнатура найдена. Фрагмент α: <span class="code">${FRAG_ALPHA}</span>`;
+        haveA=true; updateProgress();
+      }else{
+        cell.textContent=String(d);
+        if(d===1){cell.classList.add('hot'); scanMsg.textContent='Очень горячо';}
+        else if(d===2){cell.classList.add('warm'); scanMsg.textContent='Тепло';}
+        else {cell.classList.add('cold'); scanMsg.textContent='Холодно';}
+        if(scanLeft===0&&!haveA){scanMsg.innerHTML=`<span class="err">Скан неудачен.</span> Нужен RESET.`;}
+      }
+    };
+    scanGrid.appendChild(cell);
+  }
+}
+
+/* ====== CIPHER+ (ATBASH + Caesar → LOVE) ====== */
+const cipherIn=gid('cipherIn'), cipherOut=gid('cipherOut'), shift=gid('shift'), shiftVal=gid('shiftVal'), cipherMsg=gid('cipherMsg'), autoBtn=gid('autoShift'), atbash=gid('atbash');
+const rawBeta=FRAG_BETA.toLowerCase(); let autoEnabled=false;
+function applyShift(s,k){const A='a'.charCodeAt(0);return s.replace(/[a-z]/g,c=>String.fromCharCode(((c.charCodeAt(0)-A+k)%26+26)%26+A));}
+function applyAtbash(s){const A='a'.charCodeAt(0),Z='z'.charCodeAt(0);return s.replace(/[a-z]/g,c=>String.fromCharCode(Z-(c.charCodeAt(0)-A)));}
+function recalcCipher(){
+  let txt=cipherIn.textContent;
+  if(atbash.checked) txt=applyAtbash(txt);
+  const k=Number(shift.value); shiftVal.textContent=k;
+  txt=applyShift(txt,-k);
+  cipherOut.textContent=txt;
+  if(txt.toLowerCase()===rawBeta){haveB=true; cipherMsg.innerHTML=`Готово. Фрагмент β: <span class="code">${FRAG_BETA}</span>`; updateProgress();}
+  else if(!haveB){cipherMsg.textContent='';}
+}
+shift.oninput=recalcCipher; atbash.onchange=recalcCipher;
+autoBtn.onclick=()=>{ if(!autoEnabled) return; atbash.checked=true; shift.value=7; recalcCipher(); };
+
+/* ====== WORDS (γ = MAGIC) ====== */
+const wordsPool=["MAGIC","MANIC","MIMIC","LOGIC","MUSIC","MAGMA","MAJOR","RADIO","LASER","POWER","VAULT","ANGEL","NIGHT","LIGHT","SMILE","HEART","ARMOR","ROBOT","RADAR","RATIO","MAGUS","MAGOT","LUCID","MOVIE","MANGE"];
+let targetWord, triesLeft, wordListEl=gid('wordList'), wordLog=gid('wordLog'), wordsMsg=gid('wordsMsg'), garbage=gid('garbage');
+function likeness(a,b){let s=0; for(let i=0;i<a.length;i++) if(a[i]===b[i]) s++; return s;}
+function buildWords(){
+  const chosen=shuffle(wordsPool).slice(0,10);
+  targetWord=FRAG_GAMMA.toUpperCase();
+  if(!chosen.includes(targetWord)) chosen[Math.floor(Math.random()*chosen.length)]=targetWord;
+  triesLeft=4; gid('triesLeft').textContent=triesLeft; wordLog.textContent="> ROBCO INDUSTRIES (C)2077\n> Attempts remaining: 4 ▮▮▮▮\n";
+  wordListEl.innerHTML='';
+  chosen.forEach(w=>{
+    const b=document.createElement('button'); b.className='wbtn'; b.textContent=w;
+    b.onclick=()=>{
+      if(triesLeft<=0||haveC) return;
+      b.classList.add('used'); b.disabled=true;
+      if(w===targetWord){haveC=true; wordsMsg.innerHTML=`Фрагмент γ: <span class="code">${FRAG_GAMMA}</span>`; updateProgress(); wordLog.textContent+=`\n${w}  —  ACCESS GRANTED`;}
+      else{
+        triesLeft--; gid('triesLeft').textContent=triesLeft;
+        const like=likeness(w,targetWord); wordLog.textContent+=`\n${w}  —  LIKES=${like}`;
+        if(triesLeft===0&&!haveC){wordsMsg.innerHTML=`<span class="err">Терминал заблокирован.</span> Нужен RESET.`;}
+        wordLog.textContent=wordLog.textContent.replace(/Attempts remaining:.*/,`Attempts remaining: ${triesLeft} ${"▮".repeat(triesLeft)}`);
+      }
+    };
+    wordListEl.appendChild(b);
+  });
+  const gLines=[], bracketPairs=["()","[]","{}","<>"];
+  for(let r=0;r<6;r++){let line=""; for(let c=0;c<44;c++){ line+=Math.random()<0.1?randomSymbol():randomGarbageChar(); } gLines.push(line); }
+  garbage.innerHTML=gLines.map(line=>injectBrackets(line,bracketPairs,2)).join("\n");
+  garbage.querySelectorAll('.gb-bracket').forEach(el=>{
+    el.addEventListener('click',()=>{
+      if(Math.random()<0.45){
+        const cands=Array.from(wordListEl.querySelectorAll('.wbtn:not(.used)')).filter(b=>b.textContent!==targetWord);
+        if(cands.length){const pick=cands[Math.floor(Math.random()*cands.length)]; pick.classList.add('used'); pick.disabled=true; wordLog.textContent+=`\n<DUD REMOVED>`;}
+      }else if(triesLeft<4){triesLeft++; gid('triesLeft').textContent=triesLeft; wordLog.textContent+=`\n<ATTEMPT RESTORED>`;}
+      el.style.pointerEvents='none'; el.style.textDecoration='line-through';
+    },{once:true});
+  });
+}
+function randomSymbol(){return String.fromCharCode(33+Math.floor(Math.random()*94));}
+function randomGarbageChar(){const chars="~!@#$%^&*_-+=|;:,.?/"; return chars[Math.floor(Math.random()*chars.length)];}
+function injectBrackets(line,pairs,max=2){const a=[...line];let n=0;for(let i=0;i<a.length-2;i++){if(n>=max)break; if(Math.random()<0.07){const p=pairs[Math.floor(Math.random()*pairs.length)]; a.splice(i,0,`<span class="gb-bracket">${p[0]}${p[1]}</span>`); n++; i+=2;}} return a.join('');}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a;}
+
+/* ====== LOGS (многошагово) ====== */
+const logBox=gid('logBox'); let logPieces={a:false,b:false,c:false};
+function log(s){logBox.textContent+=(logBox.textContent?'\n':'')+s;}
+function buildLogs(){
+  logBox.textContent=[
+    "[BOOT] ROBCO Termlink v7.2 (OK)",
+    "[NET ] iface: ETH0 up (10.0.0.42)",
+    "[SCAN] hint: 5×5 сетка, числа = расстояние по Манхэттену.",
+    "[DATA] Click all three blobs to reconstruct the hint:",
+    "  blob A: QUdORFM6IEFUQkFTSA==",
+    "  blob B:IFBST1RPQ09M",
+    "  blob C:ICsgU0hJRlQ9Nw==",
+    "[LORE] Пип-Бой из убежища 69 был найден не просто так...",
+    "[JOKE] Всё это время Даня был супермутантом, мы просто не догадывались об этом...",
+    "[PLAN] Мы обязательно пересмотрим первый сезон фаллаута!",
+    "[Q ] Можно ли играть на хейте через пип-бой?",
+    "[TIP] Чтобы вурдалаки оплачивали лечение - достаточно уронить на них ядерку!",
+    "[NEWS] Весть из будущего: копы проиграли в суде и стали гулями",
+    "[CN ] Китай партия одобрять происходящее! Халасо, халасо!"
+  ].join("\n");
+  makeBlob('A','QUdORFM6IEFUQkFTSA=='); // "AGNS: ATBASH"
+  makeBlob('B','IFBST1RPQ09M');         // " PROTOCOL"
+  makeBlob('C','ICsgU0hJRlQ9Nw==');     // " + SHIFT=7"
+}
+function makeBlob(id,b64){
+  const mark=document.createElement('button');
+  mark.className='btn'; mark.style.width='auto'; mark.style.display='inline-block';
+  mark.textContent=`[DATA] decode blob ${id}`;
+  mark.onclick=()=>{ try{ const d=atob(b64); log(`[DATA] blob ${id} → ${d}`); logPieces[id.toLowerCase()]=true; checkLogsComplete(); mark.disabled=true; }catch(e){ log(`[DATA] blob ${id} → ERROR`);} };
+  logBox.parentElement.appendChild(mark);
+}
+function checkLogsComplete(){
+  if(logPieces.a&&logPieces.b&&logPieces.c){
+    log("[CIPH] HINT REBUILT → ATBASH PROTOCOL + SHIFT=7");
+    autoEnabled=true; gid('autoShift').disabled=false;
+  }
+}
+
+/* ====== UNLOCK / Финал / Reset ====== */
+const keyInput=gid('keyInput'), unlockMsg=gid('unlockMsg'), win=gid('win'), finalText=gid('finalText');
+gid('goUnlock').onclick=()=>{const key=keyInput.value.trim().toLowerCase();
+  if(!key){unlockMsg.innerHTML=`<span class="err">Введите ключ.</span>`;return;}
+  if(!haveA||!haveB||!haveC){unlockMsg.innerHTML=`<span class="hint">Сначала соберите α, β, γ.</span>`;return;}
+  if(key===EXPECTED_KEY){unlockMsg.innerHTML=`<span class="ok">ACCESS GRANTED</span>`; finalize();}
+  else{unlockMsg.innerHTML=`<span class="err">ACCESS DENIED</span> <span class="muted">формат: alpha-beta-gamma</span>`;}
+};
+gid('again').onclick=resetSession;
+function finalize(){finalText.textContent=FINAL_MESSAGE; win.classList.add('show');}
+
+/* ====== Init/Reset ====== */
+function resetSession(){
+  haveA=haveB=haveC=false; updateProgress();
+  startTime=Date.now(); keyInput.value=""; unlockMsg.textContent="";
+  buildScan(); initCipher(); buildWords(); buildLogs();
+  show('welcome'); win.classList.remove('show');
+}
+function initCipher(){ cipherOut.textContent=cipherIn.textContent; shift.value=0; shiftVal.textContent='0'; cipherMsg.textContent=''; atbash.checked=false; autoEnabled=false; gid('autoShift').disabled=true; }
+function gid(id){return document.getElementById(id);}
+
+resetSession();
+</script>
+</body>
+</html>
