@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>жвачка медоед — приём и продажа</title>
+<style>
+:root{
+  --bg:#0f1116; --panel:#151a24; --panel2:#121622; --line:#262a3b;
+  --ink:#e8e8ee; --muted:#a6a8b6; --gold:#ffb84d; --good:#74dfb2; --bad:#ff7d7d;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:radial-gradient(1100px 800px at 70% -10%,#1b1e28 0%,var(--bg) 60%),var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui}
+header{position:sticky;top:0;z-index:10;background:rgba(12,14,20,.65);backdrop-filter:blur(8px);border-bottom:1px solid #22283b}
+.bar{max-width:860px;margin:0 auto;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.stats{display:flex;gap:10px;flex-wrap:wrap}
+.badge{background:linear-gradient(180deg,#1b1e29,#151823);border:1px solid var(--line);border-radius:12px;padding:6px 10px}
+.wrap{max-width:860px;margin:18px auto;padding:0 14px;display:grid;gap:12px}
+.panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:14px;padding:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{appearance:none;background:#1b2030;border:1px solid #2a2f44;color:var(--ink);padding:12px 18px;border-radius:12px;cursor:pointer;font-weight:700}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:linear-gradient(180deg,#2a2116,#1d170f);border-color:#3e2d12;color:#ffdca8}
+.btn.good{background:linear-gradient(180deg,#143222,#0f1f18);border-color:#1f4b33;color:#c9f7e4}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+.separator{height:1px;background:#222739;margin:12px 0}
+
+/* прогресс */
+.progress{height:10px;background:#0f1117;border:1px solid #23283b;border-radius:999px;overflow:hidden}
+.progress .bar{height:100%;width:0;background:linear-gradient(90deg,#4d3a1f,#ffb84d)}
+
+/* диалоговый блок */
+.portrait{font-size:44px;border:1px solid #23283b;border-radius:12px;padding:12px;min-width:64px;text-align:center;background:#0f1219}
+.meta{display:flex;gap:8px;flex-wrap:wrap}
+.pill{padding:4px 10px;border:1px solid var(--line);border-radius:999px;background:#141927;color:#9da1b1;font-size:12px}
+.dialog{background:#0f1117;border:1px solid #23283b;border-radius:12px;padding:10px;line-height:1.4}
+.hint{color:#9da1b1;font-size:13px}
+
+/* варианты рекламы */
+.answers{display:grid;gap:8px}
+.answer{background:#0f1219;border:1px solid #23283b;border-radius:10px;padding:10px;cursor:pointer}
+.answer input{margin-right:8px;accent-color:var(--gold)}
+.answer:hover{border-color:#3a2a12}
+
+/* журнал */
+.log{display:grid;gap:8px;max-height:260px;overflow:auto}
+.item{background:#0f1219;border:1px solid #23283b;border-radius:10px;padding:8px}
+.item .who{opacity:.85}
+.ok{color:var(--good)} .no{color:var(--bad)}
+
+/* модал */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:16px;z-index:20}
+.modal.show{display:flex}
+.sheet{background:#12131a;border:1px solid #2a2b35;border-radius:14px;max-width:560px;width:100%;padding:16px}
+.sheet h2{color:#ffdca8;margin:0 0 6px}
+.sheet p{margin:6px 0 0}
+@media (max-width:560px){
+  .bar{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div class="stats">
+      <div class="badge">🧃 Запас: <b id="stock">10</b></div>
+      <div class="badge">💰 Деньги: <b id="cash">20</b> ₽</div>
+      <div class="badge">✅ Сделки: <b id="wins">0</b>/10</div>
+    </div>
+    <div class="stats" style="min-width:240px;flex:1">
+      <div style="flex:1;min-width:220px">
+        <div class="progress" aria-label="Прогресс к цели">
+          <div class="bar" id="winBar"></div>
+        </div>
+        <div class="hint" id="winHint">Цель: 10 удачных продаж</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- Верхние действия -->
+  <section class="panel" aria-label="Управление">
+    <div class="row" style="justify-content:space-between;align-items:center">
+      <div class="row">
+        <button class="btn" id="btnAccept" title="Enter">Принять пациента</button>
+        <button class="btn primary" id="btnSell" title="Пробел" disabled>Продать медоед</button>
+      </div>
+      <button class="btn good" id="btnReveal" disabled>Открыть послание</button>
+    </div>
+    <div class="hint" style="margin-top:6px">Подсказка: сначала «Принять пациента», затем выбери рекламу и жми «Продать медоед». Enter/Space работают тоже.</div>
+  </section>
+
+  <!-- Диалог и выбор рекламы -->
+  <section class="panel" aria-label="Диалог">
+    <div class="row" style="align-items:flex-start">
+      <div class="portrait" id="portrait">🙂</div>
+      <div style="flex:1">
+        <div class="meta">
+          <span class="pill" id="ptype">Пациент: —</span>
+          <span class="pill" id="prefs">—</span>
+        </div>
+        <div class="dialog" id="dialog">Нажмите «Принять пациента». Здесь появится его реплика.</div>
+      </div>
+    </div>
+
+    <div class="separator"></div>
+
+    <div>
+      <div class="row" style="justify-content:space-between;align-items:end">
+        <div style="font-weight:700">Реклама медоеда (выберите одну формулировку)</div>
+        <div class="hint" id="adHint">Формулировки отличаются стилем, но одна «суть» зайдёт этому типу.</div>
+      </div>
+      <div class="answers" id="answers"><!-- радио-опции сюда --></div>
+    </div>
+  </section>
+
+  <!-- Журнал -->
+  <section class="panel" aria-label="Журнал">
+    <div class="row" style="justify-content:space-between;align-items:center">
+      <div style="font-weight:700">Журнал диалогов</div>
+      <div class="hint">После удачной продажи в журнал пишется: ваша фраза и ответ покупателя.</div>
+    </div>
+    <div class="log" id="log"></div>
+  </section>
+</main>
+
+<!-- Послание -->
+<div class="modal" id="modal">
+  <div class="sheet">
+    <h2>Подарок</h2>
+    <p id="loveText">Здесь будет твоё послание. ✨</p>
+    <div style="display:flex;justify-content:center;margin-top:10px">
+      <button class="btn primary" id="close">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== Настройки ===== */
+const LOVE_MESSAGE = 'Я люблю тебя, Лена ❤️'; // твой текст
+const START_STOCK = 12; // небольшой запас, обычно хватит на 10 успешных
+
+/* Психотипы (без откровенного контента) */
+const TYPES = {
+  vurdalak: {
+    name:'Вурдалак', emoji:'🧛',
+    likes:['неадекватность','слабоумие'],
+    greet:[
+      '«ВААААААААЙ БЛЯ!! Жвачку дай шерифы заебали!»',
+      '«ДАЙ ЖВАЧКУ СЕЙЧАС НА ПУЗО ПОЛОЖУ НАХУЙ»',
+      '«Расхуярил десять шерифов, дай хапануть»'
+    ],
+    ok:[
+      '«О БРАТАН СПАСИБО!»',
+      '«ОЙ ХАПАНУЛ ТАК ХАПАНУЛ»',
+      '«ШЕРИФЫ ЛЯГУТ НА ПУЗО АХАХАХАХХА»'
+    ],
+    no:[
+      '«Туманные слова — не моё.»',
+      '«Много шума, мало толку.»',
+      '«Мимо. Хотел чётко и коротко.»'
+    ],
+    want:'power'
+  },
+  social: {
+    name:'Аватарик', emoji:'🏠',
+    likes:['социалить','аватарить'],
+    greet:[
+      '«Моя мурчалка захотела жвачки, можнно?»',
+      '«Хочу помурчать сегодня с моей кралей, что посоветуете?»',
+      '«Хочу быть крутой перед моей булочкой, что посоветуете?»'
+    ],
+    ok:[
+      '«СПАСИБО БЕРУ!!!»',
+      '«Уже чувствую тестостерон в венах!»',
+      '«УХ ТЫ!»'
+    ],
+    no:[
+      '«Звучит как дешевая реклама. Нет.»',
+      '«Лишние слова не помогают.»',
+      '«Ухожу. Не мой стиль.»'
+    ],
+    want:'charisma'
+  },
+  arist: {
+    name:'Аристократ', emoji:'🎩',
+    likes:['жить вечно','деньги','слава'],
+    greet:[
+      '«Я слышал медоед приносит удачу, это правда?»',
+      '«Покажите достоинство медоеда — и поговорим о цене.»',
+      '«Мистер Грей посоветовал медоед, что скажете?.»'
+    ],
+    ok:[
+      '«Достойно. Оформляйте.»',
+      '«Согласен. Беру.»',
+      '«Выгодная сделка, забираю..»'
+    ],
+    no:[
+      '«Вы издеваетесь?»',
+      '«Вы издеваетесь?»',
+      '«Вы издеваетесь?»'
+    ],
+    want:'panacea'
+  }
+};
+
+/* Пулы формулировок по «сути» — варианты на выбор (любая из группы засчитывается) */
+const AD_POOL = {
+  power: [
+    '«медоед помогает тулиться до рассвета»',
+    '«медоед ложить на пузо шерифов штабелями»',
+    '«медоед помогает вурдалачить вдвое эффективнее»'
+  ],
+  charisma: [
+    '«медоед позволяет дезентегрировать одежду женщины взглядом»',
+    '«медоед — жуй, жуй и член станет вдвое больше»',
+    '«медоед позволяет иметь несколько жён даже не становясь мормоном»'
+  ],
+  panacea: [
+    '«медоед — лечит от всего, уверяю»',
+    '«медоед приносит богатство и славу!»',
+    '«медоед подарит вам харизму и уверенность в настоящем дне»'
+  ]
+};
+
+/* Состояние */
+const state = {
+  cash:20, stock:START_STOCK, wins:0, victory:false,
+  current:null, selectedAd:null,
+  prices:{ vurdalak:22, social:14, arist:28 }
+};
+
+/* Утилиты */
+const $ = s=>document.querySelector(s);
+const pick = a=>a[(Math.random()*a.length)|0];
+function updateHeader(){
+  $('#stock').textContent = state.stock;
+  $('#cash').textContent = state.cash;
+  $('#wins').textContent = state.wins;
+  const pct = Math.min(100, Math.round((state.wins/10)*100));
+  $('#winBar').style.width = pct+'%';
+  $('#winHint').textContent = state.wins>=10 ? 'Цель достигнута!' : `Осталось: ${Math.max(0,10-state.wins)}`;
+}
+function log(lines, cls){
+  const box = $('#log');
+  const el = document.createElement('div');
+  el.className='item';
+  if(cls==='ok') el.classList.add('ok');
+  if(cls==='no') el.classList.add('no');
+  el.innerHTML = lines.map(t=>`<div class="who">${t.who}</div><div>${t.text}</div>`).join('<div style="height:6px"></div>');
+  box.prepend(el);
+  while(box.children.length>20) box.removeChild(box.lastChild);
+}
+
+/* Приём пациента */
+function acceptPatient(){
+  if(state.victory) return;
+  if(state.stock<=0 && state.wins<10){ // нет запаса, цель не достигнута
+    log([{who:'Система',text:'Запас закончился раньше цели. Обнови страницу и попробуй снова.'}],'no');
+    return;
+  }
+  const ids = Object.keys(TYPES);
+  const id = ids[(Math.random()*ids.length)|0];
+  state.current = id; state.selectedAd = null;
+  $('#btnSell').disabled = true;
+
+  const t = TYPES[id];
+  $('#portrait').textContent = t.emoji;
+  $('#ptype').textContent = `Пациент: ${t.name}`;
+  $('#prefs').textContent = 'Предпочитает: ' + t.likes.join(', ');
+  $('#dialog').textContent = pick(t.greet);
+
+  // собрать набор опций: по одному случайному варианту из каждой «сути»
+  const variants = [
+    {id:'power', text: pick(AD_POOL.power)},
+    {id:'charisma', text: pick(AD_POOL.charisma)},
+    {id:'panacea', text: pick(AD_POOL.panacea)}
+  ];
+  // перемешаем порядок
+  variants.sort(()=>Math.random()-0.5);
+
+  const box = $('#answers'); box.innerHTML='';
+  variants.forEach(v=>{
+    const idHtml = 'ad_'+v.id+'_'+Math.random().toString(36).slice(2,6);
+    const lbl = document.createElement('label');
+    lbl.className='answer';
+    lbl.innerHTML = `<input type="radio" name="ad" id="${idHtml}" value="${v.id}"><span>${v.text}</span>`;
+    lbl.querySelector('input').addEventListener('change', e=>{
+      state.selectedAd = e.target.value;
+      $('#btnSell').disabled = false;
+    });
+    // клик по всей строке тоже выбирает
+    lbl.addEventListener('click', (ev)=>{
+      const inp = lbl.querySelector('input');
+      if(ev.target!==inp){ inp.checked = true; inp.dispatchEvent(new Event('change')); }
+    });
+    box.appendChild(lbl);
+  });
+}
+
+/* Продажа */
+function sell(){
+  if(state.victory) return;
+  if(!state.current){ log([{who:'Система',text:'Сначала примите пациента.'}]); return; }
+  if(!state.selectedAd){ log([{who:'Система',text:'Выберите формулировку рекламы.'}]); return; }
+
+  const t = TYPES[state.current];
+  const isRightSence = (state.selectedAd === t.want);
+
+  if(isRightSence){
+    const price = state.prices[state.current] || 16;
+    state.cash += price; state.stock = Math.max(0, state.stock-1); state.wins += 1;
+    $('#dialog').textContent = pick(t.ok);
+
+    // записываем в лог: «Вы: выбранная формулировка» и «Покупатель: ответ»
+    const chosenText = [...document.querySelectorAll('#answers input[name="ad"]')].find(r=>r.checked)?.nextElementSibling?.textContent || '(ваша формулировка)';
+    const buyerReply = pick(t.ok);
+    log([
+      {who:'Вы', text: chosenText},
+      {who:`${t.name}`, text: buyerReply},
+      {who:'Итог', text:`Успех: +${price} ₽`}
+    ], 'ok');
+
+    // сброс текущего, ждём нового пациента
+    state.current = null;
+    $('#ptype').textContent = 'Пациент: —';
+    $('#prefs').textContent = '—';
+    $('#answers').innerHTML = '';
+    $('#btnSell').disabled = true;
+
+  }else{
+    const chosenText = [...document.querySelectorAll('#answers input[name="ad"]')].find(r=>r.checked)?.nextElementSibling?.textContent || '(ваша формулировка)';
+    const buyerReply = pick(t.no);
+    $('#dialog').textContent = buyerReply;
+    log([
+      {who:'Вы', text: chosenText},
+      {who:`${t.name}`, text: buyerReply},
+      {who:'Итог', text:'Отказ'}
+    ], 'no');
+  }
+
+  updateHeader();
+  checkVictory();
+}
+
+/* Победа */
+function checkVictory(){
+  if(state.wins>=10 && !state.victory){
+    state.victory = true;
+    $('#btnReveal').disabled = false;
+    log([{who:'Система',text:'🎉 Цель достигнута: 10 удачных продаж. Нажмите «Открыть послание».'}],'ok');
+  }else if(state.stock<=0 && state.wins<10){
+    log([{who:'Система',text:'Запас закончился. Для цели 10 успехов перезапусти игру (обнови страницу).'}],'no');
+  }
+}
+
+/* Послание */
+function openMessage(){
+  if(!state.victory) return;
+  $('#loveText').textContent = LOVE_MESSAGE;
+  $('#modal').classList.add('show');
+}
+
+/* Инициализация */
+function init(){
+  // стартовые значения
+  $('#stock').textContent = state.stock;
+  $('#cash').textContent = state.cash;
+  updateHeader();
+
+  // события
+  $('#btnAccept').addEventListener('click', acceptPatient);
+  $('#btnSell').addEventListener('click', sell);
+  $('#btnReveal').addEventListener('click', openMessage);
+  $('#close').addEventListener('click', ()=>$('#modal').classList.remove('show'));
+
+  // горячие клавиши
+  document.addEventListener('keydown', e=>{
+    if(e.code==='Enter'){ e.preventDefault(); acceptPatient(); }
+    if(e.code==='Space'){ e.preventDefault(); sell(); }
+  });
+}
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
