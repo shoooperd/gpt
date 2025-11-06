@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>MEDOED — мини-игры + терминал (CRT)</title>
+<style>
+  :root{
+    --bg:#07110b; --panel:#081814; --text:#b6f2bb; --accent:#54d26b; --muted:#6f8c78; --danger:#ff6b6b; --warn:#d3c96e;
+    --mono:"Lucida Console", Monaco, monospace;
+  }
+  html,body{height:100%;margin:0;background:radial-gradient(1200px 600px at 50% -10%,rgba(84,210,107,0.08),transparent 70%) , linear-gradient(180deg,#02120b 0%, #041812 100%);color:var(--text);font-family:var(--mono)}
+  .wrap{max-width:980px;margin:26px auto;padding:22px;background:rgba(0,0,0,0.35);border:1px solid rgba(80,160,110,0.06);box-shadow:0 8px 40px rgba(0,0,0,0.6), inset 0 0 60px rgba(84,210,107,0.05);border-radius:10px}
+  header{display:flex;gap:12px;align-items:center;margin-bottom:14px}
+  .led{width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent)}
+  h1{margin:0;font-size:18px;color:var(--accent);text-shadow:0 0 8px rgba(84,210,107,.25)}
+  .subtitle{margin:0;color:var(--muted);font-size:13px}
+
+  /* screens */
+  .screen{display:none}
+  .screen.active{display:block}
+  .card{background:rgba(0,0,0,0.35);border:1px solid rgba(84,210,107,0.08);border-radius:8px;padding:14px;margin-top:8px;box-shadow:inset 0 0 0 1px rgba(84,210,107,0.03)}
+  .btn{display:inline-block;padding:9px 12px;border-radius:6px;border:1px solid rgba(84,210,107,0.25);background:rgba(0,0,0,0.1);cursor:pointer;color:var(--text);font-family:var(--mono);transition:transform .04s, box-shadow .15s}
+  .btn:hover{box-shadow:0 0 12px rgba(84,210,107,0.15)}
+  .btn:active{transform:translateY(1px)}
+  .muted{color:var(--muted)}
+  .ok{color:var(--accent)}
+  .err{color:var(--danger)}
+  .row{display:flex;gap:14px;flex-wrap:wrap}
+  .col{flex:1;min-width:300px}
+  .title{color:var(--accent);margin:0 0 8px 0;text-shadow:0 0 6px rgba(84,210,107,.2)}
+  .big{font-size:18px}
+  .mono{font-family:var(--mono)}
+  .hint{font-size:12px;color:var(--muted)}
+  .input{background:#03140d;border:1px solid rgba(84,210,107,0.18);color:var(--text);border-radius:6px;padding:8px;font-family:var(--mono)}
+  .box{border:1px solid rgba(84,210,107,0.12);border-radius:6px;padding:10px;background:rgba(0,0,0,0.2);box-shadow:inset 0 0 24px rgba(84,210,107,0.05)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+  .word{padding:8px;border:1px solid rgba(255,255,255,0.06);border-radius:6px;background:rgba(0,0,0,0.2);cursor:pointer;text-align:center;transition:background .15s, transform .04s}
+  .word:hover{background:rgba(84,210,107,0.08)}
+  .word:active{transform:translateY(1px)}
+  .word.locked{opacity:.38;text-decoration:line-through;cursor:default}
+  .badge{margin-left:6px;color:var(--accent);font-weight:bold}
+  .stat{margin:4px 0}
+  .sep{height:1px;background:rgba(255,255,255,0.06);margin:10px 0}
+  .center{text-align:center}
+
+  /* ===== Terminal (CRT, bubbles) ===== */
+  .term-wrap{margin-top:18px;background:rgba(0,0,0,0.4);border:1px solid rgba(84,210,107,0.15);border-radius:10px;box-shadow:0 0 30px rgba(0,0,0,.5), inset 0 0 120px rgba(84,210,107,0.06)}
+  .term-head{padding:10px 12px;color:#78ee8a;border-bottom:1px solid rgba(84,210,107,0.15);font-family:var(--mono);letter-spacing:.5px;display:flex;justify-content:space-between;align-items:center}
+  .term-badge{font-size:11px;color:#2f823f;background:rgba(84,210,107,0.15);padding:2px 6px;border:1px solid rgba(84,210,107,0.3);border-radius:999px}
+  .term-body{position:relative;padding:12px;max-height:520px;overflow:auto;background:#03140d;color:#b6f2bb;font-family:var(--mono);line-height:1.35}
+  /* scanlines */
+  .term-body::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(180deg, rgba(0,0,0,0) 0, rgba(0,0,0,0) 2px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px)}
+  /* slight chromatic blur */
+  .term-body{filter:contrast(1.02) saturate(1.05)}
+  .term-input{display:flex;gap:8px;padding:10px;border-top:1px solid rgba(84,210,107,0.15);background:#05160f;align-items:center}
+  .term-prompt{color:#78ee8a;text-shadow:0 0 6px rgba(84,210,107,.3)}
+  .term-edit{flex:1;background:rgba(0,0,0,0.25);border:1px solid rgba(84,210,107,0.25);border-radius:8px;outline:none;color:#b6f2bb;font-family:var(--mono);font-size:14px;padding:8px 10px}
+  .term-edit::placeholder{color:#5a7a64}
+
+  /* entries */
+  .entry{position:relative;margin:10px 0 14px 0}
+  .entry .meta{display:flex;gap:8px;align-items:center;font-size:11px;color:var(--muted);margin-bottom:6px}
+  .entry .meta .dot{width:6px;height:6px;border-radius:50%}
+  .entry.user .meta .dot{background:#6bdc7c;box-shadow:0 0 6px rgba(84,210,107,.6)}
+  .entry.system .meta .dot{background:#8fd5a0}
+  .entry.output .meta .dot{background:#4ea35d}
+  .entry.error .meta .dot{background:#ff6b6b}
+  .entry.warn  .meta .dot{background:#d3c96e}
+  .entry .meta .tag{border:1px solid rgba(84,210,107,0.25);padding:2px 6px;border-radius:999px;color:#78ee8a}
+  .entry.error .meta .tag{border-color:rgba(255,107,107,0.45);color:#ff9a9a}
+  .entry.warn  .meta .tag{border-color:rgba(211,201,110,0.45);color:#e9df9d}
+
+  .bubble{position:relative;padding:10px 12px;border-radius:10px;border:1px solid rgba(84,210,107,0.15);background:rgba(2,18,11,0.8);box-shadow:inset 0 0 18px rgba(84,210,107,0.07), 0 0 12px rgba(84,210,107,0.05)}
+  .entry.user   .bubble{background:rgba(10,40,24,0.75)}
+  .entry.output .bubble{background:rgba(5,28,18,0.8)}
+  .entry.warn   .bubble{background:rgba(45,44,18,0.5)}
+  .entry.error  .bubble{background:rgba(40,10,10,0.5)}
+  .bubble .line{white-space:pre-wrap}
+  .divider{height:1px;background:linear-gradient(90deg, rgba(84,210,107,0), rgba(84,210,107,0.25), rgba(84,210,107,0));margin:12px 0;opacity:.7}
+
+  .file-title{color:#78ee8a;margin:0 0 6px 0;text-shadow:0 0 6px rgba(84,210,107,.3)}
+  .file-box{border:1px solid rgba(84,210,107,0.18);border-radius:8px;background:rgba(0,0,0,0.25);padding:10px;box-shadow:inset 0 0 18px rgba(84,210,107,.06)}
+  .timer{font-weight:bold}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="led" title="SYSTEM OK"></div>
+    <div>
+      <h1>MEDOED — доступ к архиву</h1>
+      <p class="subtitle">Сначала пройди 2 мини-игры для разблокировки терминала.</p>
+    </div>
+  </header>
+
+  <!-- Screen 1: Дешифратор -->
+  <section id="screen1" class="screen active">
+    <div class="card">
+      <h2 class="title">Мини-игра #1 — Дешифратор</h2>
+      <p class="muted">Восстанови фразу. Подбери <em>смещение</em> шифра Цезаря по кириллице.</p>
+      <div class="row">
+        <div class="col">
+          <div class="box">
+            <div class="muted">Зашифровано:</div>
+            <div id="cipherEncoded" class="big mono" style="word-break:break-word"></div>
+            <div class="sep"></div>
+            <div class="muted">Дешифровано (текущая настройка):</div>
+            <div id="cipherDecoded" class="big mono" style="word-break:break-word"></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="box">
+            <label class="muted">Смещение: <span id="shiftVal" class="ok">0</span></label>
+            <input id="shiftRange" type="range" min="0" max="32" value="0" style="width:100%"/>
+            <p class="hint">Алфавит: русские буквы (включая «ё»). Знаки и пробелы не шифруются.</p>
+            <button id="cipherCheck" class="btn">Проверить</button>
+            <div id="cipherMsg" class="stat"></div>
+          </div>
+        </div>
+      </div>
+      <div class="center" style="margin-top:10px">
+        <button id="toHack" class="btn" disabled>Продолжить к мини-игре #2</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Screen 2: Взлом в духе Fallout -->
+  <section id="screen2" class="screen">
+    <div class="card">
+      <h2 class="title">Мини-игра #2 — Взлом терминала</h2>
+      <p class="muted">Выбери правильное слово. Подсказка — число совпадений букв в тех же позициях.</p>
+      <div class="row">
+        <div class="col">
+          <div class="box">
+            <div class="grid" id="wordsGrid"></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="box">
+            <div class="stat">Попыток осталось: <span id="tries">5</span></div>
+            <div class="stat">Подсказка: <span id="hint">ищи что-то очень «наше»</span></div>
+            <div class="divider"></div>
+            <div id="hackLog" class="mono" style="max-height:240px;overflow:auto"></div>
+          </div>
+        </div>
+      </div>
+      <div class="center" style="margin-top:10px">
+        <button id="toTerminal" class="btn" disabled>Открыть терминал</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Screen 3: Терминал -->
+  <section id="screen3" class="screen">
+    <div class="term-wrap">
+      <div class="term-head">
+        <span>MEDOED://ARCHIVE — терминал</span>
+        <span class="term-badge">CRT • 80×24 • GREEN</span>
+      </div>
+      <div id="termOut" class="term-body" aria-live="polite"></div>
+      <div class="term-input">
+        <span class="term-prompt">medoed&gt;</span>
+        <input id="termIn" class="term-edit" type="text" autocomplete="off" spellcheck="false" placeholder="помощь — список команд"/>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+/* =========================
+   Мини-игра #1 — Дешифратор
+   ========================= */
+const RU_ABC = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
+const TARGET_PHRASE = "хапая медоеда - мы делаем жизнь лучше";
+
+const cipherDOM = {
+  encoded: document.getElementById("cipherEncoded"),
+  decoded: document.getElementById("cipherDecoded"),
+  range:   document.getElementById("shiftRange"),
+  shiftVal:document.getElementById("shiftVal"),
+  check:   document.getElementById("cipherCheck"),
+  msg:     document.getElementById("cipherMsg"),
+  next:    document.getElementById("toHack")
+};
+
+let secretShift = Math.floor(Math.random()*32)+1; // 1..32
+function caesarEncode(str, shift){
+  const a = RU_ABC; const A = RU_ABC.toUpperCase();
+  return [...str].map(ch=>{
+    const i=a.indexOf(ch); if(i>-1) return a[(i+shift)%a.length];
+    const j=A.indexOf(ch); if(j>-1) return A[(j+shift)%A.length];
+    return ch;
+  }).join("");
+}
+function caesarDecode(str, shift){
+  return caesarEncode(str, (RU_ABC.length - (shift%RU_ABC.length))%RU_ABC.length);
+}
+const ENCODED = caesarEncode(TARGET_PHRASE, secretShift);
+cipherDOM.encoded.textContent = ENCODED;
+cipherDOM.decoded.textContent = caesarDecode(ENCODED, +cipherDOM.range.value);
+
+cipherDOM.range.addEventListener("input", ()=>{
+  cipherDOM.shiftVal.textContent = cipherDOM.range.value;
+  cipherDOM.decoded.textContent = caesarDecode(ENCODED, +cipherDOM.range.value);
+  cipherDOM.msg.textContent = "";
+});
+cipherDOM.check.addEventListener("click", ()=>{
+  const attempt = caesarDecode(ENCODED, +cipherDOM.range.value);
+  if(attempt === TARGET_PHRASE){
+    cipherDOM.msg.innerHTML = '<span class="ok">Верно! Фраза восстановлена.</span>';
+    cipherDOM.next.disabled = false;
+  } else {
+    cipherDOM.msg.innerHTML = '<span class="err">Нет. Попробуй другое смещение.</span>';
+  }
+});
+cipherDOM.next.addEventListener("click", ()=>{ goTo("screen2"); });
+
+/* =========================
+   Мини-игра #2 — Fallout-взлом
+   ========================= */
+const hack = {
+  words: [
+    "Медоед","Хапать","Рецепт","Секрет","Сердце","Вурдалак","Котомуж","Гоблин","Дракула","Медоедус","Жвачка","Гуль","Даня спит","Любовь"
+  ],
+  target: "КОТОМУЖ",
+  triesLeft: 5
+};
+const hackDOM = {
+  grid: document.getElementById("wordsGrid"),
+  tries: document.getElementById("tries"),
+  log: document.getElementById("hackLog"),
+  next: document.getElementById("toTerminal")
+};
+function norm(s){ return s.toUpperCase().replace(/[^А-ЯЁ]/g,""); }
+function countMatches(a,b){ a=norm(a); b=norm(b); let c=0; for(let i=0;i<Math.min(a.length,b.length);i++) if(a[i]===b[i]) c++; return c; }
+function addHackLog(msg, cls){ const d=document.createElement("div"); d.className=cls||""; d.textContent=msg; hackDOM.log.appendChild(d); hackDOM.log.scrollTop=hackDOM.log.scrollHeight; }
+
+function renderHack(){
+  hackDOM.grid.innerHTML = "";
+  hack.words.forEach(w=>{
+    const el = document.createElement("div");
+    el.className = "word";
+    el.textContent = w;
+    el.addEventListener("click", ()=>onPickWord(el,w));
+    hackDOM.grid.appendChild(el);
+  });
+  hackDOM.tries.textContent = hack.triesLeft;
+  hackDOM.log.innerHTML = "";
+  addHackLog("Подключение к секции паролей...","muted");
+}
+function onPickWord(el, w){
+  if(el.classList.contains("locked") || hack.triesLeft<=0) return;
+  const m = countMatches(w, hack.target);
+  el.classList.add("locked");
+  const badge = document.createElement("span"); badge.className="badge"; badge.textContent=`(${m})`; el.appendChild(badge);
+  addHackLog(`Ввод: ${w} → совпадений: ${m}`);
+  if(norm(w)===hack.target){
+    addHackLog("Доступ получен.","ok");
+    hackDOM.next.disabled = false; return;
+  }
+  hack.triesLeft--; hackDOM.tries.textContent = hack.triesLeft;
+  if(hack.triesLeft<=0) addHackLog("Доступ отклонён. Перезапусти мини-игру.","err");
+}
+renderHack();
+hackDOM.next.addEventListener("click", ()=>{ goTo("screen3"); openTerminal(); });
+
+/* =========================
+   Навигация между экранами
+   ========================= */
+function goTo(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+/* =========================
+   Терминал (красиво, с «пузырьками»)
+   ========================= */
+const term = {
+  out: document.getElementById("termOut"),
+  input: document.getElementById("termIn"),
+  history: [], hIndex: -1,
+
+  now(){ const d=new Date(); const p=n=>String(n).padStart(2,"0"); return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`; },
+
+  entry(type,label,html){
+    const wrap = document.createElement("div");
+    wrap.className = `entry ${type}`;
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    meta.innerHTML = `<span class="dot"></span><span class="tag">${label}</span><span>• ${this.now()}</span>`;
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+    const line = document.createElement("div");
+    line.className = "line";
+    line.innerHTML = html;
+    bubble.appendChild(line);
+    wrap.appendChild(meta); wrap.appendChild(bubble);
+    this.out.appendChild(wrap);
+    // тонкий разделитель между командами и выводом
+    if(type==="output"||type==="error"||type==="warn"){
+      const div = document.createElement("div"); div.className="divider"; this.out.appendChild(div);
+    }
+    this.out.scrollTop = this.out.scrollHeight;
+  },
+
+  saySystem(txt){ this.entry("system","SYSTEM", escapeHtml(txt)); },
+  sayOutput(html){ this.entry("output","OUTPUT", html); },
+  sayWarn(txt){ this.entry("warn","WARN", escapeHtml(txt)); },
+  sayError(txt){ this.entry("error","ERROR", escapeHtml(txt)); },
+  echoUser(txt){ this.entry("user","USER", escapeHtml(txt)); },
+
+  focus(){ setTimeout(()=>this.input.focus(),0); }
+};
+
+function openTerminal(){
+  term.saySystem("Добро пожаловать в архив MEDOED. Наберите «помощь» для списка команд.");
+  term.focus();
+}
+
+/* --- файлы (как просил) --- */
+const FS = {
+  "МЕДОЕДУС": {
+    title: "Записи графа Медоедуса",
+    dynamic: null,
+    content: "Здесь будет много текста, который ты напишешь сам."
+  },
+  "РЕЦЕПТ": {
+    title: "Рецепт жвачки Медоед",
+    dynamic: null,
+    content: "Здесь будет много текста, который ты напишешь сам."
+  },
+  "ИССЛЕДОВАНИЕ": {
+    title: "Поведенческий анализ объекта Даня-0515",
+    dynamic: null,
+    content: "Здесь будет много текста, который ты напишешь сам."
+  },
+  "КИТАЙ": {
+    title: "Таймер ожидания китай-партия",
+    dynamic: function(container){
+      const target = new Date("2025-11-15T02:00:00+03:00").getTime(); // 15.11.2025 02:00 MSK
+      const box = document.createElement("div"); box.className="file-box";
+      const title = document.createElement("div"); title.className="file-title"; title.textContent = "Таймер ожидания китай-партия (MSK)";
+      const line = document.createElement("div"); line.innerHTML = '<span class="muted">До момента: </span><span class="timer" id="chinaTimer">—</span>';
+      const note = document.createElement("div"); note.className="muted"; note.style.marginTop="6px";
+      note.textContent = "Цель: 15.11.2025 02:00:00 (MSK, UTC+03:00). Обновляется каждую секунду.";
+      box.appendChild(title); box.appendChild(line); box.appendChild(note);
+      container.appendChild(box);
+
+      function tick(){
+        const now = Date.now();
+        const out = document.getElementById("chinaTimer"); if(!out) return;
+        let diff = target - now;
+        if(diff<=0){ out.textContent = "Партия прибыла!"; out.classList.add("ok"); clearInterval(timerId); return; }
+        const sec = Math.floor(diff/1000)%60;
+        const min = Math.floor(diff/60000)%60;
+        const hr  = Math.floor(diff/3600000)%24;
+        const day = Math.floor(diff/86400000);
+        const pad = n=>String(n).padStart(2,"0");
+        out.textContent = `${day} дн ${pad(hr)}:${pad(min)}:${pad(sec)}`;
+      }
+      tick();
+      const timerId = setInterval(tick,1000);
+      return ()=>clearInterval(timerId);
+    },
+    content: ""
+  },
+  "КОТОМУЖ": {
+    title: "Секретнейший секрет Котомужа",
+    dynamic: null,
+    content: "Здесь будет много текста, который ты напишешь сам."
+  },
+  "ВИНДОУС": {
+    title: "Как переустановить виндоус после ядерного удара",
+    dynamic: null,
+    content: "Здесь будет много текста, который ты напишешь сам."
+  }
+};
+
+/* --- команды (на русском, простые) --- */
+const COMMANDS = {
+  "помощь": () => {
+    term.sayOutput(
+`<b>Доступные команды</b>
+<span class="ok">список</span>                — показать имена файлов<br>
+<span class="ok">открыть &lt;имя&gt;</span>      — открыть файл по имени (например: открыть КИТАЙ)<br>
+<span class="ok">поиск &lt;слово&gt;</span>       — поиск по заголовкам/содержимому (в простых файлах)<br>
+<span class="ok">журнал</span>                — история команд<br>
+<span class="ok">очистить</span>              — очистить экран<br>
+<span class="ok">выход</span>                 — закрыть терминал`
+    );
+  },
+  "список": () => {
+    const list = Object.keys(FS).map(k=>`• <span class="ok">${k}</span>`).join("<br>");
+    term.sayOutput(`<span class="muted">Файлы в архиве:</span><br>${list}`);
+  },
+  "открыть": (args) => {
+    const name = args.join(" ").trim();
+    if(!name){ term.sayError("Укажите имя файла, например: открыть КИТАЙ"); return; }
+    const key = name.toUpperCase();
+    const file = FS[key];
+    if(!file){ term.sayWarn(`Файл «${name}» не найден.`); return; }
+    let html = `<div class="file-title">${escapeHtml(file.title)}</div>`;
+    if(typeof file.dynamic === "function"){
+      term.sayOutput(html); // сначала заголовок
+      // отрендерим динамику прямо в последний bubble
+      const lastBubble = term.out.querySelector(".entry.output:last-of-type .bubble");
+      file.dynamic(lastBubble);
+    } else {
+      html += `<div class="file-box">${escapeHtml(file.content)}</div>`;
+      term.sayOutput(html);
+    }
+  },
+  "поиск": (args) => {
+    const q = args.join(" ").trim().toLowerCase();
+    if(!q){ term.sayError("Укажите слово для поиска, например: поиск кото"); return; }
+    let found=[];
+    for(const [name,file] of Object.entries(FS)){
+      if(file.dynamic) continue;
+      if((file.title||"").toLowerCase().includes(q) || (file.content||"").toLowerCase().includes(q)){
+        found.push(name);
+      }
+    }
+    if(found.length===0) term.sayWarn("Ничего не найдено.");
+    else term.sayOutput(`Найдено в: <span class="ok">${found.join(", ")}</span>`);
+  },
+  "журнал": ()=> {
+    if(term.history.length===0){ term.sayOutput("<span class='muted'>Журнал пуст.</span>"); return; }
+    const rows = term.history.map((h,i)=>`${i+1}. ${escapeHtml(h)}`).join("<br>");
+    term.sayOutput(rows);
+  },
+  "очистить": ()=> { term.out.innerHTML=""; term.saySystem("Экран очищен."); },
+  "выход": ()=> { term.saySystem("Сеанс завершён."); document.querySelector(".term-wrap").style.display="none"; },
+
+  /* алиасы */
+  "help":"помощь","ls":"список","dir":"список",
+  "open":"открыть","cat":"открыть","grep":"поиск",
+  "history":"журнал","clear":"очистить","exit":"выход"
+};
+
+/* --- обработка ввода с пузырьками и разделителями --- */
+term.input.addEventListener("keydown", (e)=>{
+  // история
+  if(e.key==="ArrowUp"){ if(term.history.length){ term.hIndex=Math.max(0,term.hIndex-1); term.input.value=term.history[term.hIndex]||""; term.input.setSelectionRange(term.input.value.length,term.input.value.length);} e.preventDefault(); return; }
+  if(e.key==="ArrowDown"){ if(term.history.length){ term.hIndex=Math.min(term.history.length,term.hIndex+1); term.input.value=term.history[term.hIndex]||""; term.input.setSelectionRange(term.input.value.length,term.input.value.length);} e.preventDefault(); return; }
+  // автодополнение Tab
+  if(e.key==="Tab"){
+    e.preventDefault();
+    const text = term.input.value.trim(); if(!text) return;
+    const [cmd,...rest] = text.split(/\s+/);
+    const lower = cmd.toLowerCase();
+    const list = Object.keys(COMMANDS).filter(k => typeof COMMANDS[k]!=="string" && k.startsWith(lower));
+    if(list.length===1){ term.input.value = list[0] + (rest.length? " "+rest.join(" "):""); }
+    else if(list.length>1){ term.saySystem("Возможные команды: " + list.join(", ")); }
+    else if(lower==="открыть" && rest.length>=1){
+      const name = rest.join(" ").toUpperCase();
+      const matches = Object.keys(FS).filter(f=>f.startsWith(name));
+      if(matches.length===1) term.input.value = `открыть ${matches[0]}`;
+      else if(matches.length>1) term.saySystem("Подходящие файлы: " + matches.join(", "));
+    }
+    return;
+  }
+  // выполнение
+  if(e.key==="Enter"){
+    const line = term.input.value.trim();
+    if(!line) return;
+    term.echoUser(line);
+    term.history.push(line); term.hIndex = term.history.length; term.input.value="";
+    const parts = line.split(/\s+/);
+    let cmd = (parts.shift()||"").toLowerCase();
+    if(typeof COMMANDS[cmd]==="string"){ cmd = COMMANDS[cmd]; }
+    const fn = COMMANDS[cmd];
+    if(!fn){ term.sayError(`Неизвестная команда: ${cmd}. Введите «помощь».`); return; }
+    try{ fn(parts); }catch(err){ console.error(err); term.sayError("Ошибка выполнения команды."); }
+  }
+});
+
+/* --- утилита --- */
+function escapeHtml(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+</script>
+</body>
+</html>
