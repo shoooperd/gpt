@@ -49,16 +49,13 @@
   .term-head{padding:10px 12px;color:#78ee8a;border-bottom:1px solid rgba(84,210,107,0.15);font-family:var(--mono);letter-spacing:.5px;display:flex;justify-content:space-between;align-items:center}
   .term-badge{font-size:11px;color:#2f823f;background:rgba(84,210,107,0.15);padding:2px 6px;border:1px solid rgba(84,210,107,0.3);border-radius:999px}
   .term-body{position:relative;padding:12px;max-height:520px;overflow:auto;background:#03140d;color:#b6f2bb;font-family:var(--mono);line-height:1.35}
-  /* scanlines */
   .term-body::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(180deg, rgba(0,0,0,0) 0, rgba(0,0,0,0) 2px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px)}
-  /* slight chromatic blur */
   .term-body{filter:contrast(1.02) saturate(1.05)}
   .term-input{display:flex;gap:8px;padding:10px;border-top:1px solid rgba(84,210,107,0.15);background:#05160f;align-items:center}
   .term-prompt{color:#78ee8a;text-shadow:0 0 6px rgba(84,210,107,.3)}
   .term-edit{flex:1;background:rgba(0,0,0,0.25);border:1px solid rgba(84,210,107,0.25);border-radius:8px;outline:none;color:#b6f2bb;font-family:var(--mono);font-size:14px;padding:8px 10px}
   .term-edit::placeholder{color:#5a7a64}
 
-  /* entries */
   .entry{position:relative;margin:10px 0 14px 0}
   .entry .meta{display:flex;gap:8px;align-items:center;font-size:11px;color:var(--muted);margin-bottom:6px}
   .entry .meta .dot{width:6px;height:6px;border-radius:50%}
@@ -297,7 +294,6 @@ const term = {
     bubble.appendChild(line);
     wrap.appendChild(meta); wrap.appendChild(bubble);
     this.out.appendChild(wrap);
-    // тонкий разделитель между командами и выводом
     if(type==="output"||type==="error"||type==="warn"){
       const div = document.createElement("div"); div.className="divider"; this.out.appendChild(div);
     }
@@ -339,17 +335,19 @@ const FS = {
     title: "Таймер ожидания китай-партия",
     dynamic: function(container){
       const target = new Date("2025-11-15T02:00:00+03:00").getTime(); // 15.11.2025 02:00 MSK
+      const uid = "chinaTimer_" + Date.now() + "_" + Math.floor(Math.random()*1e6);
+
       const box = document.createElement("div"); box.className="file-box";
       const title = document.createElement("div"); title.className="file-title"; title.textContent = "Таймер ожидания китай-партия (MSK)";
-      const line = document.createElement("div"); line.innerHTML = '<span class="muted">До момента: </span><span class="timer" id="chinaTimer">—</span>';
+      const line = document.createElement("div"); line.innerHTML = '<span class="muted">До момента: </span><span class="timer" id="'+uid+'">—</span>';
       const note = document.createElement("div"); note.className="muted"; note.style.marginTop="6px";
       note.textContent = "Цель: 15.11.2025 02:00:00 (MSK, UTC+03:00). Обновляется каждую секунду.";
       box.appendChild(title); box.appendChild(line); box.appendChild(note);
       container.appendChild(box);
 
       function tick(){
+        const out = document.getElementById(uid); if(!out) return;
         const now = Date.now();
-        const out = document.getElementById("chinaTimer"); if(!out) return;
         let diff = target - now;
         if(diff<=0){ out.textContent = "Партия прибыла!"; out.classList.add("ok"); clearInterval(timerId); return; }
         const sec = Math.floor(diff/1000)%60;
@@ -400,15 +398,30 @@ const COMMANDS = {
     const key = name.toUpperCase();
     const file = FS[key];
     if(!file){ term.sayWarn(`Файл «${name}» не найден.`); return; }
-    let html = `<div class="file-title">${escapeHtml(file.title)}</div>`;
+
+    const headerHTML = `<div class="file-title">${escapeHtml(file.title)}</div>`;
+
     if(typeof file.dynamic === "function"){
-      term.sayOutput(html); // сначала заголовок
-      // отрендерим динамику прямо в последний bubble
-      const lastBubble = term.out.querySelector(".entry.output:last-of-type .bubble");
-      file.dynamic(lastBubble);
+      // выводим заголовок
+      term.sayOutput(headerHTML);
+
+      // ищем последний пузырь OUTPUT
+      const outputs = term.out.querySelectorAll(".entry.output");
+      const bubble = outputs.length ? outputs[outputs.length - 1].querySelector(".bubble") : null;
+
+      // создаём хост для динамики
+      const host = document.createElement("div");
+      host.className = "file-box";
+      (bubble || term.out).appendChild(host);
+
+      try{
+        file.dynamic(host);
+      }catch(e){
+        console.error(e);
+        term.sayError("Не удалось открыть динамический файл.");
+      }
     } else {
-      html += `<div class="file-box">${escapeHtml(file.content)}</div>`;
-      term.sayOutput(html);
+      term.sayOutput(headerHTML + `<div class="file-box">${escapeHtml(file.content)}</div>`);
     }
   },
   "поиск": (args) => {
@@ -432,7 +445,6 @@ const COMMANDS = {
   "очистить": ()=> { term.out.innerHTML=""; term.saySystem("Экран очищен."); },
   "выход": ()=> { term.saySystem("Сеанс завершён."); document.querySelector(".term-wrap").style.display="none"; },
 
-  /* алиасы */
   "help":"помощь","ls":"список","dir":"список",
   "open":"открыть","cat":"открыть","grep":"поиск",
   "history":"журнал","clear":"очистить","exit":"выход"
@@ -440,10 +452,22 @@ const COMMANDS = {
 
 /* --- обработка ввода с пузырьками и разделителями --- */
 term.input.addEventListener("keydown", (e)=>{
-  // история
-  if(e.key==="ArrowUp"){ if(term.history.length){ term.hIndex=Math.max(0,term.hIndex-1); term.input.value=term.history[term.hIndex]||""; term.input.setSelectionRange(term.input.value.length,term.input.value.length);} e.preventDefault(); return; }
-  if(e.key==="ArrowDown"){ if(term.history.length){ term.hIndex=Math.min(term.history.length,term.hIndex+1); term.input.value=term.history[term.hIndex]||""; term.input.setSelectionRange(term.input.value.length,term.input.value.length);} e.preventDefault(); return; }
-  // автодополнение Tab
+  if(e.key==="ArrowUp"){
+    if(term.history.length){
+      term.hIndex=Math.max(0,term.hIndex-1);
+      term.input.value=term.history[term.hIndex]||"";
+      term.input.setSelectionRange(term.input.value.length,term.input.value.length);
+    }
+    e.preventDefault(); return;
+  }
+  if(e.key==="ArrowDown"){
+    if(term.history.length){
+      term.hIndex=Math.min(term.history.length,term.hIndex+1);
+      term.input.value=term.history[term.hIndex]||"";
+      term.input.setSelectionRange(term.input.value.length,term.input.value.length);
+    }
+    e.preventDefault(); return;
+  }
   if(e.key==="Tab"){
     e.preventDefault();
     const text = term.input.value.trim(); if(!text) return;
@@ -460,7 +484,6 @@ term.input.addEventListener("keydown", (e)=>{
     }
     return;
   }
-  // выполнение
   if(e.key==="Enter"){
     const line = term.input.value.trim();
     if(!line) return;
@@ -480,7 +503,3 @@ function escapeHtml(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt
 </script>
 </body>
 </html>
-
-
-
-
