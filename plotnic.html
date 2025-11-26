@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Каталог плотницкой</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background: #111827;
+        font-family: Arial, sans-serif;
+        color: #e5e7eb;
+    }
+
+    header {
+        padding: 20px;
+        background: #1f2937;
+        border-bottom: 1px solid #374151;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 22px;
+    }
+
+    #searchBar {
+        padding: 8px 12px;
+        font-size: 14px;
+        border-radius: 6px;
+        border: none;
+        background: #374151;
+        color: white;
+        width: 260px;
+    }
+
+    .categories {
+        padding: 12px;
+        background: #1f2937;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        border-bottom: 1px solid #374151;
+    }
+
+    .cat-btn {
+        padding: 6px 12px;
+        border-radius: 6px;
+        border: 1px solid #4b5563;
+        background: #111827;
+        color: #e5e7eb;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .cat-btn.active {
+        background: #2563eb;
+        border-color: #1d4ed8;
+    }
+
+    .grid {
+        padding: 20px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 20px;
+    }
+
+    .card {
+        background: #1f2937;
+        border: 1px solid #374151;
+        border-radius: 10px;
+        padding: 16px;
+        display: flex;
+        gap: 14px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    }
+
+    .card img {
+        width: 110px;
+        height: 110px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid #374151;
+    }
+
+    .card h3 {
+        margin: 0 0 6px 0;
+        font-size: 18px;
+    }
+
+    .price {
+        margin: 6px 0;
+        font-size: 15px;
+    }
+
+    .tag {
+        display: inline-block;
+        margin-top: 4px;
+        padding: 3px 8px;
+        background: #374151;
+        border-radius: 6px;
+        font-size: 12px;
+        color: #9ca3af;
+    }
+
+    details {
+        margin-top: 8px;
+    }
+
+    summary {
+        cursor: pointer;
+        color: #60a5fa;
+    }
+
+    .ingredient {
+        font-size: 13px;
+        padding-left: 10px;
+        margin-top: 2px;
+        color: #d1d5db;
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Каталог плотницкой</h1>
+    <input type="text" id="searchBar" placeholder="Поиск по товарам...">
+</header>
+
+<div class="categories" id="categories"></div>
+
+<div class="grid" id="grid"></div>
+
+<script>
+/* ----------------------- ДАННЫЕ ИЗ PDF ----------------------- */
+
+const DATA = [
+    /* Каждая позиция: 
+        {
+            name: "",
+            category: "",
+            cost: "",
+            price: "",
+            img: "images/no-image.png",
+            ingredients: [ "..." ]
+        }
+    */
+
+    /* ---------- НАБОРЫ ---------- */
+    {
+        name: "Набор по уходу за мебелью",
+        category: "Наборы",
+        cost: "9.77",
+        price: "29.93",
+        img: "images/no-image.png",
+        ingredients: [
+            "Мягкая древесина - 3 шт.",
+            "Гвозди - 1 шт.",
+            "Мешковина - 2 шт.",
+            "Краска для мебели - 1 шт."
+        ]
+    },
+    {
+        name: "Набор по уходу за деталями интерьера",
+        category: "Наборы",
+        cost: "8.56",
+        price: "29.93",
+        img: "images/no-image.png",
+        ingredients: [
+            "Гвозди - 1 шт.",
+            "Мешковина - 1 шт.",
+            "Краска для мебели - 1 шт."
+        ]
+    },
+    {
+        name: "Набор по уходу за ульями",
+        category: "Наборы",
+        cost: "12.7",
+        price: "38.43",
+        img: "images/no-image.png",
+        ingredients: [
+            "Мягкая древесина - 10 шт.",
+            "Гвозди - 3 шт.",
+            "Краска для мебели - 1 шт."
+        ]
+    },
+
+    /* ---------------- КРОВАТИ и ДИВАНЫ ---------------- */
+
+    {
+        name: "Одноместная кровать",
+        category: "Кровати и диваны",
+        cost: "19.1",
+        price: "43",
+        img: "images/no-image.png",
+        ingredients: [
+            "Волокна древесные - 4 шт.",
+            "Мебельный лак - 1 шт.",
+            "Железная руда - 4 шт.",
+            "Мягкая древесина - 4 шт.",
+            "Твердая древесина - 15 шт."
+        ]
+    },
+
+    {
+        name: "Двуспальная кровать",
+        category: "Кровати и диваны",
+        cost: "18.8",
+        price: "50",
+        img: "images/no-image.png",
+        ingredients: [
+            "Железная руда - 6 шт.",
+            "Твердая древесина - 6 шт.",
+            "Древесные волокна - 7 шт.",
+            "Мебельный лак - 1 шт.",
+            "Мягкая древесина - 12 шт."
+        ]
+    },
+
+    {
+        name: "Массивная кровать",
+        category: "Кровати и диваны",
+        cost: "23.35",
+        price: "45",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 9 шт.",
+            "Мебельный лак - 1 шт.",
+            "Твердая древесина - 12 шт.",
+            "Железная руда - 2 шт.",
+            "Мягкая древесина - 15 шт."
+        ]
+    },
+
+    {
+        name: "Качественная высокая кровать",
+        category: "Кровати и диваны",
+        cost: "21.5",
+        price: "100",
+        img: "images/no-image.png",
+        ingredients: [
+            "Волокна древесные - 12 шт.",
+            "Мебельный лак - 1 шт.",
+            "Твердая древесина - 9 шт.",
+            "Мягкая древесина - 14 шт.",
+            "Железная руда - 2 шт."
+        ]
+    },
+
+    {
+        name: "Скромная кровать",
+        category: "Кровати и диваны",
+        cost: "19.15",
+        price: "40",
+        img: "images/no-image.png",
+        ingredients: [
+            "Волокна древесные - 5 шт.",
+            "Мебельный лак - 1 шт.",
+            "Твердая древесина - 7 шт.",
+            "Мягкая древесина - 14 шт.",
+            "Железная руда - 5 шт."
+        ]
+    },
+
+    {
+        name: "Грязная кровать",
+        category: "Кровати и диваны",
+        cost: "20",
+        price: "45",
+        img: "images/no-image.png",
+        ingredients: [
+            "Древесные волокна - 7 шт.",
+            "Мебельный лак - 1 шт.",
+            "Твердая древесина - 12 шт.",
+            "Мягкая древесина - 9 шт.",
+            "Железная руда - 3 шт."
+        ]
+    },
+
+    {
+        name: "Койка",
+        category: "Кровати и диваны",
+        cost: "9.7",
+        price: "25",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 4 шт.",
+            "Твердая древесина - 12 шт.",
+            "Мягкая древесина - 6 шт."
+        ]
+    },
+
+    {
+        name: "Диван",
+        category: "Кровати и диваны",
+        cost: "16.45",
+        price: "70",
+        img: "images/no-image.png",
+        ingredients: [
+            "Волокна древесные - 9 шт.",
+            "Мебельный лак - 1 шт.",
+            "Твердая древесина - 6 шт.",
+            "Мягкая древесина - 5 шт.",
+            "Железная руда - 4 шт."
+        ]
+    },
+
+    {
+        name: "Серо-зеленый диван",
+        category: "Кровати и диваны",
+        cost: "23.15",
+        price: "70",
+        img: "images/no-image.png",
+        ingredients: [
+            "Волокна древесные - 7 шт.",
+            "Мебельный лак - 1 шт.",
+            "Твердая древесина - 15 шт.",
+            "Мягкая древесина - 13 шт.",
+            "Железная руда - 4 шт."
+        ]
+    },
+
+    {
+        name: "Красный диван",
+        category: "Кровати и диваны",
+        cost: "17.15",
+        price: "80",
+        img: "images/no-image.png",
+        ingredients: [
+            "Волокна древесные - 13 шт.",
+            "Мебельный лак - 1 шт.",
+            "Железная руда - 2 шт.",
+            "Мягкая древесина - 5 шт.",
+            "Твердая древесина - 6 шт."
+        ]
+    },
+
+    {
+        name: "Синий диван",
+        category: "Кровати и диваны",
+        cost: "19.2",
+        price: "70",
+        img: "images/no-image.png",
+        ingredients: [
+            "Волокна древесные - 15 шт.",
+            "Мебельный лак - 1 шт.",
+            "Твердая древесина - 7 шт.",
+            "Мягкая древесина - 7 шт.",
+            "Железная руда - 3 шт."
+        ]
+    },
+
+    /* ---------------- СТУЛЬЯ ---------------- */
+
+    {
+        name: "Стул 1",
+        category: "Стулья",
+        cost: "???",
+        price: "25",
+        img: "images/no-image.png",
+        ingredients: [
+            "Железная руда - 2 шт.",
+            "Мягкая древесина - 6 шт.",
+            "Смола - 4 шт.",
+            "Твердая древесина - 10 шт."
+        ]
+    },
+
+    {
+        name: "Стул 8",
+        category: "Стулья",
+        cost: "7",
+        price: "23",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 4 шт.",
+            "Твердая древесина - 8 шт.",
+            "Мягкая древесина - 4 шт."
+        ]
+    },
+
+    {
+        name: "Стул 32",
+        category: "Стулья",
+        cost: "14.1",
+        price: "40",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 8 шт.",
+            "Мебельный лак - 1 шт.",
+            "Мягкая древесина - 4 шт.",
+            "Твердая древесина - 3 шт."
+        ]
+    },
+
+    {
+        name: "Комфортный стул 1",
+        category: "Стулья",
+        cost: "12.5",
+        price: "30",
+        img: "images/no-image.png",
+        ingredients: [
+            "Твердая древесина - 12 шт.",
+            "Мягкая древесина - 8 шт.",
+            "Железная руда - 2 шт.",
+            "Смола - 8 шт."
+        ]
+    },
+
+    {
+        name: "Комфортный стул 2",
+        category: "Стулья",
+        cost: "17.85",
+        price: "45",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 5 шт.",
+            "Железная руда - 3 шт.",
+            "Мебельный лак - 1 шт.",
+            "Мягкая древесина - 6 шт.",
+            "Твердая древесина - 10 шт."
+        ]
+    },
+
+    {
+        name: "Комфортный стул 3",
+        category: "Стулья",
+        cost: "17.8",
+        price: "45",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 8 шт.",
+            "Железная руда - 2 шт.",
+            "Мебельный лак - 1 шт.",
+            "Мягкая древесина - 6 шт.",
+            "Твердая древесина - 8 шт."
+        ]
+    },
+
+    {
+        name: "Комфортный стул 6",
+        category: "Стулья",
+        cost: "20.9",
+        price: "50",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 8 шт.",
+            "Мягкая древесина - 12 шт.",
+            "Мебельный лак - 1 шт.",
+            "Твердая древесина - 10 шт.",
+            "Железная руда - 2 шт."
+        ]
+    },
+
+    {
+        name: "Комфортный стул 12",
+        category: "Стулья",
+        cost: "20.45",
+        price: "52",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 9 шт.",
+            "Железная руда - 3 шт.",
+            "Твердая древесина - 12 шт.",
+            "Мебельный лак - 1 шт.",
+            "Мягкая древесина - 6 шт."
+        ]
+    },
+
+    {
+        name: "Комфортный стул 16",
+        category: "Стулья",
+        cost: "18.45",
+        price: "46",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 9 шт.",
+            "Мягкая древесина - 6 шт.",
+            "Мебельный лак - 1 шт.",
+            "Твердая древесина - 8 шт.",
+            "Железная руда - 3 шт."
+        ]
+    },
+
+    {
+        name: "Нарезной стул",
+        category: "Стулья",
+        cost: "21.35",
+        price: "55",
+        img: "images/no-image.png",
+        ingredients: [
+            "Волокна древесные - 6 шт.",
+            "Мебельный лак - 1 шт.",
+            "Твердая древесина - 15 шт.",
+            "Мягкая древесина - 8 шт.",
+            "Железная руда - 5 шт."
+        ]
+    },
+
+    {
+        name: "Роскошный стул",
+        category: "Стулья",
+        cost: "23.5",
+        price: "60",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 5 шт.",
+            "Твердая древесина - 15 шт.",
+            "Железная руда - 3 шт.",
+            "Мебельный лак - 1 шт.",
+            "Мягкая древесина - 15 шт."
+        ]
+    },
+
+    {
+        name: "Синий стул",
+        category: "Стулья",
+        cost: "10.05",
+        price: "23",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 8 шт.",
+            "Железная руда - 3 шт.",
+            "Мягкая древесина - 6 шт.",
+            "Твердая древесина - 8 шт."
+        ]
+    },
+
+    {
+        name: "Мягкая скамейка",
+        category: "Стулья",
+        cost: "21.32",
+        price: "63",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 1 шт.",
+            "Мебельный лак - 1 шт.",
+            "Мешковина - 2 шт.",
+            "Твердая древесина - 20 шт.",
+            "Железная руда - 4 шт.",
+            "Гвозди - 4 шт."
+        ]
+    },
+
+    {
+        name: "Скамейка с медведями",
+        category: "Стулья",
+        cost: "14.55",
+        price: "42",
+        img: "images/no-image.png",
+        ingredients: [
+            "Волокна древесные - 6 шт.",
+            "Мебельный лак - 1 шт.",
+            "Мягкая древесина - 5 шт.",
+            "Твердая древесина - 6 шт."
+        ]
+    },
+
+    {
+        name: "Простой табурет",
+        category: "Стулья",
+        cost: "15.2",
+        price: "40",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 4 шт.",
+            "Железная руда - 2 шт.",
+            "Мебельный лак - 1 шт.",
+            "Мягкая древесина - 6 шт.",
+            "Твердая древесина - 6 шт."
+        ]
+    },
+
+    /* ---------------- СТОЛЫ ---------------- */
+
+    {
+        name: "Большой круглый стол",
+        category: "Столы",
+        cost: "15.45",
+        price: "50",
+        img: "images/no-image.png",
+        ingredients: [
+            "Волокна древесные - 6 шт.",
+            "Железная руда - 2 шт.",
+            "Мебельный лак - 1 шт.",
+            "Мягкая древесина - 9 шт.",
+            "Твердая древесина - 4 шт."
+        ]
+    },
+
+    {
+        name: "Большой стол с белой скатертью",
+        category: "Столы",
+        cost: "20.4",
+        price: "60",
+        img: "images/no-image.png",
+        ingredients: [
+            "Мешковина - 5 шт.",
+            "Мебельный лак - 1 шт.",
+            "Гвозди - 4 шт.",
+            "Твердая древесина - 20 шт."
+        ]
+    },
+
+    {
+        name: "Стол с белой скатертью",
+        category: "Столы",
+        cost: "16.46",
+        price: "40",
+        img: "images/no-image.png",
+        ingredients: [
+            "Мешковина - 1 шт.",
+            "Мебельный лак - 1 шт.",
+            "Гвозди - 2 шт.",
+            "Твердая древесина - 15 шт."
+        ]
+    },
+
+    {
+        name: "Белый туалетный столик",
+        category: "Столы",
+        cost: "36",
+        price: "60",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 5 шт.",
+            "Железная руда - 3 шт.",
+            "Мебельный лак - 2 шт.",
+            "Твердая древесина - 25 шт.",
+            "Мягкая древесина - 10 шт.",
+            "Гвозди - 3 шт."
+        ]
+    },
+
+    {
+        name: "Круглый стол",
+        category: "Столы",
+        cost: "19.05",
+        price: "49",
+        img: "images/no-image.png",
+        ingredients: [
+            "Древесные волокна - 6 шт.",
+            "Твердая древесина - 15 шт.",
+            "Мебельный лак - 1 шт.",
+            "Мягкая древесина - 5 шт."
+        ]
+    },
+
+    {
+        name: "Полукруглый стол",
+        category: "Столы",
+        cost: "26.5",
+        price: "60",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 10 шт.",
+            "Мебельный лак - 1 шт.",
+            "Гвозди - 5 шт.",
+            "Твердая древесина - 25 шт."
+        ]
+    },
+
+    {
+        name: "Старый стол",
+        category: "Столы",
+        cost: "24.3",
+        price: "49",
+        img: "images/no-image.png",
+        ingredients: []
+    },
+
+    {
+        name: "Столешница",
+        category: "Столы",
+        cost: "18.7",
+        price: "55",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 5 шт.",
+            "Твердая древесина - 15 шт.",
+            "Гвозди - 3 шт.",
+            "Мебельный лак - 1 шт."
+        ]
+    },
+
+    {
+        name: "Кофейный столик",
+        category: "Столы",
+        cost: "17.1",
+        price: "45",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 2 шт.",
+            "Твердая древесина - 15 шт.",
+            "Гвозди - 2 шт.",
+            "Мебельный лак - 1 шт."
+        ]
+    },
+
+    {
+        name: "Парта",
+        category: "Столы",
+        cost: "17.1",
+        price: "40",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 2 шт.",
+            "Мебельный лак - 1 шт.",
+            "Твердая древесина - 15 шт.",
+            "Гвозди - 2 шт."
+        ]
+    },
+
+    {
+        name: "Офисный стол",
+        category: "Столы",
+        cost: "5",
+        price: "20",
+        img: "images/no-image.png",
+        ingredients: [
+            "Железная руда - 4 шт.",
+            "Твердая древесина - 8 шт."
+        ]
+    },
+
+    {
+        name: "Офисный стол 2",
+        category: "Столы",
+        cost: "26",
+        price: "90",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 1 шт.",
+            "Мебельный лак - 2 шт.",
+            "Твердая древесина - 15 шт.",
+            "Железная руда - 2 шт.",
+            "Гвозди - 4 шт."
+        ]
+    },
+
+    {
+        name: "Старый белый стол",
+        category: "Столы",
+        cost: "20.1",
+        price: "55",
+        img: "images/no-image.png",
+        ingredients: [
+            "Древесные волокна - 6 шт.",
+            "Твердая древесина - 15 шт.",
+            "Мебельный лак - 1 шт.",
+            "Мягкая древесина - 8 шт."
+        ]
+    },
+
+    /* ---------------- ШКАФЫ ---------------- */
+
+    {
+        name: "Оружейный шкаф",
+        category: "Шкафы и тумбы",
+        cost: "28.85",
+        price: "90",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 5 шт.",
+            "Мебельный лак - 2 шт.",
+            "Твердая древесина - 15 шт.",
+            "Мягкая древесина - 6 шт.",
+            "Железная руда - 5 шт."
+        ]
+    },
+
+    {
+        name: "Прикроватная тумбочка",
+        category: "Шкафы и тумбы",
+        cost: "16.75",
+        price: "49.99",
+        img: "images/no-image.png",
+        ingredients: [
+            "Железная руда - 1 шт.",
+            "Твердая древесина - 15 шт.",
+            "Волокна древесные - 1 шт.",
+            "Мебельный лак - 1 шт.",
+            "Мягкая древесина - 2 шт."
+        ]
+    },
+
+    {
+        name: "Старинный комод",
+        category: "Шкафы и тумбы",
+        cost: "42.4",
+        price: "100",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 5 шт.",
+            "Железная руда - 2 шт.",
+            "Мебельный лак - 2 шт.",
+            "Волокна древесные - 3 шт.",
+            "Твердая древесина - 35 шт.",
+            "Мягкая древесина - 10 шт.",
+            "Гвозди - 5 шт."
+        ]
+    },
+
+    {
+        name: "Большой лакированный шкаф",
+        category: "Шкафы и тумбы",
+        cost: "23.8",
+        price: "60",
+        img: "images/no-image.png",
+        ingredients: [
+            "Волокна древесные - 6 шт.",
+            "Мебельный лак - 1 шт.",
+            "Мягкая древесина - 15 шт.",
+            "Железная руда - 5 шт.",
+            "Твердая древесина - 15 шт."
+        ]
+    },
+
+    {
+        name: "Буфет",
+        category: "Шкафы и тумбы",
+        cost: "17.9",
+        price: "50",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 4 шт.",
+            "Мебельный лак - 1 шт.",
+            "Гвозди - 2 шт.",
+            "Твердая древесина - 15 шт."
+        ]
+    },
+
+    {
+        name: "Буфет 2",
+        category: "Шкафы и тумбы",
+        cost: "30.25",
+        price: "60",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 5 шт.",
+            "Мебельный лак - 2 шт.",
+            "Твердая древесина - 20 шт.",
+            "Железная руда - 1 шт.",
+            "Гвозди - 5 шт."
+        ]
+    },
+
+    {
+        name: "Большой буфет",
+        category: "Шкафы и тумбы",
+        cost: "27.25",
+        price: "70",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 5 шт.",
+            "Мебельный лак - 1 шт.",
+            "Твердая древесина - 20 шт.",
+            "Мягкая древесина - 15 шт.",
+            "Гвозди - 5 шт."
+        ]
+    },
+
+    {
+        name: "Средний шкаф",
+        category: "Шкафы и тумбы",
+        cost: "18.6",
+        price: "50",
+        img: "images/no-image.png",
+        ingredients: [
+            "Волокна древесные - 4 шт.",
+            "Мебельный лак - 1 шт.",
+            "Твердая древесина - 15 шт.",
+            "Мягкая древесина - 4 шт.",
+            "Железная руда - 2 шт."
+        ]
+    },
+
+    {
+        name: "Комод",
+        category: "Шкафы и тумбы",
+        cost: "23",
+        price: "55",
+        img: "images/no-image.png",
+        ingredients: [
+            "Железная руда - 2 шт.",
+            "Смола - 2 шт.",
+            "Гвозди - 3 шт.",
+            "Мебельный лак - 1 шт.",
+            "Твердая древесина - 25 шт."
+        ]
+    },
+
+    {
+        name: "Комод из черного дерева",
+        category: "Шкафы и тумбы",
+        cost: "17.6",
+        price: "50",
+        img: "images/no-image.png",
+        ingredients: [
+            "Волокна древесные - 3 шт.",
+            "Мебельный лак - 1 шт.",
+            "Твердая древесина - 15 шт.",
+            "Мягкая древесина - 2 шт.",
+            "Железная руда - 2 шт."
+        ]
+    },
+
+    {
+        name: "Комод с узорами",
+        category: "Шкафы и тумбы",
+        cost: "17.35",
+        price: "53",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 1 шт.",
+            "Мебельный лак - 1 шт.",
+            "Твердая древесина - 15 шт.",
+            "Железная руда - 1 шт.",
+            "Гвозди - 3 шт."
+        ]
+    },
+
+    {
+        name: "Угловой шкаф",
+        category: "Шкафы и тумбы",
+        cost: "20.1",
+        price: "65",
+        img: "images/no-image.png",
+        ingredients: [
+            "Твердая древесина - 20 шт.",
+            "Железная руда - 2 шт.",
+            "Гвозди - 4 шт.",
+            "Мебельный лак - 1 шт."
+        ]
+    },
+
+    {
+        name: "Шкаф",
+        category: "Шкафы и тумбы",
+        cost: "18.3",
+        price: "56",
+        img: "images/no-image.png",
+        ingredients: [
+            "Мебельный лак - 1 шт.",
+            "Твердая древесина - 15 шт.",
+            "Железная руда - 1 шт.",
+            "Мягкая древесина - 5 шт.",
+            "Гвозди - 2 шт."
+        ]
+    },
+
+    /* ---------------- ПРОЧЕЕ ---------------- */
+
+    {
+        name: "Пугало",
+        category: "Прочее",
+        cost: "15.95",
+        price: "35",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 8 шт.",
+            "Мягкая древесина - 15 шт.",
+            "Твердая древесина - 15 шт."
+        ]
+    },
+
+    {
+        name: "Зеркало",
+        category: "Прочее",
+        cost: "13.55",
+        price: "37",
+        img: "images/no-image.png",
+        ingredients: [
+            "Древесные волокна - 2 шт.",
+            "Мебельный лак - 1 шт.",
+            "Железная руда - 7 шт.",
+            "Мягкая древесина - 2 шт.",
+            "Твердая древесина - 5 шт."
+        ]
+    },
+
+    {
+        name: "Вешалка",
+        category: "Прочее",
+        cost: "14.2",
+        price: "39",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 2 шт.",
+            "Твердая древесина - 10 шт.",
+            "Гвозди - 1 шт.",
+            "Мебельный лак - 1 шт."
+        ]
+    },
+
+    {
+        name: "Ширма",
+        category: "Прочее",
+        cost: "16",
+        price: "35",
+        img: "images/no-image.png",
+        ingredients: [
+            "Железная руда - 2 шт.",
+            "Мебельный лак - 1 шт.",
+            "Твердая древесина - 15 шт."
+        ]
+    },
+
+    {
+        name: "Старое кресло",
+        category: "Прочее",
+        cost: "23.55",
+        price: "55",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 4 шт.",
+            "Волокна древесные - 4 шт.",
+            "Мебельный лак - 1 шт.",
+            "Твердая древесина - 15 шт.",
+            "Мягкая древесина - 15 шт."
+        ]
+    },
+
+    {
+        name: "Трубка",
+        category: "Прочее",
+        cost: "11.2",
+        price: "35",
+        img: "images/no-image.png",
+        ingredients: [
+            "Смола - 5 шт.",
+            "Твердая древесина - 1 шт.",
+            "Мягкая древесина - 2 шт.",
+            "Мебельный лак - 1 шт."
+        ]
+    },
+
+    {
+        name: "Заготовка баррикады для полиции",
+        category: "Прочее",
+        cost: "5.35",
+        price: "25",
+        img: "images/no-image.png",
+        ingredients: [
+            "Твердая древесина - 6 шт.",
+            "Мягкая древесина - 6 шт.",
+            "Железная руда - 1 шт."
+        ]
+    }
+];
+
+/* ----------------------- UI СКРИПТ ----------------------- */
+
+const grid = document.getElementById("grid");
+const categoriesBox = document.getElementById("categories");
+const searchBar = document.getElementById("searchBar");
+
+let activeCategory = "Все";
+
+function renderCategories() {
+    const categories = ["Все", ...new Set(DATA.map(i => i.category))];
+
+    categoriesBox.innerHTML = "";
+
+    categories.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.className = "cat-btn" + (cat === activeCategory ? " active" : "");
+        btn.textContent = cat;
+        btn.onclick = () => { activeCategory = cat; render(); };
+        categoriesBox.appendChild(btn);
+    });
+}
+
+function render() {
+    const query = searchBar.value.toLowerCase();
+
+    grid.innerHTML = "";
+
+    DATA
+        .filter(item => activeCategory === "Все" || item.category === activeCategory)
+        .filter(item => item.name.toLowerCase().includes(query))
+        .forEach(item => {
+            const card = document.createElement("div");
+            card.className = "card";
+
+            card.innerHTML = `
+                <img src="${item.img}">
+                <div>
+                    <h3>${item.name}</h3>
+                    <div class="price">Цена: <b>${item.price}$</b></div>
+                    <div class="price">Себестоимость: <span style="color:#fbbf24">${item.cost}$</span></div>
+                    <div class="tag">${item.category}</div>
+
+                    <details>
+                        <summary>Ингредиенты</summary>
+                        ${item.ingredients.map(i => `<div class='ingredient'>• ${i}</div>`).join("")}
+                    </details>
+                </div>
+            `;
+
+            grid.appendChild(card);
+        });
+}
+
+searchBar.addEventListener("input", render);
+
+renderCategories();
+render();
+
+</script>
+
+</body>
+</html>
