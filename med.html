@@ -268,62 +268,139 @@ function normName(s){
 
 /* -------------------- ДАННЫЕ: докторские крафты -------------------- */
 const DOCTOR_CRAFTS = [
-  {id:"paracetamol", name:"Парацетамол", output:1, stack:10, timeSec:120, ing:[
-    {name:"Яд",qty:1,unit:"шт"},{name:"Стеклянная бутылка",qty:1,unit:"шт"},
-    {name:"Соль",qty:1,unit:"шт"},{name:"Агава",qty:2,unit:"шт"}]},
-  {id:"bint-steril", name:"Бинт стерильный", output:2, stack:20, timeSec:120, ing:[
-    {name:"Волокна древесные",qty:1,unit:"шт"},{name:"Спирт",qty:1,unit:"шт"},{name:"Алоэ",qty:2,unit:"шт"}]},
-  {id:"maz-lechebnaya", name:"Лечебная мазь", output:1, stack:10, timeSec:120, ing:[
-    {name:"Животный жир",qty:1,unit:"шт"},{name:"Алоэ",qty:3,unit:"шт"},
-    {name:"Змеиный яд",qty:1,unit:"шт"},{name:"Тысячелистник",qty:2,unit:"шт"}]},
-  {id:"aptechka-heroine", name:"Аптечка на героине", output:1, stack:10, timeSec:120, ing:[
-    {name:"Героин",qty:1,unit:"шт"},{name:"Противоядие",qty:1,unit:"шт"},{name:"Бинт стерильный",qty:1,unit:"шт"}]},
-  {id:"protivoyadie", name:"Противоядие", output:1, stack:10, timeSec:120, ing:[
-    {name:"Зимняя ягода",qty:1,unit:"шт"},{name:"Змеиный яд",qty:1,unit:"шт"},{name:"Чок Дейзи",qty:1,unit:"шт"}]},
-  {id:"hirurg-nabor", name:"Хирургический набор", output:1, stack:10, timeSec:60, ing:[
-    {name:"Змеиный яд",qty:1,unit:"шт"},{name:"Вода",qty:1,unit:"шт"},
-    {name:"Спирт",qty:1,unit:"шт"},{name:"Бинт простой",qty:1,unit:"шт"},{name:"Опиум",qty:1,unit:"шт"}]},
-  {id:"otvar-travy", name:"Отвар на травах", output:1, stack:15, timeSec:120, ing:[
-    {name:"Английская булава",qty:2,unit:"шт"},{name:"Ползучий тимьян",qty:2,unit:"шт"},
-    {name:"Гриб-зонтик",qty:2,unit:"шт"},{name:"Алоэ",qty:2,unit:"шт"}]},
+  {id:"aptechka-heroine", name:"Аптечка на героине", output:1, stack:10, timeSec:60, ing:[
+    {name:"Героин",qty:1,unit:"шт"},
+    {name:"Противоядие",qty:1,unit:"шт"},
+    {name:"Бинт стерильный",qty:1,unit:"шт"}]},
+
+  {id:"aptechka-opium", name:"Аптечка на опиуме", output:1, stack:10, timeSec:60, ing:[
+    {name:"Опиум",qty:1,unit:"шт"},
+    {name:"Противоядие",qty:1,unit:"шт"},
+    {name:"Бинт стерильный",qty:1,unit:"шт"}]},
+
+  {id:"bint-prost", name:"Бинт простой", output:1, stack:20, timeSec:30, ing:[
+    {name:"Волокна древесные",qty:1,unit:"шт"},
+    {name:"Мёд",qty:1,unit:"шт"},
+    {name:"Алоэ",qty:1,unit:"шт"}]},
+
+  {id:"bint-steril", name:"Бинт стерильный", output:2, stack:20, timeSec:40, ing:[
+    {name:"Волокна древесные",qty:1,unit:"шт"},
+    {name:"Алоэ",qty:1,unit:"шт"},
+    {name:"Спирт",qty:1,unit:"шт"}]},
+
+  {id:"geroin", name:"Героин", output:2, stack:10, timeSec:60, ing:[
+    {name:"Красная малина",qty:2,unit:"шт"},
+    {name:"Морфин",qty:2,unit:"шт"},
+    {name:"Яд",qty:1,unit:"шт"}]},
+
+  {id:"laudanum", name:"Лауданум", output:1, stack:10, timeSec:60, ing:[
+    {name:"Алоэ",qty:2,unit:"шт"},
+    {name:"Змеиный яд",qty:1,unit:"шт"},
+    {name:"Опиум",qty:2,unit:"шт"},
+    {name:"Спирт",qty:1,unit:"шт"}]},
+
+  {id:"maz-lechebnaya", name:"Лечебная мазь", output:1, stack:10, timeSec:60, ing:[
+    {name:"Алоэ",qty:1,unit:"шт"},
+    {name:"Животный жир",qty:1,unit:"шт"},
+    {name:"Змеиный яд",qty:1,unit:"шт"},
+    {name:"Тысячелистник",qty:2,unit:"шт"}]},
+
+  {id:"morfin", name:"Морфин", output:1, stack:10, timeSec:60, ing:[
+    {name:"Прерийный мак",qty:1,unit:"шт"},
+    {name:"Спирт",qty:1,unit:"шт"},
+    {name:"Стеклянная бутылка",qty:1,unit:"шт"}]},
+
   {id:"nast-zheludok", name:'Настойка "Здоровый желудок"', output:1, stack:15, timeSec:20, ing:[
-    {name:"Прерийный мак",qty:2,unit:"шт"},{name:"Алоэ",qty:2,unit:"шт"},
-    {name:"Аляскинский женьшень",qty:1,unit:"шт"},{name:"Тысячелистник",qty:2,unit:"шт"}]},
-  {id:"tonik-hinin", name:"Тоник с Хинином", output:2, stack:15, timeSec:120, ing:[
-    {name:"Стеклянная бутылка",qty:1,unit:"шт"},{name:"Спирт",qty:1,unit:"шт"},
-    {name:"Мягкая древесина",qty:3,unit:"шт"},{name:"Алоэ",qty:3,unit:"шт"}]},
-  {id:"maz-salic", name:"Салициловая мазь", output:1, stack:10, timeSec:140, ing:[
-    {name:"Животный жир",qty:1,unit:"шт"},{name:"Шалфей олеандровый",qty:3,unit:"шт"},{name:"Мягкая древесина",qty:2,unit:"шт"}]},
-  {id:"nast-uspokaiv", name:"Успокаивающая настойка", output:1, stack:15, timeSec:20, ing:[
-    {name:"Спирт",qty:1,unit:"шт"},{name:"Американский женьшень",qty:1,unit:"шт"},
-    {name:"Алоэ",qty:2,unit:"шт"},{name:"Дикая мята",qty:2,unit:"шт"}]},
-  {id:"bint-prost", name:"Бинт простой", output:1, stack:20, timeSec:40, ing:[
-    {name:"Волокна древесные",qty:1,unit:"шт"},{name:"Вода",qty:1,unit:"шт"},
-    {name:"Мёд",qty:1,unit:"шт"},{name:"Алоэ",qty:2,unit:"шт"}]},
-  {id:"geroin", name:"Героин", output:2, stack:10, timeSec:120, ing:[
-    {name:"Яд",qty:2,unit:"шт"},{name:"Красная малина",qty:4,unit:"шт"},{name:"Морфин",qty:2,unit:"шт"}]},
-  {id:"yad", name:"Яд", output:2, stack:20, timeSec:45, ing:[
-    {name:"Прерийный мак",qty:5,unit:"шт"},{name:"Змеиный яд",qty:1,unit:"шт"},{name:"Нитрит",qty:4,unit:"шт"}]},
-  {id:"laudanum", name:"Лауданум", output:1, stack:10, timeSec:120, ing:[
-    {name:"Опиум",qty:2,unit:"шт"},{name:"Спирт",qty:1,unit:"шт"},{name:"Змеиный яд",qty:2,unit:"шт"},{name:"Алоэ",qty:3,unit:"шт"}]},
-  {id:"opium", name:"Опиум", output:1, stack:10, timeSec:120, ing:[
-    {name:"Прерийный мак",qty:3,unit:"шт"},{name:"Яд",qty:2,unit:"шт"},{name:"Стеклянная бутылка",qty:1,unit:"шт"}]},
-  {id:"detox", name:"Детокс", output:1, stack:10, timeSec:120, ing:[
-    {name:"Молочай",qty:2,unit:"шт"},{name:"Кровавый цветок",qty:5,unit:"шт"},{name:"Змеиный яд",qty:1,unit:"шт"},
-    {name:"Вода",qty:1,unit:"шт"},{name:"Парацетамол",qty:2,unit:"шт"},{name:"Спирт",qty:3,unit:"шт"},
-    {name:"Шалфей олеандровый",qty:3,unit:"шт"},{name:"Опиум",qty:2,unit:"шт"}]},
+    {name:"Алоэ",qty:1,unit:"шт"},
+    {name:"Аляскинский женьшень",qty:1,unit:"шт"},
+    {name:"Прерийный мак",qty:1,unit:"шт"},
+    {name:"Тысячелистник",qty:2,unit:"шт"}]},
+
   {id:"nast-kosti", name:'Настойка "Крепкие кости"', output:1, stack:15, timeSec:20, ing:[
-    {name:"Прерийный мак",qty:2,unit:"шт"},{name:"Животный жир",qty:1,unit:"шт"},{name:"Тысячелистник",qty:2,unit:"шт"}]},
-  {id:"tonik-toniz", name:"Тонизирующий тоник", output:2, stack:15, timeSec:120, ing:[
-    {name:"Сахар",qty:2,unit:"шт"},{name:"Черная смородина",qty:3,unit:"шт"},{name:"Стеклянная бутылка",qty:1,unit:"шт"},
-    {name:"Агава",qty:2,unit:"шт"},{name:"Аляскинский женьшень",qty:2,unit:"шт"},{name:"Дикая мята",qty:1,unit:"шт"}]},
-  {id:"aptechka-opium", name:"Аптечка на опиуме", output:1, stack:10, timeSec:120, ing:[
-    {name:"Опиум",qty:1,unit:"шт"},{name:"Противоядие",qty:1,unit:"шт"},{name:"Бинт стерильный",qty:1,unit:"шт"}]},
-  {id:"morfin", name:"Морфин", output:1, stack:10, timeSec:120, ing:[
-    {name:"Прерийный мак",qty:2,unit:"шт"},{name:"Спирт",qty:1,unit:"шт"},{name:"Стеклянная бутылка",qty:1,unit:"шт"}]},
+    {name:"Животный жир",qty:1,unit:"шт"},
+    {name:"Прерийный мак",qty:1,unit:"шт"},
+    {name:"Тысячелистник",qty:2,unit:"шт"}]},
+
+  {id:"nast-cold", name:"Настойка от простуды", output:1, stack:15, timeSec:20, ing:[
+    {name:"Алоэ",qty:1,unit:"шт"},
+    {name:"Аляскинский женьшень",qty:1,unit:"шт"},
+    {name:"Прерийный мак",qty:1,unit:"шт"}]},
+
+  {id:"opium", name:"Опиум", output:1, stack:10, timeSec:60, ing:[
+    {name:"Прерийный мак",qty:2,unit:"шт"},
+    {name:"Стеклянная бутылка",qty:1,unit:"шт"},
+    {name:"Яд",qty:2,unit:"шт"}]},
+
+  {id:"otvar-travy", name:"Отвар на травах", output:1, stack:15, timeSec:60, ing:[
+    {name:"Алоэ",qty:1,unit:"шт"},
+    {name:"Английская булава",qty:2,unit:"шт"},
+    {name:"Гриб-зонтик",qty:2,unit:"шт"},
+    {name:"Ползучий тимьян",qty:1,unit:"шт"}]},
+
+  {id:"paracetamol", name:"Парацетамол", output:1, stack:10, timeSec:60, ing:[
+    {name:"Агава",qty:1,unit:"шт"},
+    {name:"Соль",qty:1,unit:"шт"},
+    {name:"Стеклянная бутылка",qty:1,unit:"шт"},
+    {name:"Яд",qty:1,unit:"шт"}]},
+
+  {id:"detox", name:"Детокс", output:1, stack:10, timeSec:60, ing:[
+    {name:"Вода",qty:1,unit:"шт"},
+    {name:"Змеиный яд",qty:1,unit:"шт"},
+    {name:"Кровавый цветок",qty:3,unit:"шт"},
+    {name:"Молочай",qty:2,unit:"шт"},
+    {name:"Опиум",qty:2,unit:"шт"},
+    {name:"Парацетамол",qty:1,unit:"шт"},
+    {name:"Спирт",qty:2,unit:"шт"},
+    {name:"Шалфей олеандровый",qty:2,unit:"шт"}]},
+
+  {id:"protivoyadie", name:"Противоядие", output:1, stack:10, timeSec:60, ing:[
+    {name:"Зимняя ягода",qty:1,unit:"шт"},
+    {name:"Змеиный яд",qty:1,unit:"шт"},
+    {name:"Чок Дейзи",qty:1,unit:"шт"}]},
+
+  {id:"maz-salic", name:"Салициловая мазь", output:1, stack:10, timeSec:60, ing:[
+    {name:"Животный жир",qty:1,unit:"шт"},
+    {name:"Мягкая древесина",qty:1,unit:"шт"},
+    {name:"Шалфей олеандровый",qty:2,unit:"шт"}]},
+
+  {id:"tonik-toniz", name:"Тонизирующий тоник", output:2, stack:15, timeSec:60, ing:[
+    {name:"Агава",qty:1,unit:"шт"},
+    {name:"Аляскинский женьшень",qty:1,unit:"шт"},
+    {name:"Дикая мята",qty:1,unit:"шт"},
+    {name:"Сахар",qty:2,unit:"шт"},
+    {name:"Стеклянная бутылка",qty:1,unit:"шт"},
+    {name:"Черная смородина",qty:2,unit:"шт"}]},
+
+  {id:"tonik-hinin", name:"Тоник с Хинином", output:2, stack:15, timeSec:60, ing:[
+    {name:"Алоэ",qty:2,unit:"шт"},
+    {name:"Мягкая древесина",qty:1,unit:"шт"},
+    {name:"Спирт",qty:1,unit:"шт"},
+    {name:"Стеклянная бутылка",qty:1,unit:"шт"}]},
+
+  {id:"nast-uspokaiv", name:"Успокаивающая настойка", output:1, stack:15, timeSec:20, ing:[
+    {name:"Алоэ",qty:1,unit:"шт"},
+    {name:"Американский женьшень",qty:1,unit:"шт"},
+    {name:"Дикая мята",qty:2,unit:"шт"},
+    {name:"Спирт",qty:1,unit:"шт"}]},
+
+  {id:"hirurg-nabor", name:"Хирургический набор", output:1, stack:10, timeSec:45, ing:[
+    {name:"Вода",qty:1,unit:"шт"},
+    {name:"Бинт простой",qty:1,unit:"шт"},
+    {name:"Змеиный яд",qty:1,unit:"шт"},
+    {name:"Опиум",qty:1,unit:"шт"},
+    {name:"Спирт",qty:1,unit:"шт"}]},
+
+  {id:"yad", name:"Яд", output:2, stack:20, timeSec:45, ing:[
+    {name:"Змеиный яд",qty:1,unit:"шт"},
+    {name:"Нитрит",qty:3,unit:"шт"},
+    {name:"Прерийный мак",qty:3,unit:"шт"}]},
+
   {id:"syrop-dr-kaf", name:'Сироп "Др. Каф"', output:1, stack:15, timeSec:55, ing:[
-    {name:"Листья коки",qty:4,unit:"шт"},{name:"Спирт",qty:1,unit:"шт"},{name:"Нитрит",qty:1,unit:"шт"},
-    {name:"Сахар",qty:4,unit:"шт"},{name:"Вода",qty:1,unit:"шт"}]},
+    {name:"Вода",qty:1,unit:"шт"},
+    {name:"Листья коки",qty:4,unit:"шт"},
+    {name:"Нитрит",qty:1,unit:"шт"},
+    {name:"Сахар",qty:4,unit:"шт"},
+    {name:"Спирт",qty:1,unit:"шт"}]}
 ];
 const DO_NOT_EXPAND = new Set([]);
 
@@ -660,6 +737,7 @@ const GOODS = [
   ["Настойка «крепкие кости»", "$4 /шт", ""],
   ["Настойка «крепкий желудок»", "$4 /шт", "в крафтах: «Здоровый желудок»"],
   ["Успокаивающая настойка", "$4 /шт", ""],
+  ["Настойка от простуды", "$1 /шт", ""],
   ["Сироп Доктора Кафа", "$6 /шт", ""],
   ["Кровь Вождя", "$6 /шт", ""]
 ];
@@ -685,6 +763,7 @@ const PRICING = [
   {id:"g_nast_kosti", name:'Настойка «крепкие кости»', type:"good", pricing:{base:4}},
   {id:"g_nast_zheludok", name:'Настойка «крепкий желудок»', type:"good", pricing:{base:4}},
   {id:"g_nast_uspok", name:"Успокаивающая настойка", type:"good", pricing:{base:4}},
+  {id:"g_nast_cold", name:"Настойка от простуды", type:"good", pricing:{base:1}},
   {id:"g_syrop_kaf", name:"Сироп Доктора Кафа", type:"good", pricing:{base:6}},
   {id:"g_krov_vozhdya", name:"Кровь Вождя", type:"good", pricing:{base:6}}
 ];
@@ -750,3 +829,4 @@ renderPay();
 </script>
 </body>
 </html>
+
