@@ -395,17 +395,41 @@ const DOCTOR_CRAFTS = [
     {name:"Нитрит",qty:3,unit:"шт"},
     {name:"Прерийный мак",qty:3,unit:"шт"}]},
 
-  {id:"nast-cold", name:"Настойка от простуды", output:1, stack:15, timeSec:20, ing:[
-    {name:"Алоэ",qty:1,unit:"шт"},
-    {name:"Аляскинский женьшень",qty:1,unit:"шт"},
-    {name:"Прерийный мак",qty:1,unit:"шт"}]},
-
   {id:"syrop-dr-kaf", name:'Сироп "Др. Каф"', output:1, stack:15, timeSec:55, ing:[
     {name:"Вода",qty:1,unit:"шт"},
     {name:"Листья коки",qty:4,unit:"шт"},
     {name:"Нитрит",qty:1,unit:"шт"},
     {name:"Сахар",qty:4,unit:"шт"},
-    {name:"Спирт",qty:1,unit:"шт"}]}
+    {name:"Спирт",qty:1,unit:"шт"}]},
+  
+  {id:"nast-morfin", name:"Настойка на морфине", output:2, stack:15, timeSec:60, ing:[
+    {name:"Морфин",qty:1,unit:"шт"},
+    {name:"Сахар",qty:2,unit:"шт"},
+    {name:"Стеклянная бутылка",qty:2,unit:"шт"},
+    {name:"Чёрная смородина",qty:2,unit:"шт"}]},
+
+  {id:"nast-ginseng", name:"Настойка на женьшене", output:2, stack:15, timeSec:60, ing:[
+    {name:"Аляскинский женьшень",qty:3,unit:"шт"},
+    {name:"Сахар",qty:1,unit:"шт"},
+    {name:"Спирт",qty:1,unit:"шт"},
+    {name:"Стеклянная бутылка",qty:2,unit:"шт"}]},
+
+  {id:"nast-thyme", name:"Настойка на тимьяне", output:2, stack:15, timeSec:60, ing:[
+    {name:"Ползучий тимьян",qty:3,unit:"шт"},
+    {name:"Сахар",qty:1,unit:"шт"},
+    {name:"Спирт",qty:1,unit:"шт"},
+    {name:"Стеклянная бутылка",qty:2,unit:"шт"}]},
+
+  {id:"nast-berries", name:"Настойка на ягодах", output:1, stack:15, timeSec:60, ing:[
+    {name:"Зимняя ягода",qty:2,unit:"шт"},
+    {name:"Сахар",qty:1,unit:"шт"},
+    {name:"Спирт",qty:1,unit:"шт"},
+    {name:"Стеклянная бутылка",qty:1,unit:"шт"}]},
+
+  {id:"nast-garlic", name:"Настойка на чесноке", output:2, stack:15, timeSec:60, ing:[
+    {name:"Дикий чеснок",qty:3,unit:"шт"},
+    {name:"Спирт",qty:1,unit:"шт"},
+    {name:"Стеклянная бутылка",qty:2,unit:"шт"}]}
 ];
 const DO_NOT_EXPAND = new Set([]);
 
@@ -744,7 +768,12 @@ const GOODS = [
   ["Успокаивающая настойка", "$4 /шт", ""],
   ["Настойка от простуды", "$1 /шт", ""],
   ["Сироп Доктора Кафа", "$6 /шт", ""],
-  ["Кровь Вождя", "$6 /шт", ""]
+  ["Кровь Вождя", "$6 /шт", ""],
+  ["Настойка на морфине", "$1 /шт", ""],
+  ["Настойка на женьшене", "$1 /шт", ""],
+  ["Настойка на тимьяне", "$1 /шт", ""],
+  ["Настойка на ягодах", "$1 /шт", ""],
+  ["Настойка на чесноке", "$1 /шт", ""]
 ];
 (function(){
   $("#services").innerHTML = SERVICES.map(([n,p])=>`<tr><td>${n}</td><td class="right mono">${p}</td></tr>`).join("");
@@ -770,7 +799,12 @@ const PRICING = [
   {id:"g_nast_uspok", name:"Успокаивающая настойка", type:"good", pricing:{base:4}},
   {id:"g_nast_cold", name:"Настойка от простуды", type:"good", pricing:{base:1}},
   {id:"g_syrop_kaf", name:"Сироп Доктора Кафа", type:"good", pricing:{base:6}},
-  {id:"g_krov_vozhdya", name:"Кровь Вождя", type:"good", pricing:{base:6}}
+  {id:"g_krov_vozhdya", name:"Кровь Вождя", type:"good", pricing:{base:6}},
+  {id:"g_nast_morfin",  name:"Настойка на морфине",  type:"good", pricing:{base:1}},
+  {id:"g_nast_ginseng", name:"Настойка на женьшене", type:"good", pricing:{base:1}},
+  {id:"g_nast_thyme",   name:"Настойка на тимьяне",  type:"good", pricing:{base:1}},
+  {id:"g_nast_berries", name:"Настойка на ягодах",   type:"good", pricing:{base:1}},
+  {id:"g_nast_garlic",  name:"Настойка на чесноке",  type:"good", pricing:{base:1}}
 ];
 (function initPaySelect(){
   const sel = document.getElementById("payItem");
@@ -834,5 +868,6 @@ renderPay();
 </script>
 </body>
 </html>
+
 
 
