@@ -2891,41 +2891,61 @@ function buildPoliceText(d, totals, selected, facts, payUntilStr){
   return lines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
 }
 
-function buildSheriffText(d, totals, selected, facts, payUntilStr){
-  const suspect = d.suspect || "гражданин";
+
+  function buildSheriffText(d, totals, selected, facts, payUntilStr){
   const officer = [d.officer_rank, d.officer_name].filter(Boolean).join(" ") || "служитель закона";
-  const where = d.location || "на указанном участке";
+  const suspect = d.suspect || "гражданин";
   const title = d.title || "происшествие";
-  const articleText = joinArticleNarrative(selected);
+  const place = d.location || "неуказанное место";
 
-  let text = `${docTypeLabel(d.type)} ${d.number ? d.number : ""}`.trim();
-  text += `\n\nЯ, ${officer}, докладываю по делу о происшествии "${title}", имевшем место ${where}. `;
-  text += `По собранным мною сведениям, ${suspect} был связан с указанным случаем. `;
+  const lines = [];
+  lines.push(`${docTypeLabel(d.type)} ${d.number ? d.number : ""}`.trim());
+  lines.push("");
+  lines.push(`Составил: ${officer}`);
+  lines.push(`По делу: ${title}`);
+  lines.push(`Где было: ${place}`);
+  if(d.date) lines.push(`Дата: ${fmtDate(new Date(d.date))}`);
+  if(d.time) lines.push(`Время: ${d.time}`);
+  lines.push("");
 
-  if(d.description?.trim()){
-    text += `По существу случилось следующее: ${d.description.trim()} `;
-  }
+  lines.push("Как было дело:");
+  lines.push(d.description?.trim() || "Толком описания нет.");
+  lines.push("");
+
+  lines.push(`Кто проходит по делу: ${suspect}.`);
+  if(d.victim) lines.push(`Потерпевший: ${d.victim}.`);
+  if(d.delivery) lines.push(`Куда потом определили: ${d.delivery}.`);
+  lines.push("");
 
   if(facts.length){
-    text += `При этом установлено, что ${facts.join(", ")}. `;
+    lines.push("Что ещё установлено:");
+    facts.forEach(x => lines.push(`— ${x}.`));
+    lines.push("");
   }
 
-  text += `По совокупности увиденного и собранного я считаю возможным вменить ${articleText}. `;
-  text += `По итогу ${buildPunishmentPhrase(totals.fine, totals.jail)}. `;
+  if(selected.length){
+    lines.push("Что вменяется:");
+    selected.forEach(x => {
+      const punish = [];
+      if(x.fine > 0) punish.push(`${x.fine}$`);
+      if(x.jail > 0) punish.push(`${x.jail} сут.`);
+      lines.push(`— ст. ${x.article.code}: ${x.article.title}${punish.length ? ` (${punish.join(", ")})` : ""}`);
+    });
+    lines.push("");
+  }
 
+  lines.push(`Решение по итогу: ${buildPunishmentPhrase(totals.fine, totals.jail)}.`);
   if(totals.fine > 0){
-    text += `Штраф надлежит уплатить до ${payUntilStr}. `;
-  }
-
-  if(d.delivery){
-    text += `После оформления лицо было направлено: ${d.delivery}. `;
+    lines.push(`Штраф уплатить до ${payUntilStr}.`);
   }
 
   if(d.notes?.trim()){
-    text += `Дополнительно замечаю: ${d.notes.trim()}.`;
+    lines.push("");
+    lines.push("От себя замечу:");
+    lines.push(d.notes.trim());
   }
 
-  return text.trim();
+  return lines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
 }
 
 function buildMarshalText(d, totals, selected, facts, payUntilStr){
@@ -2933,38 +2953,53 @@ function buildMarshalText(d, totals, selected, facts, payUntilStr){
   const victim = d.victim || "потерпевшая сторона не указана";
   const officer = [d.officer_rank, d.officer_name].filter(Boolean).join(" ") || "уполномоченное должностное лицо";
   const place = d.location || "в неустановленной локации";
-  const articleText = joinArticleNarrative(selected);
+  const title = d.title || "обстоятельства происшествия";
 
-  let text = `${docTypeLabel(d.type)} ${d.number ? d.number : ""}`.trim();
-  text += `\n\nНастоящим ${officer} удостоверяет, что в рамках рассмотрения материалов по факту события, имевшего место ${place}, была произведена фиксация обстоятельств, имеющих значение для последующей правовой оценки и возможного судебного рассмотрения. `;
-  text += `В ходе первичного разбирательства было установлено, что ${suspect} предположительно находится в причинно-следственной связи с описываемым эпизодом, при том что потерпевшей стороной по материалам проходит: ${victim}. `;
-  
-  if(d.description?.trim()){
-    text += `Содержательная часть собранных объяснений, наблюдений и служебных выводов сводится к следующему: ${d.description.trim()} `;
-  }
+  const lines = [];
+  lines.push(`${docTypeLabel(d.type)} ${d.number ? d.number : ""}`.trim());
+  lines.push("");
+  lines.push("СЛУЖЕБНОЕ ИЗЛОЖЕНИЕ ОБСТОЯТЕЛЬСТВ");
+  lines.push("");
+  lines.push(`Настоящим ${officer} удостоверяет, что в рамках рассмотрения материалов по факту события, квалифицируемого как "${title}", имевшего место ${place}, была произведена фиксация обстоятельств, имеющих значение для последующей правовой оценки.`);
+  lines.push("");
+  lines.push(`Лицом, в отношении которого произведено оформление, является: ${suspect}.`);
+  lines.push(`Потерпевшая сторона по имеющимся материалам: ${victim}.`);
+  if(d.reg) lines.push(`Регистрационный номер / идентификатор: ${d.reg}.`);
+  if(d.delivery) lines.push(`После завершения процессуальных действий лицо было препровождено: ${d.delivery}.`);
+  lines.push("");
+
+  lines.push("ОПИСАТЕЛЬНАЯ ЧАСТЬ");
+  lines.push(d.description?.trim() || "Фактическое описание в материалах на данный момент отсутствует.");
+  lines.push("");
 
   if(facts.length){
-    text += `Дополнительно подлежат отражению юридически значимые обстоятельства, а именно: ${facts.join(", ")}. `;
+    lines.push("ДОПОЛНИТЕЛЬНО УСТАНОВЛЕННЫЕ ЮРИДИЧЕСКИ ЗНАЧИМЫЕ ОБСТОЯТЕЛЬСТВА");
+    facts.forEach(x => lines.push(`— ${x}.`));
+    lines.push("");
   }
 
-  text += `По совокупности объективных и формально установленных признаков усматриваются основания для квалификации деяния по следующим нормам: ${articleText}. `;
-  text += `С учётом характера нарушения, степени общественной опасности, сопутствующих признаков и применённого режима исчисления наказания полагаю обоснованным вывод о том, что ${buildPunishmentPhrase(totals.fine, totals.jail)}. `;
+  if(selected.length){
+    lines.push("ПРЕДВАРИТЕЛЬНАЯ КВАЛИФИКАЦИЯ ДЕЯНИЯ");
+    selected.forEach(x => {
+      lines.push(`— статья ${x.article.code} (${x.article.title});`);
+      lines.push(`  санкция по расчёту: ${x.fine > 0 ? `штраф ${x.fine}$` : "без штрафа"}${x.jail > 0 ? `, срок ${x.jail} суток` : ""}.`);
+    });
+    lines.push("");
+  }
 
+  lines.push("ВЫВОД О МЕРЕ НАКАЗАНИЯ");
+  lines.push(`С учётом характера нарушения, степени общественной опасности, совокупности квалифицирующих признаков и применённого режима исчисления наказания полагаю обоснованным вывод о том, что ${buildPunishmentPhrase(totals.fine, totals.jail)}.`);
   if(totals.fine > 0){
-    text += `Срок надлежащего и добровольного исполнения обязанности по уплате денежного взыскания определяется до ${payUntilStr} включительно. `;
-  }
-
-  if(d.delivery){
-    text += `После завершения процессуальных и регистрационных действий указанное лицо было передано/препровождено: ${d.delivery}. `;
+    lines.push(`Срок добровольного исполнения обязанности по уплате денежного взыскания определяется до ${payUntilStr} включительно.`);
   }
 
   if(d.notes?.trim()){
-    text += `Отдельно считаю необходимым приобщить следующее служебное замечание: ${d.notes.trim()}. `;
+    lines.push("");
+    lines.push("СЛУЖЕБНОЕ ПРИМЕЧАНИЕ");
+    lines.push(d.notes.trim());
   }
 
-  text += `Настоящий текст составлен в расширенной канцелярской форме для использования при последующей передаче по инстанции либо представлении суду.`;
-
-  return text.trim();
+  return lines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
 }
 
 function buildLadyText(d, totals, selected, facts, payUntilStr){
@@ -2972,78 +3007,112 @@ function buildLadyText(d, totals, selected, facts, payUntilStr){
   const officer = [d.officer_rank, d.officer_name].filter(Boolean).join(" ") || "составитель документа";
   const place = d.location || "в указанном месте";
   const title = d.title || "данное происшествие";
-  const articleText = joinArticleNarrative(selected);
 
-  let text = `${docTypeLabel(d.type)} ${d.number ? d.number : ""}`.trim();
-  text += `\n\nЯ, ${officer}, с должной внимательностью и аккуратностью излагаю обстоятельства, сопровождавшие ${title}, произошедшее ${place}. `;
-  text += `Как это нередко бывает в делах подобного рода, внешняя простота события не отменяет того, что за ним скрывается целая цепь поступков, слов и последствий, требующих точной фиксации. `;
-  
-  if(d.description?.trim()){
-    text += `По имеющимся сведениям и моим непосредственным наблюдениям ситуация развивалась следующим образом: ${d.description.trim()} `;
-  }
+  const lines = [];
+  lines.push(`${docTypeLabel(d.type)} ${d.number ? d.number : ""}`.trim());
+  lines.push("");
+  lines.push(`Составитель: ${officer}`);
+  lines.push(`Предмет изложения: ${title}`);
+  lines.push(`Место события: ${place}`);
+  if(d.date) lines.push(`Дата: ${fmtDate(new Date(d.date))}`);
+  if(d.time) lines.push(`Время: ${d.time}`);
+  lines.push("");
 
-  text += `Лицом, в отношении которого велось оформление, является ${suspect}. `;
+  lines.push("Общие обстоятельства");
+  lines.push(`Я излагаю обстоятельства данного случая с должной внимательностью, поскольку даже событие, которое на первый взгляд кажется грубым и прямолинейным, нередко скрывает за собой целую цепь поступков, решений и последствий.`);
+  lines.push("");
+  lines.push("Описание произошедшего");
+  lines.push(d.description?.trim() || "Подробное описание пока не было внесено в документ.");
+  lines.push("");
+
+  lines.push(`Лицом, в отношении которого ведётся оформление, является ${suspect}.`);
+  if(d.victim) lines.push(`Потерпевшей стороной проходит ${d.victim}.`);
+  if(d.delivery) lines.push(`По завершении оформления лицо было направлено далее: ${d.delivery}.`);
+  lines.push("");
 
   if(facts.length){
-    text += `Кроме того, нельзя не отметить следующие обстоятельства, имевшие значение для общего понимания картины происшествия: ${facts.join(", ")}. `;
+    lines.push("Обстоятельства, которые нельзя оставить без внимания");
+    facts.forEach(x => lines.push(`— ${x}.`));
+    lines.push("");
   }
 
-  text += `Сопоставив увиденное, услышанное и установленное, считаю возможным указать на следующие статьи: ${articleText}. `;
-  text += `Итоговое наказание, к которому приводит данная совокупность обстоятельств, выражается так: ${buildPunishmentPhrase(totals.fine, totals.jail)}. `;
+  if(selected.length){
+    lines.push("Статьи, к которым приводит данная картина событий");
+    selected.forEach(x => lines.push(`— ст. ${x.article.code} — ${x.article.title}; штраф ${x.fine}$; срок ${x.jail} сут.`));
+    lines.push("");
+  }
 
+  lines.push("Итог");
+  lines.push(`Сопоставив увиденное, услышанное и установленное, считаю, что по настоящему делу ${buildPunishmentPhrase(totals.fine, totals.jail)}.`);
   if(totals.fine > 0){
-    text += `Срок для мирного и добровольного исполнения обязанности по уплате штрафа установлен до ${payUntilStr}. `;
-  }
-
-  if(d.delivery){
-    text += `По завершении оформления лицо было направлено далее: ${d.delivery}. `;
+    lines.push(`Срок для добровольной уплаты штрафа установлен до ${payUntilStr}.`);
   }
 
   if(d.notes?.trim()){
-    text += `В завершение считаю важным добавить следующее замечание: ${d.notes.trim()}. `;
+    lines.push("");
+    lines.push("Дополнение");
+    lines.push(d.notes.trim());
   }
 
-  return text.trim();
+  return lines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
 }
 
 function buildRoughText(d, totals, selected, facts, payUntilStr){
   const suspect = d.suspect || "тип";
   const officer = [d.officer_rank, d.officer_name].filter(Boolean).join(" ") || "я";
   const place = d.location || "гдето";
-  const articleText = selected.length
-    ? selected.map(x => `${x.article.code} ${x.article.title}`).join(", ")
-    : "статьи не выбраны";
+  const title = d.title || "какаято хрень";
 
-  let text = `${docTypeLabel(d.type)} ${d.number ? d.number : ""}`.trim();
-  text += `\n\nЯ ${officer} писал по поводу того что случилось в ${place}. `;
-  text += `${suspect} там был и вообще по всему видно что натворил дел. `;
+  const lines = [];
+  lines.push(`${docTypeLabel(d.type)} ${d.number ? d.number : ""}`.trim());
+  lines.push("");
+  lines.push(`писал: ${officer}`);
+  lines.push(`тема: ${title}`);
+  lines.push(`место: ${place}`);
+  if(d.date) lines.push(`дата: ${fmtDate(new Date(d.date))}`);
+  if(d.time) lines.push(`время: ${d.time}`);
+  lines.push("");
 
-  if(d.description?.trim()){
-    text += `Вобщем было так: ${d.description.trim()} `;
-  }
+  lines.push("кароче чо было");
+  lines.push(d.description?.trim() || "описания нету потомучто не написали");
+  lines.push("");
+
+  lines.push(`по делу идет ${suspect}`);
+  if(d.victim) lines.push(`еще там был ${d.victim}`);
+  if(d.delivery) lines.push(`потом увезли: ${d.delivery}`);
+  lines.push("");
 
   if(facts.length){
-    text += `Еще там установлено такое: ${facts.join(", ")}. `;
+    lines.push("еще вот чо выяснили");
+    facts.forEach(x => lines.push(`- ${x}`));
+    lines.push("");
   }
 
-  text += `По статьям тут выходит так: ${articleText}. `;
-  text += `По итогу ${buildPunishmentPhrase(totals.fine, totals.jail)}. `;
+  if(selected.length){
+    lines.push("статьи вроде такие");
+    selected.forEach(x => {
+      const raw = `- ${x.article.code} ${x.article.title} штраф ${x.fine}$ срок ${x.jail} сут`;
+      lines.push(raw);
+    });
+    lines.push("");
+  }
 
+  lines.push("итог");
+  lines.push(buildPunishmentPhrase(totals.fine, totals.jail));
   if(totals.fine > 0){
-    text += `Штраф пускай платит до ${payUntilStr}. `;
-  }
-
-  if(d.delivery){
-    text += `Потом его отвезли ${d.delivery}. `;
+    lines.push(`штраф до ${payUntilStr}`);
   }
 
   if(d.notes?.trim()){
-    text += `Еще примечание такое: ${d.notes.trim()}. `;
+    lines.push("");
+    lines.push("еще");
+    lines.push(d.notes.trim());
   }
 
-  return roughifyText(text.trim());
+  return roughifyText(lines.join("\n").replace(/\n{3,}/g, "\n\n").trim());
 }
 
+  
 function buildDocumentText(){
   const d = STATE.doc;
   const totals = computeTotals();
