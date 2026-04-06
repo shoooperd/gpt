@@ -1,1193 +1,1580 @@
 <!doctype html>
-
 <html lang="ru">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>РУВД • Ассистент законов и отчётности</title>
+<title>MDT • Law Enforcement Assistant</title>
 <style>
   :root{
-    --bg:#0f1115;
-    --panel:#171a21;
-    --panel-2:#11141b;
-    --chip:#222634;
-    --text:#e6e9ef;
-    --muted:#a5adbb;
-    --accent:#4cc3ff;
-    --accent-2:#7bd88f;
-    --warn:#ffb86b;
-    --danger:#ff6b6b;
-    --border:#2a2f3a;
-    --mark:#3b4358;
-    --shadow:0 10px 30px rgba(0,0,0,.22);
-    --i:#8aa1ff;
-    --m:#ffd37a;
-    --f:#ff8aa1;
+    --bg:#08101d;
+    --bg-2:#0d1626;
+    --panel:#111b2e;
+    --panel-2:#15233c;
+    --panel-3:#0d1423;
+    --text:#eaf1ff;
+    --muted:#8ea1c7;
+    --line:#223252;
+    --line-soft:#1a2742;
+    --accent:#4d8dff;
+    --accent-2:#67b0ff;
+    --accent-3:#75d0ff;
+    --success:#57d39b;
+    --warn:#ffbf69;
+    --danger:#ff7272;
+    --shadow:0 16px 48px rgba(0,0,0,.34);
+    --radius:18px;
+    --radius-sm:12px;
+    --radius-xs:10px;
+    --sidebar-w:96px;
+    --i:#9eb7ff;
+    --m:#ffe08d;
+    --f:#ff9db4;
   }
 
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-margin:0;
-background:var(--bg);
-color:var(--text);
-font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Arial,sans-serif;
-}
-
-.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-.hidden{display:none!important}
-.muted{color:var(--muted)}
-.right{margin-left:auto}
-.w100{width:100%}
-
-header{
-position:sticky;
-top:0;
-z-index:100;
-background:rgba(15,17,21,.92);
-backdrop-filter:blur(8px);
-border-bottom:1px solid var(--border);
-box-shadow:var(--shadow);
-}
-
-.wrap{
-max-width:1380px;
-margin:0 auto;
-padding:14px;
-}
-
-.topbar{
-display:flex;
-gap:12px;
-align-items:center;
-flex-wrap:wrap;
-}
-
-h1{
-margin:0;
-font-size:18px;
-line-height:1.2;
-}
-
-.subtitle{
-color:var(--muted);
-font-size:12px;
-margin-top:4px;
-}
-
-.tabs{
-display:flex;
-flex-wrap:wrap;
-gap:8px;
-margin-top:12px;
-}
-
-.tab-btn,
-.subtab-btn,
-.btn{
-border:1px solid var(--border);
-background:var(--panel);
-color:var(--text);
-border-radius:10px;
-padding:9px 12px;
-cursor:pointer;
-transition:.15s ease;
-}
-
-.tab-btn:hover,
-.subtab-btn:hover,
-.btn:hover{
-transform:translateY(-1px);
-border-color:#3b4250;
-}
-
-.tab-btn.active,
-.subtab-btn.active{
-outline:2px solid var(--accent);
-background:#141a24;
-}
-
-.btn.primary{
-background:var(--accent);
-color:#07141d;
-border-color:transparent;
-font-weight:700;
-}
-
-.btn.ok{
-background:var(--accent-2);
-color:#07150d;
-border-color:transparent;
-font-weight:700;
-}
-
-.btn.warn{
-background:var(--warn);
-color:#1f1200;
-border-color:transparent;
-font-weight:700;
-}
-
-.btn.danger{
-background:var(--danger);
-color:#240505;
-border-color:transparent;
-font-weight:700;
-}
-
-.btn.ghost{
-background:transparent;
-}
-
-.container{
-display:none;
-max-width:1380px;
-margin:18px auto;
-padding:0 14px 32px;
-}
-
-.container.active{display:block}
-
-.panel{
-background:var(--panel);
-border:1px solid var(--border);
-border-radius:14px;
-padding:14px;
-margin-bottom:14px;
-box-shadow:var(--shadow);
-}
-
-.panel-title{
-display:flex;
-gap:10px;
-align-items:center;
-flex-wrap:wrap;
-margin-bottom:10px;
-}
-
-.panel-title h2,
-.panel-title h3{
-margin:0;
-font-size:16px;
-}
-
-.row{
-display:flex;
-flex-wrap:wrap;
-gap:12px;
-align-items:flex-start;
-}
-
-.col{
-flex:1 1 220px;
-min-width:180px;
-}
-
-.col-2{flex:2 1 440px}
-.col-3{flex:3 1 660px}
-.col-100{flex:1 1 100%}
-
-label{
-display:block;
-color:var(--muted);
-font-size:12px;
-margin-bottom:6px;
-}
-
-input[type=text],
-input[type=number],
-input[type=date],
-input[type=time],
-select,
-textarea{
-width:100%;
-padding:10px 12px;
-border-radius:10px;
-border:1px solid var(--border);
-background:#0d0f14;
-color:var(--text);
-outline:none;
-}
-
-input:focus,
-select:focus,
-textarea:focus{
-border-color:#4a5469;
-box-shadow:0 0 0 3px rgba(76,195,255,.1);
-}
-
-textarea{
-resize:vertical;
-min-height:90px;
-}
-
-.pill{
-display:inline-flex;
-align-items:center;
-gap:6px;
-padding:4px 9px;
-border-radius:999px;
-background:var(--chip);
-border:1px solid var(--border);
-color:var(--muted);
-font-size:12px;
-}
-
-.badge{
-display:inline-flex;
-align-items:center;
-gap:5px;
-padding:2px 7px;
-border-radius:999px;
-border:1px solid var(--border);
-background:#0b0e13;
-color:var(--muted);
-font-size:12px;
-}
-
-.badge.i{color:#dbe5ff;border-color:#324171;background:rgba(138,161,255,.08)}
-.badge.m{color:#ffe9b9;border-color:#6d5320;background:rgba(255,211,122,.08)}
-.badge.f{color:#ffd0da;border-color:#6d2436;background:rgba(255,138,161,.08)}
-
-.kpis{
-display:flex;
-flex-wrap:wrap;
-gap:10px;
-}
-
-.kpi{
-min-width:145px;
-padding:10px 12px;
-border-radius:12px;
-border:1px solid var(--border);
-background:var(--chip);
-}
-
-.kpi .label{
-display:block;
-color:var(--muted);
-font-size:12px;
-margin-bottom:2px;
-}
-
-.kpi b{
-font-size:19px;
-}
-
-.grid-2{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:14px;
-}
-
-.grid-3{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:14px;
-}
-
-.table-wrap{
-overflow:auto;
-border:1px solid var(--border);
-border-radius:12px;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-min-width:1100px;
-}
-
-th,td{
-padding:9px 8px;
-border-bottom:1px solid var(--border);
-vertical-align:top;
-text-align:left;
-}
-
-th{
-position:sticky;
-top:0;
-z-index:5;
-background:#141923;
-color:var(--muted);
-font-weight:600;
-}
-
-tr:hover td{
-background:#141823;
-}
-
-.mini{
-font-size:12px;
-color:var(--muted);
-}
-
-.note{
-background:#10141c;
-border:1px dashed var(--border);
-color:var(--muted);
-border-radius:12px;
-padding:10px 12px;
-}
-
-.cards{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:10px;
-}
-
-.card{
-background:var(--panel-2);
-border:1px solid var(--border);
-border-radius:12px;
-padding:12px;
-}
-
-.card h4{
-margin:0 0 6px;
-font-size:14px;
-}
-
-.preset-grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
-gap:10px;
-}
-
-.preset{
-background:var(--panel-2);
-border:1px solid var(--border);
-border-radius:12px;
-padding:12px;
-display:flex;
-flex-direction:column;
-gap:8px;
-}
-
-.preset-title{
-font-weight:700;
-font-size:14px;
-}
-
-.doc-preview{
-white-space:pre-wrap;
-background:#0c1016;
-border:1px solid var(--border);
-border-radius:12px;
-padding:14px;
-min-height:420px;
-max-height:72vh;
-overflow:auto;
-}
-
-.law-view{
-white-space:pre-wrap;
-background:#0c1016;
-border:1px solid var(--border);
-border-radius:12px;
-padding:14px;
-min-height:420px;
-max-height:72vh;
-overflow:auto;
-}
-
-.mark{
-background:var(--mark);
-color:#fff;
-border-radius:4px;
-padding:0 2px;
-}
-
-.chip-list{
-display:flex;
-flex-wrap:wrap;
-gap:8px;
-}
-
-.chip-btn{
-display:inline-flex;
-align-items:center;
-gap:6px;
-border:1px solid var(--border);
-background:var(--chip);
-color:var(--text);
-border-radius:999px;
-padding:7px 11px;
-cursor:pointer;
-}
-
-.chip-btn.active{
-outline:2px solid var(--accent);
-}
-
-.fav-item,
-.history-item{
-display:flex;
-justify-content:space-between;
-align-items:flex-start;
-gap:10px;
-padding:10px 0;
-border-bottom:1px solid var(--border);
-}
-
-.fav-item:last-child,
-.history-item:last-child{
-border-bottom:none;
-}
-
-.stack{
-display:flex;
-flex-direction:column;
-gap:8px;
-}
-
-.list{
-display:flex;
-flex-direction:column;
-gap:10px;
-}
-
-.item{
-display:grid;
-grid-template-columns:repeat(6,1fr);
-gap:8px;
-}
-
-.item .wide{grid-column:1/-1}
-
-.remove{
-background:transparent;
-border:1px dashed var(--border);
-color:var(--muted);
-border-radius:10px;
-padding:8px 10px;
-cursor:pointer;
-}
-
-.footer-tools{
-display:flex;
-flex-wrap:wrap;
-gap:10px;
-align-items:center;
-}
-
-.subtabs{
-display:flex;
-flex-wrap:wrap;
-gap:8px;
-margin-bottom:12px;
-}
-
-.subtab{
-display:none;
-}
-
-.subtab.active{
-display:block;
-}
-
-.hr{
-height:1px;
-background:var(--border);
-margin:12px 0;
-}
-
-.status-line{
-display:flex;
-flex-wrap:wrap;
-gap:8px;
-align-items:center;
-}
-
-.searchline{
-display:flex;
-flex-wrap:wrap;
-gap:10px;
-align-items:end;
-}
-
-.law-results{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-gap:10px;
-margin-bottom:12px;
-}
-
-.small-select{
-min-width:110px;
-width:auto;
-}
-
-.sticky-tools{
-position:sticky;
-bottom:10px;
-z-index:20;
-background:rgba(23,26,33,.92);
-backdrop-filter:blur(8px);
-border:1px solid var(--border);
-border-radius:14px;
-padding:10px;
-margin-top:14px;
-box-shadow:var(--shadow);
-}
-
-@media (max-width:1100px){
-.grid-2,.grid-3{grid-template-columns:1fr}
-}
-
-@media (max-width:900px){
-.item{grid-template-columns:repeat(2,1fr)}
-}
-
-@media (max-width:700px){
-.topbar{align-items:flex-start}
-.kpi{min-width:120px}
-.item{grid-template-columns:1fr}
-th{position:static}
-} </style>
-
+  body.theme-light{
+    --bg:#eef4ff;
+    --bg-2:#dfe9fb;
+    --panel:#ffffff;
+    --panel-2:#f6f9ff;
+    --panel-3:#edf3ff;
+    --text:#15223c;
+    --muted:#64789f;
+    --line:#d7e0f1;
+    --line-soft:#e4ebf8;
+    --accent:#2f73ff;
+    --accent-2:#1f8cff;
+    --accent-3:#0fa7ff;
+    --success:#1fa36d;
+    --warn:#c88a29;
+    --danger:#d85050;
+    --shadow:0 18px 42px rgba(33,57,102,.12);
+    --i:#5676df;
+    --m:#b98d1a;
+    --f:#d05679;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    font:14px/1.45 Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    color:var(--text);
+    background:
+      radial-gradient(circle at top left, rgba(77,141,255,.14), transparent 22%),
+      radial-gradient(circle at top right, rgba(117,208,255,.10), transparent 18%),
+      linear-gradient(180deg,var(--bg),var(--bg-2));
+  }
+
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  .hidden{display:none!important}
+
+  .app-shell{
+    min-height:100vh;
+    display:none;
+  }
+
+  .app-shell.ready{
+    display:grid;
+    grid-template-columns:var(--sidebar-w) 1fr;
+  }
+
+  .sidebar{
+    position:sticky;
+    top:0;
+    height:100vh;
+    background:linear-gradient(180deg,rgba(13,24,44,.94),rgba(8,15,29,.98));
+    border-right:1px solid var(--line);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+    padding:18px 12px;
+    backdrop-filter:blur(14px);
+    box-shadow:var(--shadow);
+    z-index:40;
+  }
+
+  body.theme-light .sidebar{
+    background:linear-gradient(180deg,rgba(255,255,255,.94),rgba(240,246,255,.96));
+  }
+
+  .brand{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+    margin-bottom:4px;
+  }
+
+  .brand-badge{
+    width:48px;
+    height:48px;
+    border-radius:16px;
+    display:grid;
+    place-items:center;
+    font-size:24px;
+    background:linear-gradient(180deg,rgba(77,141,255,.22),rgba(77,141,255,.10));
+    border:1px solid rgba(109,160,255,.32);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+  }
+
+  .brand-label{
+    font-weight:800;
+    letter-spacing:.12em;
+    font-size:13px;
+    color:var(--accent-3);
+  }
+
+  .brand-sub{
+    font-size:10px;
+    letter-spacing:.18em;
+    color:var(--muted);
+    text-transform:uppercase;
+  }
+
+  .nav{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top:10px;
+  }
+
+  .nav-btn{
+    width:100%;
+    min-height:74px;
+    border:none;
+    border-radius:20px;
+    background:transparent;
+    color:var(--muted);
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    padding:8px 6px;
+    transition:.18s ease;
+    border:1px solid transparent;
+  }
+
+  .nav-btn:hover{
+    background:rgba(255,255,255,.04);
+    color:var(--text);
+    transform:translateY(-1px);
+  }
+
+  body.theme-light .nav-btn:hover{
+    background:rgba(47,115,255,.06);
+  }
+
+  .nav-btn.active{
+    background:linear-gradient(180deg,rgba(77,141,255,.24),rgba(77,141,255,.10));
+    color:#fff;
+    border-color:rgba(117,171,255,.30);
+    box-shadow:0 10px 26px rgba(54,113,255,.18);
+  }
+
+  body.theme-light .nav-btn.active{
+    color:var(--accent);
+  }
+
+  .nav-ico{
+    font-size:22px;
+    line-height:1;
+  }
+
+  .nav-txt{
+    font-size:10px;
+    letter-spacing:.10em;
+    text-transform:uppercase;
+    text-align:center;
+  }
+
+  .sidebar-bottom{
+    margin-top:auto;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    width:100%;
+  }
+
+  .icon-btn{
+    width:100%;
+    height:44px;
+    border-radius:14px;
+    border:1px solid var(--line);
+    background:var(--panel-2);
+    color:var(--text);
+    cursor:pointer;
+    transition:.18s ease;
+  }
+
+  .icon-btn:hover{
+    transform:translateY(-1px);
+    border-color:var(--accent);
+  }
+
+  .main{
+    min-width:0;
+    padding:18px 18px 26px;
+  }
+
+  .topbar{
+    display:flex;
+    gap:14px;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:18px;
+    padding:14px 18px;
+    border:1px solid var(--line);
+    border-radius:22px;
+    background:linear-gradient(180deg,rgba(17,27,46,.88),rgba(11,18,31,.92));
+    box-shadow:var(--shadow);
+    backdrop-filter:blur(12px);
+  }
+
+  body.theme-light .topbar{
+    background:linear-gradient(180deg,rgba(255,255,255,.88),rgba(243,247,255,.94));
+  }
+
+  .topbar-left{
+    min-width:0;
+  }
+
+  .topbar-title{
+    font-size:22px;
+    font-weight:800;
+    letter-spacing:.02em;
+    margin:0;
+  }
+
+  .topbar-sub{
+    color:var(--muted);
+    margin-top:3px;
+    font-size:12px;
+  }
+
+  .topbar-right{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+    gap:10px;
+    align-items:center;
+  }
+
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    padding:7px 12px;
+    border-radius:999px;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    color:var(--muted);
+    font-size:12px;
+    white-space:nowrap;
+  }
+
+  .layout{
+    display:grid;
+    grid-template-columns:minmax(0,1.55fr) 380px;
+    gap:18px;
+    align-items:start;
+  }
+
+  .panel{
+    background:linear-gradient(180deg,rgba(17,27,46,.96),rgba(12,20,35,.98));
+    border:1px solid var(--line);
+    border-radius:24px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+
+  body.theme-light .panel{
+    background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(245,249,255,.98));
+  }
+
+  .panel-head{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    padding:16px 18px;
+    border-bottom:1px solid var(--line-soft);
+    background:linear-gradient(180deg,rgba(77,141,255,.08),rgba(77,141,255,.02));
+  }
+
+  .panel-head h2,
+  .panel-head h3{
+    margin:0;
+    font-size:18px;
+    font-weight:800;
+    letter-spacing:.02em;
+  }
+
+  .panel-body{
+    padding:18px;
+  }
+
+  .subtle{
+    color:var(--muted);
+    font-size:12px;
+  }
+
+  .row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px;
+    align-items:flex-start;
+  }
+
+  .col{
+    flex:1 1 220px;
+    min-width:180px;
+  }
+
+  .col-2{flex:2 1 440px}
+  .col-3{flex:3 1 660px}
+  .col-full{flex:1 1 100%}
+
+  .grid-2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+
+  .grid-3{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+  }
+
+  label{
+    display:block;
+    margin:0 0 7px;
+    color:var(--muted);
+    font-size:12px;
+  }
+
+  input[type=text],
+  input[type=number],
+  input[type=date],
+  input[type=time],
+  select,
+  textarea{
+    width:100%;
+    border:1px solid var(--line);
+    background:var(--panel-3);
+    color:var(--text);
+    padding:12px 14px;
+    border-radius:14px;
+    outline:none;
+    transition:.16s ease;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.02);
+  }
+
+  body.theme-light input[type=text],
+  body.theme-light input[type=number],
+  body.theme-light input[type=date],
+  body.theme-light input[type=time],
+  body.theme-light select,
+  body.theme-light textarea{
+    background:#f8fbff;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus{
+    border-color:var(--accent);
+    box-shadow:0 0 0 4px rgba(77,141,255,.12);
+  }
+
+  textarea{
+    min-height:120px;
+    resize:vertical;
+  }
+
+  .btn{
+    border:none;
+    border-radius:14px;
+    padding:11px 15px;
+    color:var(--text);
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    cursor:pointer;
+    transition:.16s ease;
+    font-weight:700;
+  }
+
+  .btn:hover{
+    transform:translateY(-1px);
+    border-color:var(--accent);
+  }
+
+  .btn.primary{
+    background:linear-gradient(180deg,var(--accent),#386fe6);
+    color:#fff;
+    border-color:transparent;
+    box-shadow:0 14px 26px rgba(48,110,255,.22);
+  }
+
+  .btn.success{
+    background:linear-gradient(180deg,#4fd39a,#2db678);
+    color:#fff;
+    border-color:transparent;
+  }
+
+  .btn.warn{
+    background:linear-gradient(180deg,#f6c46d,#e2a84a);
+    color:#332000;
+    border-color:transparent;
+  }
+
+  .btn.ghost{
+    background:transparent;
+  }
+
+  .btn.block{width:100%}
+
+  .kpis{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+  }
+
+  .kpi{
+    padding:14px;
+    border-radius:18px;
+    background:linear-gradient(180deg,rgba(77,141,255,.10),rgba(77,141,255,.03));
+    border:1px solid var(--line);
+  }
+
+  .kpi-label{
+    color:var(--muted);
+    font-size:12px;
+    margin-bottom:4px;
+  }
+
+  .kpi-value{
+    font-size:26px;
+    font-weight:800;
+    line-height:1.1;
+  }
+
+  .kpi-note{
+    margin-top:4px;
+    font-size:11px;
+    color:var(--muted);
+  }
+
+  .tag-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+
+  .tag{
+    padding:8px 12px;
+    border-radius:999px;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    color:var(--muted);
+    cursor:pointer;
+    transition:.16s ease;
+    user-select:none;
+  }
+
+  .tag:hover{
+    color:var(--text);
+    border-color:var(--accent);
+  }
+
+  .tag.active{
+    color:#fff;
+    background:linear-gradient(180deg,rgba(77,141,255,.28),rgba(77,141,255,.14));
+    border-color:rgba(117,171,255,.34);
+  }
+
+  body.theme-light .tag.active{
+    color:var(--accent);
+  }
+
+  .table-wrap{
+    overflow:auto;
+    border:1px solid var(--line);
+    border-radius:18px;
+    background:var(--panel-3);
+  }
+
+  table{
+    width:100%;
+    min-width:1120px;
+    border-collapse:collapse;
+  }
+
+  th,td{
+    text-align:left;
+    padding:12px 10px;
+    border-bottom:1px solid var(--line-soft);
+    vertical-align:top;
+  }
+
+  th{
+    position:sticky;
+    top:0;
+    z-index:3;
+    background:linear-gradient(180deg,#13203a,#101a2e);
+    color:var(--muted);
+    font-size:12px;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+  }
+
+  body.theme-light th{
+    background:linear-gradient(180deg,#f4f8ff,#edf3ff);
+  }
+
+  tr:hover td{
+    background:rgba(77,141,255,.04);
+  }
+
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:28px;
+    padding:4px 8px;
+    border-radius:999px;
+    font-size:12px;
+    border:1px solid var(--line);
+    background:var(--panel-2);
+    color:var(--muted);
+  }
+
+  .badge.i{color:var(--i)}
+  .badge.m{color:var(--m)}
+  .badge.f{color:var(--f)}
+
+  .stack{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+
+  .card{
+    border:1px solid var(--line);
+    background:linear-gradient(180deg,rgba(77,141,255,.08),rgba(77,141,255,.02));
+    border-radius:18px;
+    padding:14px;
+  }
+
+  .card h4{
+    margin:0 0 6px;
+    font-size:15px;
+  }
+
+  .mini{
+    font-size:12px;
+    color:var(--muted);
+  }
+
+  .doc-preview,
+  .law-view{
+    white-space:pre-wrap;
+    background:var(--panel-3);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:16px;
+    min-height:420px;
+    max-height:70vh;
+    overflow:auto;
+  }
+
+  .note{
+    border:1px dashed var(--line);
+    background:linear-gradient(180deg,rgba(77,141,255,.05),rgba(77,141,255,.02));
+    color:var(--muted);
+    border-radius:16px;
+    padding:12px 14px;
+  }
+
+  .subtabs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+
+  .subtab-btn{
+    border:none;
+    border-radius:12px;
+    padding:9px 12px;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    color:var(--muted);
+    cursor:pointer;
+    transition:.16s ease;
+    font-weight:700;
+  }
+
+  .subtab-btn.active{
+    background:linear-gradient(180deg,rgba(77,141,255,.24),rgba(77,141,255,.10));
+    border-color:rgba(117,171,255,.32);
+    color:#fff;
+  }
+
+  body.theme-light .subtab-btn.active{
+    color:var(--accent);
+  }
+
+  .subtab{display:none}
+  .subtab.active{display:block}
+
+  .footer-tools{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:center;
+  }
+
+  .sticky-tools{
+    position:sticky;
+    bottom:12px;
+    z-index:20;
+    margin-top:16px;
+    padding:12px;
+    border-radius:18px;
+    background:rgba(14,22,38,.92);
+    border:1px solid var(--line);
+    box-shadow:var(--shadow);
+    backdrop-filter:blur(10px);
+  }
+
+  body.theme-light .sticky-tools{
+    background:rgba(255,255,255,.90);
+  }
+
+  .auth-screen{
+    min-height:100vh;
+    display:grid;
+    place-items:center;
+    padding:24px;
+  }
+
+  .auth-card{
+    width:min(100%, 460px);
+    background:linear-gradient(180deg,rgba(14,22,38,.98),rgba(10,16,28,.98));
+    border:1px solid var(--line);
+    border-radius:30px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+
+  body.theme-light .auth-card{
+    background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(244,248,255,.98));
+  }
+
+  .auth-head{
+    padding:20px 22px;
+    border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,rgba(77,141,255,.10),rgba(77,141,255,.03));
+  }
+
+  .auth-title{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:24px;
+    font-weight:900;
+    letter-spacing:.04em;
+    color:var(--accent-3);
+  }
+
+  .auth-sub{
+    margin-top:8px;
+    color:var(--muted);
+    font-size:12px;
+  }
+
+  .auth-body{
+    padding:22px;
+  }
+
+  .shield{
+    width:70px;
+    height:70px;
+    margin:6px auto 16px;
+    border-radius:22px;
+    display:grid;
+    place-items:center;
+    font-size:34px;
+    background:linear-gradient(180deg,rgba(77,141,255,.20),rgba(77,141,255,.08));
+    border:1px solid rgba(115,176,255,.32);
+  }
+
+  .auth-actions{
+    display:flex;
+    gap:10px;
+    margin-top:14px;
+  }
+
+  .auth-hint{
+    margin-top:12px;
+    text-align:center;
+    color:var(--muted);
+    font-size:12px;
+  }
+
+  .view{display:none}
+  .view.active{display:block}
+
+  .right-col{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+
+  .quick-list{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+
+  .quick-item{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    padding:12px;
+    border-radius:16px;
+    border:1px solid var(--line);
+    background:var(--panel-3);
+  }
+
+  .article-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+
+  .compact-btn{
+    border:none;
+    border-radius:10px;
+    padding:6px 9px;
+    font-size:12px;
+    font-weight:700;
+    color:var(--text);
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    cursor:pointer;
+  }
+
+  .compact-btn:hover{
+    border-color:var(--accent);
+  }
+
+  .scenario-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:14px;
+  }
+
+  .scenario{
+    border:1px solid var(--line);
+    background:linear-gradient(180deg,rgba(77,141,255,.08),rgba(77,141,255,.02));
+    border-radius:18px;
+    padding:14px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+
+  .mark{
+    background:rgba(77,141,255,.20);
+    border-radius:5px;
+    padding:0 2px;
+  }
+
+  .switch{
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+
+  .check-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:8px 18px;
+  }
+
+  .check-line{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    color:var(--muted);
+  }
+
+  .item-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+
+  .item-row{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:8px;
+  }
+
+  .item-row .wide{
+    grid-column:1/-1;
+  }
+
+  .remove{
+    border:none;
+    border-radius:12px;
+    border:1px dashed var(--line);
+    background:transparent;
+    color:var(--muted);
+    cursor:pointer;
+  }
+
+  .mobile-top{
+    display:none;
+  }
+
+  @media (max-width:1240px){
+    .layout{grid-template-columns:1fr}
+    .right-col{order:-1}
+  }
+
+  @media (max-width:980px){
+    .grid-2,.grid-3,.kpis{grid-template-columns:1fr 1fr}
+    .item-row{grid-template-columns:repeat(2,1fr)}
+  }
+
+  @media (max-width:780px){
+    .app-shell.ready{
+      grid-template-columns:1fr;
+    }
+
+    .sidebar{
+      display:none;
+    }
+
+    .mobile-top{
+      display:flex;
+      gap:8px;
+      overflow:auto;
+      margin-bottom:14px;
+      padding-bottom:4px;
+    }
+
+    .mobile-top .nav-btn{
+      min-height:auto;
+      width:auto;
+      flex-direction:row;
+      padding:10px 12px;
+      border-radius:14px;
+      white-space:nowrap;
+    }
+
+    .main{padding:14px}
+    .topbar{padding:14px}
+    .grid-2,.grid-3,.kpis{grid-template-columns:1fr}
+    .item-row{grid-template-columns:1fr}
+    .auth-actions{flex-direction:column}
+  }
+</style>
 </head>
-<body>
-<header>
-  <div class="wrap">
+<body class="theme-dark">
+<div id="auth_screen" class="auth-screen">
+  <div class="auth-card">
+    <div class="auth-head">
+      <div class="auth-title">⚖ MDT</div>
+      <div class="auth-sub">LAW ENFORCEMENT OFFICER • Идентификация офицера перед входом в систему</div>
+    </div>
+    <div class="auth-body">
+      <div class="shield">🛡️</div>
+
+      <div class="row">
+        <div class="col col-full">
+          <label>Имя и фамилия офицера</label>
+          <input id="auth_name" type="text" placeholder="James Delaney">
+        </div>
+        <div class="col">
+          <label>Звание / должность</label>
+          <input id="auth_rank" type="text" placeholder="Deputy / Sheriff / Marshal">
+        </div>
+        <div class="col">
+          <label>Позывной / жетон</label>
+          <input id="auth_callsign" type="text" placeholder="2SR-98">
+        </div>
+      </div>
+
+      <div class="auth-actions">
+        <button id="auth_enter" class="btn primary block">ВОЙТИ В СИСТЕМУ</button>
+        <button id="auth_apply_defaults" class="btn block">Взять из настроек</button>
+      </div>
+
+      <div class="auth-hint">Данные можно будет изменить в настройках и прямо в форме документа.</div>
+    </div>
+  </div>
+</div>
+
+<div id="app_shell" class="app-shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-badge">⚖️</div>
+      <div class="brand-label">MDT</div>
+      <div class="brand-sub">Sheriff Office</div>
+    </div>
+
+    <nav class="nav">
+      <button class="nav-btn active" data-view="workspace">
+        <span class="nav-ico">📝</span>
+        <span class="nav-txt">Workspace</span>
+      </button>
+      <button class="nav-btn" data-view="laws">
+        <span class="nav-ico">📚</span>
+        <span class="nav-txt">Laws</span>
+      </button>
+      <button class="nav-btn" data-view="scenarios">
+        <span class="nav-ico">🧩</span>
+        <span class="nav-txt">Scenarios</span>
+      </button>
+      <button class="nav-btn" data-view="archive">
+        <span class="nav-ico">📄</span>
+        <span class="nav-txt">Drafts</span>
+      </button>
+      <button class="nav-btn" data-view="settings">
+        <span class="nav-ico">⚙️</span>
+        <span class="nav-txt">Settings</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <button id="theme_toggle" class="icon-btn" title="Сменить тему">☀️ / 🌙</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="mobile-top">
+      <button class="nav-btn active" data-view="workspace">
+        <span class="nav-ico">📝</span>
+        <span class="nav-txt">Workspace</span>
+      </button>
+      <button class="nav-btn" data-view="laws">
+        <span class="nav-ico">📚</span>
+        <span class="nav-txt">Laws</span>
+      </button>
+      <button class="nav-btn" data-view="scenarios">
+        <span class="nav-ico">🧩</span>
+        <span class="nav-txt">Scenarios</span>
+      </button>
+      <button class="nav-btn" data-view="archive">
+        <span class="nav-ico">📄</span>
+        <span class="nav-txt">Drafts</span>
+      </button>
+      <button class="nav-btn" data-view="settings">
+        <span class="nav-ico">⚙️</span>
+        <span class="nav-txt">Settings</span>
+      </button>
+    </div>
+
     <div class="topbar">
-      <div>
-        <h1>РУВД • Ассистент законов и отчётности</h1>
-        <div class="subtitle">Быстрый поиск статей, расчёт наказания, шаблоны документов и автогенерация текста</div>
+      <div class="topbar-left">
+        <h1 class="topbar-title">Рапорт и оформление инцидента</h1>
+        <div class="topbar-sub">Единое рабочее место: статьи, наказание, документ и черновик в одном потоке</div>
       </div>
-      <div class="right status-line">
-        <span class="pill">Локальное сохранение: <b id="save_status">включено</b></span>
-        <span class="pill">Избранных статей: <b id="fav_count">0</b></span>
-        <span class="pill">Последний шаблон: <b id="last_doc_type">—</b></span>
+      <div class="topbar-right">
+        <span class="pill">👤 <b id="top_officer_name">—</b></span>
+        <span class="pill">🎖️ <b id="top_officer_rank">—</b></span>
+        <span class="pill">🏷️ <b id="top_officer_callsign">—</b></span>
+        <span class="pill">🕒 <b id="top_clock">--:--:--</b></span>
       </div>
     </div>
 
-
-<div class="tabs">
-  <button class="tab-btn active" data-tab="dashboard">Калькулятор</button>
-  <button class="tab-btn" data-tab="documents">Генератор документов</button>
-  <button class="tab-btn" data-tab="laws">Законы</button>
-  <button class="tab-btn" data-tab="presets">Сценарии</button>
-  <button class="tab-btn" data-tab="settings">Настройки</button>
-</div>
-
-
-  </div>
-</header>
-
-<main>
-  <section id="dashboard" class="container active">
-    <div class="grid-2">
-      <div>
+    <section id="workspace" class="view active">
+      <div class="layout">
         <div class="panel">
-          <div class="panel-title">
-            <h2>Подбор статей</h2>
-            <span class="pill">Единый выбор статей для всех документов</span>
-          </div>
-
-
-      <div class="row">
-        <div class="col col-2">
-          <label>Поиск по статье</label>
-          <input id="calc_search" type="text" placeholder="Номер, название, ключевое слово">
-        </div>
-
-        <div class="col">
-          <label>Режим расчёта</label>
-          <select id="calc_mode">
-            <option value="max">Максимум</option>
-            <option value="avg">Среднее</option>
-            <option value="min">Минимум</option>
-          </select>
-        </div>
-
-        <div class="col">
-          <label>Фильтр категории</label>
-          <select id="calc_category">
-            <option value="">Все</option>
-            <option value="i">Административные</option>
-            <option value="m">Проступки</option>
-            <option value="f">Уголовные</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="row" style="margin-top:10px">
-        <div class="col">
-          <label>Быстрый фильтр</label>
-          <div class="chip-list" id="quick_filters"></div>
-        </div>
-      </div>
-
-      <div class="hr"></div>
-
-      <div class="row">
-        <div class="col">
-          <label>Скидки / смягчающие факторы</label>
-          <div class="stack">
-            <label class="pill"><input class="calc_disc" type="checkbox" data-val="10"> Признал вину 10%</label>
-            <label class="pill"><input class="calc_disc" type="checkbox" data-val="25"> Информатор 25%</label>
-            <label class="pill"><input class="calc_disc" type="checkbox" data-val="20"> Был жертвой 20%</label>
-            <label class="pill"><input class="calc_disc" type="checkbox" data-val="50"> Приказ 50%</label>
-          </div>
-        </div>
-
-        <div class="col">
-          <label>Быстрые действия</label>
-          <div class="stack">
-            <button class="btn" id="btn_clear_selected">Снять все статьи</button>
-            <button class="btn" id="btn_clear_discounts">Сбросить скидки</button>
-            <button class="btn" id="btn_clear_filters">Сбросить поиск и фильтры</button>
-          </div>
-        </div>
-
-        <div class="col">
-          <label>Итоги расчёта</label>
-          <div class="kpis">
-            <div class="kpi">
-              <span class="label">Штраф</span>
-              <b><span id="sum_fine">0</span>$</b>
+          <div class="panel-head">
+            <div>
+              <h2>Инцидент и оформление</h2>
+              <div class="subtle">Сначала заполни ситуацию, выбери статьи ниже, затем сразу получи итоговый текст</div>
             </div>
-            <div class="kpi">
-              <span class="label">Срок</span>
-              <b><span id="sum_jail">0</span> ср</b>
-            </div>
-            <div class="kpi">
-              <span class="label">Скидка</span>
-              <b><span id="sum_disc">0</span>%</b>
+            <div class="subtabs">
+              <button class="subtab-btn active" data-subtab="incident_form">Форма</button>
+              <button class="subtab-btn" data-subtab="evidence_form">Изъятое / имущество</button>
+              <button class="subtab-btn" data-subtab="document_preview">Результат</button>
             </div>
           </div>
+
+          <div class="panel-body">
+            <div id="incident_form" class="subtab active">
+              <div class="row">
+                <div class="col">
+                  <label>Тип документа</label>
+                  <select id="doc_type">
+                    <option value="incident_report">Рапорт об инциденте</option>
+                    <option value="detention">Оформление задержания</option>
+                    <option value="fine_notice">Штрафной бланк</option>
+                    <option value="seizure_report">Протокол изъятия</option>
+                    <option value="memo">Служебная записка</option>
+                    <option value="brief">Краткая сводка</option>
+                  </select>
+                </div>
+
+                <div class="col">
+                  <label>Тон документа</label>
+                  <select id="doc_style">
+                    <option value="department">Департаментский</option>
+                    <option value="sheriff">Шерифский</option>
+                    <option value="judicial">Судебный / высокий</option>
+                    <option value="literary">Литературный</option>
+                    <option value="telegraph">Телеграфный</option>
+                  </select>
+                </div>
+
+                <div class="col">
+                  <label>Номер дела / документа</label>
+                  <input id="doc_number" type="text" placeholder="5485 / № ____">
+                </div>
+
+                <div class="col">
+                  <label>Дата</label>
+                  <input id="doc_date" type="date">
+                </div>
+
+                <div class="col">
+                  <label>Время</label>
+                  <input id="doc_time" type="time">
+                </div>
+              </div>
+
+              <div class="row" style="margin-top:14px">
+                <div class="col">
+                  <label>Офицер</label>
+                  <input id="doc_officer_name" type="text" placeholder="James Delaney">
+                </div>
+                <div class="col">
+                  <label>Звание</label>
+                  <input id="doc_officer_rank" type="text" placeholder="Deputy Sheriff">
+                </div>
+                <div class="col">
+                  <label>Позывной / жетон</label>
+                  <input id="doc_officer_callsign" type="text" placeholder="2SR-98">
+                </div>
+              </div>
+
+              <div class="row" style="margin-top:14px">
+                <div class="col">
+                  <label>Подозреваемый / нарушитель</label>
+                  <input id="doc_suspect" type="text" placeholder="Имя Фамилия">
+                </div>
+                <div class="col">
+                  <label>Потерпевший / заявитель</label>
+                  <input id="doc_victim" type="text" placeholder="Имя Фамилия">
+                </div>
+                <div class="col">
+                  <label>Регистрационный номер</label>
+                  <input id="doc_reg" type="text" placeholder="№ / ID">
+                </div>
+              </div>
+
+              <div class="row" style="margin-top:14px">
+                <div class="col col-2">
+                  <label>Место сцены</label>
+                  <input id="doc_location" type="text" placeholder="Route 1 между X-Y, далее к станции...">
+                </div>
+                <div class="col">
+                  <label>Тип вызова / заголовок</label>
+                  <input id="doc_title" type="text" placeholder="Ограбление дома / нарушение порядка / задержание">
+                </div>
+              </div>
+
+              <div class="row" style="margin-top:14px">
+                <div class="col">
+                  <label>Доставлен / помещён</label>
+                  <input id="doc_delivery" type="text" placeholder="В офис шерифа / в тюрьму / отпущен">
+                </div>
+                <div class="col">
+                  <label>Срок оплаты штрафа (дней)</label>
+                  <input id="doc_deadline_days" type="number" min="1" step="1" value="3">
+                </div>
+                <div class="col">
+                  <label>Режим расчёта статей</label>
+                  <select id="calc_mode">
+                    <option value="max">Максимум</option>
+                    <option value="avg">Среднее</option>
+                    <option value="min">Минимум</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="row" style="margin-top:14px">
+                <div class="col col-full">
+                  <label>Обстоятельства</label>
+                  <div class="check-grid">
+                    <label class="check-line"><input type="checkbox" class="fact-flag" data-key="foundOnArrival"> По прибытии обнаружен подозреваемый</label>
+                    <label class="check-line"><input type="checkbox" class="fact-flag" data-key="onFootEscape"> Побег пешком</label>
+                    <label class="check-line"><input type="checkbox" class="fact-flag" data-key="attemptedEscape"> Попытался скрыться</label>
+                    <label class="check-line"><input type="checkbox" class="fact-flag" data-key="detained"> Был задержан</label>
+                    <label class="check-line"><input type="checkbox" class="fact-flag" data-key="chase"> Началась погоня</label>
+                    <label class="check-line"><input type="checkbox" class="fact-flag" data-key="delivered"> Был доставлен</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row" style="margin-top:14px">
+                <div class="col col-full">
+                  <label>Подробное описание инцидента</label>
+                  <textarea id="doc_description" placeholder="Подробно и по фактам: кто, где, когда, при каких обстоятельствах, какие действия были совершены..."></textarea>
+                </div>
+              </div>
+
+              <div class="row" style="margin-top:14px">
+                <div class="col col-full">
+                  <label>Дополнительные примечания</label>
+                  <textarea id="doc_notes" placeholder="Особые обстоятельства, оговорки, пояснения, замечания офицера"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div id="evidence_form" class="subtab">
+              <div class="grid-2">
+                <div class="panel">
+                  <div class="panel-head">
+                    <div>
+                      <h3>Изъятое вооружение</h3>
+                      <div class="subtle">Оружие, боеприпасы, предметы нападения</div>
+                    </div>
+                    <button id="add_weapon" class="btn">+ Добавить</button>
+                  </div>
+                  <div class="panel-body">
+                    <div id="weapon_list" class="item-list"></div>
+                  </div>
+                </div>
+
+                <div class="panel">
+                  <div class="panel-head">
+                    <div>
+                      <h3>Имущество / улики</h3>
+                      <div class="subtle">Похищенное, найденное, изъятое имущество</div>
+                    </div>
+                    <button id="add_property" class="btn">+ Добавить</button>
+                  </div>
+                  <div class="panel-body">
+                    <div id="property_list" class="item-list"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="document_preview" class="subtab">
+              <label>Итоговый текст документа</label>
+              <pre id="doc_output" class="doc-preview mono"></pre>
+            </div>
+
+            <div class="sticky-tools">
+              <div class="footer-tools">
+                <button id="copy_doc" class="btn primary">Скопировать</button>
+                <button id="download_doc" class="btn success">Скачать .txt</button>
+                <button id="save_draft" class="btn">Сохранить черновик</button>
+                <button id="clear_form" class="btn ghost">Сбросить форму</button>
+                <span class="pill">Штраф: <b id="sum_fine">0$</b></span>
+                <span class="pill">Лишение свободы: <b id="sum_jail">0 сут.</b></span>
+                <span class="pill">Форма: <b id="sum_custody">—</b></span>
+              </div>
+            </div>
+          </div>
         </div>
+
+        <aside class="right-col">
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>Подбор статей</h3>
+                <div class="subtle">Теперь статьи выбираются прямо в рабочем процессе</div>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="row">
+                <div class="col col-2">
+                  <label>Поиск статьи</label>
+                  <input id="calc_search" type="text" placeholder="3.4, разбой, оружие, неподчинение...">
+                </div>
+                <div class="col">
+                  <label>Категория</label>
+                  <select id="calc_category">
+                    <option value="">Все</option>
+                    <option value="i">Административные</option>
+                    <option value="m">Проступки</option>
+                    <option value="f">Уголовные</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style="margin-top:14px">
+                <label>Быстрые фильтры</label>
+                <div id="quick_filters" class="tag-row"></div>
+              </div>
+
+              <div style="margin-top:14px">
+                <label>Смягчающие факторы</label>
+                <div class="tag-row">
+                  <button class="tag discount-tag" data-val="10">Признал вину 10%</button>
+                  <button class="tag discount-tag" data-val="25">Информатор 25%</button>
+                  <button class="tag discount-tag" data-val="20">Был жертвой 20%</button>
+                  <button class="tag discount-tag" data-val="50">Приказ 50%</button>
+                </div>
+              </div>
+
+              <div style="margin-top:14px" class="note">
+                Поток работы: <b>заполнил ситуацию → выбрал статьи → сразу получил наказание и итоговый документ</b>.
+              </div>
+
+              <div style="margin-top:14px" class="table-wrap">
+                <table id="calc_table">
+                  <thead>
+                    <tr>
+                      <th style="width:34px"></th>
+                      <th style="width:58px">★</th>
+                      <th>Статья</th>
+                      <th style="width:72px">Кат.</th>
+                      <th style="width:110px">Штраф</th>
+                      <th style="width:110px">Срок</th>
+                      <th style="width:120px">Тип</th>
+                      <th>Модификаторы</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>Сводка по наказанию</h3>
+                <div class="subtle">Разделение на арест и тюремное заключение</div>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="kpis">
+                <div class="kpi">
+                  <div class="kpi-label">Штраф</div>
+                  <div id="kpi_fine" class="kpi-value">0$</div>
+                  <div class="kpi-note">сумма с учётом скидок</div>
+                </div>
+                <div class="kpi">
+                  <div class="kpi-label">Срок</div>
+                  <div id="kpi_jail" class="kpi-value">0</div>
+                  <div class="kpi-note">суток лишения свободы</div>
+                </div>
+                <div class="kpi">
+                  <div class="kpi-label">Форма наказания</div>
+                  <div id="kpi_custody" class="kpi-value" style="font-size:18px">—</div>
+                  <div class="kpi-note">арест / тюремное заключение</div>
+                </div>
+                <div class="kpi">
+                  <div class="kpi-label">Скидка</div>
+                  <div id="kpi_discount" class="kpi-value">0%</div>
+                  <div class="kpi-note">максимум 75%</div>
+                </div>
+              </div>
+
+              <div style="margin-top:14px">
+                <label>Выбранные статьи</label>
+                <div id="selected_articles" class="quick-list"></div>
+              </div>
+
+              <div style="margin-top:14px">
+                <label>Подсказки</label>
+                <div id="smart_hints" class="stack"></div>
+              </div>
+            </div>
+          </div>
+        </aside>
       </div>
+    </section>
 
-      <div class="note" style="margin-top:12px">
-        <div><b>Подсказка:</b> выбранные статьи автоматически используются в генераторе документов.</div>
-        <div id="cap_info" class="mini" style="margin-top:6px">Потолки и исключения будут показаны здесь.</div>
-      </div>
-    </div>
-
-    <div class="panel">
-      <div class="panel-title">
-        <h3>Список статей</h3>
-        <span class="pill">Можно выбирать, добавлять в избранное и открывать в кодексе</span>
-      </div>
-
-      <div class="table-wrap">
-        <table id="calc_table">
-          <thead>
-            <tr>
-              <th style="width:34px"></th>
-              <th style="width:70px">★</th>
-              <th>Статья</th>
-              <th style="width:90px">Кат.</th>
-              <th style="width:120px">Штраф</th>
-              <th style="width:120px">Срок</th>
-              <th style="width:120px">Тип</th>
-              <th>Модификаторы</th>
-              <th style="width:120px">Кодекс</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <div>
-    <div class="panel">
-      <div class="panel-title">
-        <h2>Сводка по выбранным статьям</h2>
-        <span class="pill">То, что пойдёт в итоговые документы</span>
-      </div>
-
-      <div id="selected_summary" class="stack"></div>
-    </div>
-
-    <div class="panel">
-      <div class="panel-title">
-        <h3>Избранные статьи</h3>
-        <span class="pill">Быстрый доступ</span>
-      </div>
-      <div id="favorites_list" class="stack"></div>
-    </div>
-
-    <div class="panel">
-      <div class="panel-title">
-        <h3>Последние использованные</h3>
-        <span class="pill">История выбора</span>
-      </div>
-      <div id="history_list" class="stack"></div>
-    </div>
-
-    <div class="panel">
-      <div class="panel-title">
-        <h3>Подсказки по применению</h3>
-        <span class="pill">Автокомментарии</span>
-      </div>
-      <div id="smart_hints" class="stack"></div>
-    </div>
-  </div>
-</div>
-
-
-  </section>
-
-  <section id="documents" class="container">
-    <div class="panel">
-      <div class="panel-title">
-        <h2>Генератор документов</h2>
-        <span class="pill">Статьи, штраф и срок подтягиваются из калькулятора</span>
-      </div>
-
-
-  <div class="subtabs">
-    <button class="subtab-btn active" data-subtab="doc_form_main">Форма</button>
-    <button class="subtab-btn" data-subtab="doc_form_seized">Изъятое / имущество</button>
-    <button class="subtab-btn" data-subtab="doc_form_preview">Предпросмотр</button>
-  </div>
-
-  <div id="doc_form_main" class="subtab active">
-    <div class="row">
-      <div class="col">
-        <label>Тип документа</label>
-        <select id="doc_type">
-          <option value="fine_notice">Штрафной бланк</option>
-          <option value="detention">Оформление задержания</option>
-          <option value="incident_report">Отчёт о происшествии</option>
-          <option value="seizure_report">Протокол изъятия</option>
-          <option value="memo">Рапорт / служебная записка</option>
-          <option value="brief">Краткая сводка</option>
-        </select>
-      </div>
-
-      <div class="col">
-        <label>Стиль текста</label>
-        <select id="doc_style">
-          <option value="formal">Официальный</option>
-          <option value="short">Краткий</option>
-          <option value="rp">RP-стиль</option>
-        </select>
-      </div>
-
-      <div class="col">
-        <label>Срок оплаты штрафа (дней)</label>
-        <input id="doc_deadline_days" type="number" min="1" step="1" value="3">
-      </div>
-
-      <div class="col">
-        <label>Номер документа</label>
-        <input id="doc_number" type="text" placeholder="№ ______">
-      </div>
-    </div>
-
-    <div class="hr"></div>
-
-    <div class="row">
-      <div class="col">
-        <label>Имя гражданина</label>
-        <input id="doc_cit_fn" type="text" placeholder="Имя">
-      </div>
-      <div class="col">
-        <label>Фамилия гражданина</label>
-        <input id="doc_cit_ln" type="text" placeholder="Фамилия">
-      </div>
-      <div class="col">
-        <label>Регистрационный номер</label>
-        <input id="doc_cit_reg" type="text" placeholder="№ / ID">
-      </div>
-      <div class="col">
-        <label>Статус лица</label>
-        <select id="doc_person_status">
-          <option value="citizen">Гражданин</option>
-          <option value="suspect">Подозреваемый</option>
-          <option value="detainee">Задержанный</option>
-          <option value="violator">Нарушитель</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="row" style="margin-top:10px">
-      <div class="col">
-        <label>Дата</label>
-        <input id="doc_date" type="date">
-      </div>
-      <div class="col">
-        <label>Время</label>
-        <input id="doc_time" type="time">
-      </div>
-      <div class="col col-2">
-        <label>Место / локация</label>
-        <input id="doc_location" type="text" placeholder="Где оформлено / где произошло">
-      </div>
-    </div>
-
-    <div class="row" style="margin-top:10px">
-      <div class="col col-2">
-        <label>Заголовок / тема</label>
-        <input id="doc_title" type="text" placeholder="ПЛСД | Кратко о происшествии">
-      </div>
-      <div class="col col-2">
-        <label>Краткое описание</label>
-        <input id="doc_brief" type="text" maxlength="300" placeholder="Короткая выжимка">
-      </div>
-    </div>
-
-    <div class="row" style="margin-top:10px">
-      <div class="col col-100">
-        <label>Описание ситуации</label>
-        <textarea id="doc_description" placeholder="Кто, где, когда, что сделал; только по фактам"></textarea>
-      </div>
-    </div>
-
-    <div class="row" style="margin-top:10px">
-      <div class="col">
-        <label>Офицер — должность</label>
-        <input id="doc_officer_rank" type="text" placeholder="Коностебль / Детектив / Шериф">
-      </div>
-      <div class="col col-2">
-        <label>Офицер — имя и фамилия</label>
-        <input id="doc_officer_name" type="text" placeholder="Имя Фамилия">
-      </div>
-    </div>
-
-    <div class="row" style="margin-top:10px">
-      <div class="col col-100">
-        <label>Примечания</label>
-        <textarea id="doc_notes" placeholder="Дополнительные сведения, пояснения, особые обстоятельства"></textarea>
-      </div>
-    </div>
-  </div>
-
-  <div id="doc_form_seized" class="subtab">
-    <div class="grid-2">
-      <div class="panel" style="margin:0">
-        <div class="panel-title">
-          <h3>Изъятое вооружение</h3>
-          <button class="btn" id="add_weapon">+ Добавить оружие</button>
-        </div>
-        <div id="weapons_list" class="list"></div>
-      </div>
-
-      <div class="panel" style="margin:0">
-        <div class="panel-title">
-          <h3>Имущество / улики</h3>
-          <button class="btn" id="add_property">+ Добавить предмет</button>
-        </div>
-        <div id="property_list" class="list"></div>
-      </div>
-    </div>
-  </div>
-
-  <div id="doc_form_preview" class="subtab">
-    <div class="panel" style="margin:0">
-      <div class="panel-title">
-        <h3>Предпросмотр документа</h3>
-        <span class="pill">Обновляется автоматически</span>
-      </div>
-      <pre id="doc_output" class="mono doc-preview"></pre>
-    </div>
-  </div>
-
-  <div class="sticky-tools">
-    <div class="footer-tools">
-      <button class="btn primary" id="copy_doc">Скопировать текст</button>
-      <button class="btn ok" id="download_doc">Скачать .txt</button>
-      <button class="btn" id="refresh_doc">Обновить предпросмотр</button>
-      <button class="btn ghost" id="clear_doc_form">Сбросить форму</button>
-      <span class="pill right">Итог: <b><span id="doc_footer_penalty">0$ / 0 ср</span></b></span>
-    </div>
-  </div>
-</div>
-
-
-  </section>
-
-  <section id="laws" class="container">
-    <div class="grid-2">
-      <div>
+    <section id="laws" class="view">
+      <div class="layout">
         <div class="panel">
-          <div class="panel-title">
-            <h2>Поиск по законам</h2>
-            <span class="pill">Статьи, ключевые слова и быстрый переход</span>
+          <div class="panel-head">
+            <div>
+              <h2>Кодекс и статьи</h2>
+              <div class="subtle">Быстрый поиск по номеру, названию и ключевым словам</div>
+            </div>
           </div>
+          <div class="panel-body">
+            <div class="row">
+              <div class="col col-2">
+                <label>Запрос</label>
+                <input id="law_query" type="text" placeholder="3.4, разбой, нападение на офицера, оружие...">
+              </div>
+              <div class="col">
+                <label>Категория</label>
+                <select id="law_category">
+                  <option value="">Все</option>
+                  <option value="i">Административные</option>
+                  <option value="m">Проступки</option>
+                  <option value="f">Уголовные</option>
+                </select>
+              </div>
+              <div class="col">
+                <label>&nbsp;</label>
+                <button id="law_clear" class="btn block">Сбросить</button>
+              </div>
+            </div>
 
+            <div style="margin-top:14px" id="law_results" class="scenario-grid"></div>
+          </div>
+        </div>
 
-      <div class="searchline">
-        <div class="col col-2">
-          <label>Запрос</label>
-          <input id="law_query" type="text" placeholder="Например: 3.4, разбой, оружие, неподчинение">
-        </div>
-        <div class="col">
-          <label>Категория</label>
-          <select id="law_category">
-            <option value="">Все</option>
-            <option value="i">Административные</option>
-            <option value="m">Проступки</option>
-            <option value="f">Уголовные</option>
-          </select>
-        </div>
-        <div class="col">
-          <label>&nbsp;</label>
-          <button class="btn w100" id="law_clear">Сбросить</button>
-        </div>
+        <aside class="right-col">
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>Полный кодекс</h3>
+                <div class="subtle">Подсветка текущего запроса</div>
+              </div>
+              <div class="footer-tools">
+                <button id="law_copy" class="btn">Скопировать</button>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div id="law_view" class="law-view mono"></div>
+            </div>
+          </div>
+        </aside>
       </div>
+    </section>
 
-      <div class="hr"></div>
-
-      <div class="law-results" id="law_results"></div>
-    </div>
-  </div>
-
-  <div>
-    <div class="panel">
-      <div class="panel-title">
-        <h2>Полный кодекс</h2>
-        <div class="right footer-tools">
-          <button class="btn" id="law_expand">Показать всё</button>
-          <button class="btn" id="law_copy">Скопировать кодекс</button>
-        </div>
-      </div>
-      <div id="law_view" class="law-view mono"></div>
-    </div>
-  </div>
-</div>
-
-
-  </section>
-
-  <section id="presets" class="container">
-    <div class="panel">
-      <div class="panel-title">
-        <h2>Быстрые сценарии</h2>
-        <span class="pill">Наборы статей для типовых ситуаций</span>
-      </div>
-      <div id="preset_grid" class="preset-grid"></div>
-    </div>
-  </section>
-
-  <section id="settings" class="container">
-    <div class="grid-2">
+    <section id="scenarios" class="view">
       <div class="panel">
-        <div class="panel-title">
-          <h2>Настройки по умолчанию</h2>
+        <div class="panel-head">
+          <div>
+            <h2>Типовые сценарии</h2>
+            <div class="subtle">Выбирай заготовку, и статьи подставятся сразу в рабочую форму</div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div id="scenario_grid" class="scenario-grid"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="archive" class="view">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Черновики</h2>
+            <div class="subtle">Сохранённые локально заготовки документов</div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div id="drafts_list" class="quick-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="settings" class="view">
+      <div class="layout">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Настройки</h2>
+              <div class="subtle">Офицер по умолчанию, тема и сервисные параметры</div>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="row">
+              <div class="col">
+                <label>Имя офицера по умолчанию</label>
+                <input id="set_name" type="text" placeholder="James Delaney">
+              </div>
+              <div class="col">
+                <label>Звание / должность</label>
+                <input id="set_rank" type="text" placeholder="Deputy Sheriff">
+              </div>
+              <div class="col">
+                <label>Позывной / жетон</label>
+                <input id="set_callsign" type="text" placeholder="2SR-98">
+              </div>
+            </div>
+
+            <div class="row" style="margin-top:14px">
+              <div class="col">
+                <label>Тема</label>
+                <select id="set_theme">
+                  <option value="dark">Тёмная</option>
+                  <option value="light">Светлая</option>
+                </select>
+              </div>
+              <div class="col">
+                <label>Режим расчёта статей</label>
+                <select id="set_mode">
+                  <option value="max">Максимум</option>
+                  <option value="avg">Среднее</option>
+                  <option value="min">Минимум</option>
+                </select>
+              </div>
+              <div class="col">
+                <label>Тон документа по умолчанию</label>
+                <select id="set_style">
+                  <option value="department">Департаментский</option>
+                  <option value="sheriff">Шерифский</option>
+                  <option value="judicial">Судебный / высокий</option>
+                  <option value="literary">Литературный</option>
+                  <option value="telegraph">Телеграфный</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="footer-tools" style="margin-top:16px">
+              <button id="save_settings" class="btn primary">Сохранить настройки</button>
+              <button id="apply_defaults" class="btn">Применить в форму</button>
+            </div>
+          </div>
         </div>
 
-
-    <div class="row">
-      <div class="col">
-        <label>Офицер — должность</label>
-        <input id="set_default_rank" type="text" placeholder="Коностебль">
+        <aside class="right-col">
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>Сервис</h3>
+                <div class="subtle">Локальное хранилище браузера</div>
+              </div>
+            </div>
+            <div class="panel-body stack">
+              <div class="note">Все данные хранятся локально в браузере через <span class="mono">localStorage</span>.</div>
+              <button id="export_data" class="btn">Экспортировать JSON</button>
+              <button id="import_data" class="btn">Импортировать JSON</button>
+              <input id="import_file" type="file" class="hidden" accept=".json">
+              <button id="reset_data" class="btn warn">Сбросить всё</button>
+            </div>
+          </div>
+        </aside>
       </div>
-      <div class="col col-2">
-        <label>Офицер — имя и фамилия</label>
-        <input id="set_default_name" type="text" placeholder="Имя Фамилия">
-      </div>
-    </div>
-
-    <div class="row" style="margin-top:10px">
-      <div class="col">
-        <label>Режим расчёта по умолчанию</label>
-        <select id="set_default_mode">
-          <option value="max">Максимум</option>
-          <option value="avg">Среднее</option>
-          <option value="min">Минимум</option>
-        </select>
-      </div>
-
-      <div class="col">
-        <label>Стиль документа по умолчанию</label>
-        <select id="set_default_style">
-          <option value="formal">Официальный</option>
-          <option value="short">Краткий</option>
-          <option value="rp">RP-стиль</option>
-        </select>
-      </div>
-
-      <div class="col">
-        <label>Срок оплаты штрафа (дней)</label>
-        <input id="set_default_deadline" type="number" min="1" step="1" value="3">
-      </div>
-    </div>
-
-    <div class="row" style="margin-top:10px">
-      <div class="col col-100">
-        <label>Включить автосохранение</label>
-        <select id="set_autosave">
-          <option value="1">Да</option>
-          <option value="0">Нет</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="footer-tools" style="margin-top:12px">
-      <button class="btn primary" id="save_settings">Сохранить настройки</button>
-      <button class="btn" id="apply_settings">Применить к форме</button>
-    </div>
-  </div>
-
-  <div class="panel">
-    <div class="panel-title">
-      <h2>Сервис</h2>
-    </div>
-
-    <div class="stack">
-      <div class="note">Все данные сохраняются только в браузере через <span class="mono">localStorage</span>.</div>
-      <button class="btn" id="export_state">Экспортировать всё в JSON</button>
-      <button class="btn" id="import_state">Импортировать JSON</button>
-      <input id="import_file" type="file" accept=".json" class="hidden">
-      <button class="btn danger" id="reset_all_data">Полный сброс всех данных</button>
-    </div>
-  </div>
+    </section>
+  </main>
 </div>
-
-
-  </section>
-</main>
 
 <script>
-const STORAGE_KEY = "ruvd_assistant_v2";
+const STORAGE_KEY = "mdt_rp_assistant_v4";
 
 const ARTICLES = [
-  {code:"2.1",category:"i",title:"Нарушение общественного порядка (хулиганство, брань, непристойное поведение, опасная езда в городе)",penalty_mode:"or",fine_min:0,fine_max:8,jail_min:0,jail_max:5,tags:["порядок","хулиганство","брань","езда","город"]},
+  {code:"2.1",category:"i",title:"Нарушение общественного порядка",penalty_mode:"or",fine_min:0,fine_max:8,jail_min:0,jail_max:5,tags:["порядок","хулиганство","брань","езда","город"]},
   {code:"2.2",category:"i",title:"Надругательство над телами умерших / осквернение захоронений",penalty_mode:"or",fine_min:0,fine_max:10,jail_min:0,jail_max:5,tags:["тело","захоронение","осквернение"]},
-  {code:"2.3",category:"m",title:"Безосновательная стрельба в черте города",penalty_mode:"or",fine_min:10,fine_max:20,jail_min:0,jail_max:5,note:"Оружие изымается (см. раздел 8)",tags:["стрельба","город","оружие"]},
+  {code:"2.3",category:"m",title:"Безосновательная стрельба в черте города",penalty_mode:"or",fine_min:10,fine_max:20,jail_min:0,jail_max:5,note:"Оружие изымается по соответствующим правилам.",tags:["стрельба","город","оружие"]},
   {code:"2.4",category:"i",title:"Охота в черте города",penalty_mode:"fine_only",fine_min:5,fine_max:10,tags:["охота","город"]},
   {code:"2.5",category:"i",title:"Несогласованные массовые мероприятия",penalty_mode:"or",fine_min:0,fine_max:15,jail_min:0,jail_max:5,modifiers:{organizer:{label:"Организатор (x2)",kind:"mult",fine_delta_mult:1,jail_delta_mult:1}},tags:["митинг","массовое","организатор"]},
 
   {code:"3.1",category:"f",title:"Ограбление или попытка ограбления",penalty_mode:"and",fine_min:0,fine_max:100,jail_min:0,jail_max:40,tags:["ограбление","грабёж"]},
-  {code:"3.2a",family:"3.2",category:"m",title:"Кража имущества (стоимость до 15$)",penalty_mode:"and",fine_min:0,fine_max:20,jail_min:0,jail_max:10,tags:["кража","имущество"]},
-  {code:"3.2b",family:"3.2",category:"m",title:"Кража имущества (стоимость свыше 15$)",penalty_mode:"and",fine_min:0,fine_max:40,jail_min:0,jail_max:15,modifiers:{burglary:{label:"С проникновением (+15$ +10 ср)",fine_delta:15,jail_delta:10}},tags:["кража","имущество","проникновение"]},
-  {code:"3.3",category:"m",title:"Угон движимого имущества (лошадь, повозка)",penalty_mode:"and",fine_min:0,fine_max:40,jail_min:0,jail_max:15,tags:["угон","лошадь","повозка"]},
-  {code:"3.4",category:"f",title:"Разбой (хищение с насилием)",penalty_mode:"and",fine_min:0,fine_max:90,jail_min:0,jail_max:35,tags:["разбой","насилие","хищение"]},
+  {code:"3.2a",family:"3.2",category:"m",title:"Кража имущества до 15$",penalty_mode:"and",fine_min:0,fine_max:20,jail_min:0,jail_max:10,tags:["кража","имущество"]},
+  {code:"3.2b",family:"3.2",category:"m",title:"Кража имущества свыше 15$",penalty_mode:"and",fine_min:0,fine_max:40,jail_min:0,jail_max:15,modifiers:{burglary:{label:"С проникновением (+15$ / +10 сут.)",fine_delta:15,jail_delta:10}},tags:["кража","имущество","проникновение"]},
+  {code:"3.3",category:"m",title:"Угон движимого имущества",penalty_mode:"and",fine_min:0,fine_max:40,jail_min:0,jail_max:15,tags:["угон","лошадь","повозка"]},
+  {code:"3.4",category:"f",title:"Разбой",penalty_mode:"and",fine_min:0,fine_max:90,jail_min:0,jail_max:35,tags:["разбой","насилие","хищение"]},
   {code:"3.5",category:"f",title:"Вымогательство",penalty_mode:"and",fine_min:0,fine_max:80,jail_min:0,jail_max:25,tags:["вымогательство","шантаж"]},
-  {code:"3.6",category:"f",title:"Мошенничество (обман)",penalty_mode:"and",fine_min:0,fine_max:50,jail_min:0,jail_max:20,tags:["мошенничество","обман"]},
-  {code:"3.7",category:"m",title:"Приобретение/сбыт заведомо краденого",penalty_mode:"and",fine_min:0,fine_max:40,jail_min:0,jail_max:25,tags:["сбыт","краденое","имущество"]},
+  {code:"3.6",category:"f",title:"Мошенничество",penalty_mode:"and",fine_min:0,fine_max:50,jail_min:0,jail_max:20,tags:["мошенничество","обман"]},
+  {code:"3.7",category:"m",title:"Приобретение / сбыт заведомо краденого",penalty_mode:"and",fine_min:0,fine_max:40,jail_min:0,jail_max:25,tags:["сбыт","краденое","имущество"]},
 
-  {code:"4.1",category:"m",title:"Лёгкий вред здоровью или домогательства (физические/вербальные угрозы)",penalty_mode:"and",fine_min:0,fine_max:25,jail_min:0,jail_max:15,tags:["угрозы","лёгкий вред","домогательства","драка"]},
+  {code:"4.1",category:"m",title:"Лёгкий вред здоровью или домогательства",penalty_mode:"and",fine_min:0,fine_max:25,jail_min:0,jail_max:15,tags:["угрозы","лёгкий вред","домогательства","драка"]},
   {code:"4.2",category:"m",title:"Тяжкий вред здоровью",penalty_mode:"and",fine_min:0,fine_max:40,jail_min:0,jail_max:20,tags:["тяжкий вред","увечье","драка"]},
   {code:"4.3",category:"f",title:"Насильственные действия сексуального характера",penalty_mode:"and",fine_min:0,fine_max:40,jail_min:0,jail_max:25,tags:["сексуальное","насилие"]},
-  {code:"4.4",category:"f",title:"Похищение/удержание человека",penalty_mode:"and",fine_min:0,fine_max:40,jail_min:0,jail_max:25,tags:["похищение","удержание"]},
+  {code:"4.4",category:"f",title:"Похищение / удержание человека",penalty_mode:"and",fine_min:0,fine_max:40,jail_min:0,jail_max:25,tags:["похищение","удержание"]},
   {code:"4.5",category:"f",title:"Рабовладение",penalty_mode:"and",fine_min:0,fine_max:80,jail_min:0,jail_max:40,tags:["рабство","рабовладение"]},
-  {code:"4.6",category:"f",title:"Убийство / покушение на убийство",penalty_mode:"and",fine_min:0,fine_max:200,jail_min:0,jail_max:60,modifiers:{attempt:{label:"Покушение (штраф ≤120$, срок ≤45 ср)",note:true}},tags:["убийство","покушение","смерть"]},
-  {code:"4.7",category:"f",title:"Клевета, наносящая тяжкий ущерб / клевета с обвинением в преступлении",penalty_mode:"and",fine_min:0,fine_max:100,jail_min:0,jail_max:30,tags:["клевета"]},
-  {code:"4.8",category:"f",title:"Противоестественные развратные деяния (публичное обнажение и т.п.)",penalty_mode:"and",fine_min:0,fine_max:30,jail_min:0,jail_max:20,tags:["обнажение","разврат"]},
+  {code:"4.6",category:"f",title:"Убийство / покушение на убийство",penalty_mode:"and",fine_min:0,fine_max:200,jail_min:0,jail_max:60,modifiers:{attempt:{label:"Покушение (до 120$ / 45 сут.)",note:true}},tags:["убийство","покушение","смерть"]},
+  {code:"4.7",category:"f",title:"Клевета, наносящая тяжкий ущерб",penalty_mode:"and",fine_min:0,fine_max:100,jail_min:0,jail_max:30,tags:["клевета"]},
+  {code:"4.8",category:"f",title:"Противоестественные развратные деяния",penalty_mode:"and",fine_min:0,fine_max:30,jail_min:0,jail_max:20,tags:["обнажение","разврат"]},
 
   {code:"5.1",category:"f",title:"Нападение на представителя закона при исполнении",penalty_mode:"and",fine_min:0,fine_max:80,jail_min:0,jail_max:35,tags:["офицер","нападение","закон"]},
-  {code:"5.2",category:"m",title:"Создание помех представителю закона при исполнении обязанностей",penalty_mode:"and",fine_min:0,fine_max:25,jail_min:0,jail_max:10,tags:["помехи","офицер","сопротивление"]},
+  {code:"5.2",category:"m",title:"Создание помех представителю закона",penalty_mode:"and",fine_min:0,fine_max:25,jail_min:0,jail_max:10,tags:["помехи","офицер","сопротивление"]},
   {code:"5.3",category:"m",title:"Неподчинение законному требованию",penalty_mode:"and",fine_min:0,fine_max:15,jail_min:0,jail_max:10,tags:["неподчинение","отказ"]},
   {code:"5.4",category:"f",title:"Предложение дачи взятки",penalty_mode:"and",fine_min:0,fine_max:50,jail_min:0,jail_max:15,tags:["взятка"]},
   {code:"5.5",category:"f",title:"Незаконное присвоение должностных полномочий",penalty_mode:"and",fine_min:0,fine_max:80,jail_min:0,jail_max:20,tags:["полномочия","самозванец"]},
-  {code:"5.6",category:"f",title:"Уклонение от правосудия (побег/уничтожение улик/содействие уклонению)",penalty_mode:"and",fine_min:0,fine_max:60,jail_min:0,jail_max:25,tags:["побег","улики","правосудие"]},
-  {code:"5.7",category:"f",title:"Покушение на жизнь федерального судьи или маршала при исполнении",penalty_mode:"and",fine_min:0,fine_max:300,jail_min:60,jail_max:60,special:{capital:true},tags:["маршал","судья","покушение"]},
+  {code:"5.6",category:"f",title:"Уклонение от правосудия",penalty_mode:"and",fine_min:0,fine_max:60,jail_min:0,jail_max:25,tags:["побег","улики","правосудие"]},
+  {code:"5.7",category:"f",title:"Покушение на жизнь федерального судьи или маршала",penalty_mode:"and",fine_min:0,fine_max:300,jail_min:60,jail_max:60,special:{capital:true},tags:["маршал","судья","покушение"]},
 
-  {code:"6.1",category:"m",title:"Неуплата штрафа в срок (удвоение суммы + арест)",penalty_mode:"and",fine_min:0,fine_max:0,jail_min:0,jail_max:20,tags:["неуплата","штраф"]},
-  {code:"6.2",category:"f",title:"Дача/получение взятки, использование должности в корыстных целях",penalty_mode:"and",fine_min:0,fine_max:80,jail_min:0,jail_max:30,tags:["взятка","должность"]},
+  {code:"6.1",category:"m",title:"Неуплата штрафа в срок",penalty_mode:"and",fine_min:0,fine_max:0,jail_min:0,jail_max:20,tags:["неуплата","штраф"]},
+  {code:"6.2",category:"f",title:"Дача / получение взятки, использование должности в корыстных целях",penalty_mode:"and",fine_min:0,fine_max:80,jail_min:0,jail_max:30,tags:["взятка","должность"]},
   {code:"6.3",category:"f",title:"Подделка документов",penalty_mode:"and",fine_min:0,fine_max:60,jail_min:0,jail_max:20,tags:["подделка","документы"]},
-  {code:"6.4",category:"m",title:"Запрещённая предпринимательская деятельность лицами <21 лет",penalty_mode:"fine_only",fine_min:0,fine_max:80,tags:["предпринимательство"]},
+  {code:"6.4",category:"m",title:"Запрещённая предпринимательская деятельность лицами младше 21 года",penalty_mode:"fine_only",fine_min:0,fine_max:80,tags:["предпринимательство"]},
 
-  {code:"8.1",category:"i",title:"Ношение огнестрельного оружия в неуместных местах (суд, церковь)",penalty_mode:"fine_only",fine_min:0,fine_max:8,tags:["оружие","суд","церковь"]},
+  {code:"8.1",category:"i",title:"Ношение огнестрельного оружия в неуместных местах",penalty_mode:"fine_only",fine_min:0,fine_max:8,tags:["оружие","суд","церковь"]},
   {code:"8.2",category:"i",title:"Оружие у лиц младше 16 лет",penalty_mode:"fine_only",fine_min:0,fine_max:20,tags:["оружие","несовершеннолетний"]},
-  {code:"8.3",category:"m",title:"Торговля оружием/боеприпасами вне оружейных магазинов",penalty_mode:"and",fine_min:0,fine_max:80,jail_min:0,jail_max:25,tags:["оружие","торговля","боеприпасы"]},
+  {code:"8.3",category:"m",title:"Торговля оружием / боеприпасами вне оружейных магазинов",penalty_mode:"and",fine_min:0,fine_max:80,jail_min:0,jail_max:25,tags:["оружие","торговля","боеприпасы"]},
   {code:"8.4",category:"i",title:"Хранение оружия, зарегистрированного на другого",penalty_mode:"or",fine_min:0,fine_max:5,jail_min:0,jail_max:5,tags:["оружие","регистрация"]},
-  {code:"8.5",category:"i",title:"Хранение незарегистрированного оружия (повтор — конфискация)",penalty_mode:"or",fine_min:0,fine_max:5,jail_min:0,jail_max:5,modifiers:{repeat:{label:"Повторное нарушение (конфискация без возврата)"}},tags:["оружие","регистрация","конфискация"]},
+  {code:"8.5",category:"i",title:"Хранение незарегистрированного оружия",penalty_mode:"or",fine_min:0,fine_max:5,jail_min:0,jail_max:5,modifiers:{repeat:{label:"Повторное нарушение (конфискация)",note:true}},tags:["оружие","регистрация","конфискация"]},
 
   {code:"11.6",category:"f",title:"Превышение полномочий или халатность, повлёкшая ущерб",penalty_mode:"and",fine_min:0,fine_max:80,jail_min:0,jail_max:50,tags:["полномочия","халатность"]},
-  {code:"11.7",category:"f",title:"Неоказание первой помощи представителем закона/медиком",penalty_mode:"or",fine_min:0,fine_max:20,jail_min:0,jail_max:15,tags:["первая помощь","медик"]},
-
-  {code:"14.3m",family:"14.3",category:"m",title:"Разовая частная адвокатская деятельность",penalty_mode:"and",fine_min:0,fine_max:60,jail_min:0,jail_max:25,tags:["адвокат"]},
-  {code:"14.3f",family:"14.3",category:"f",title:"Систематическая частная адвокатская деятельность",penalty_mode:"and",fine_min:0,fine_max:100,jail_min:0,jail_max:40,tags:["адвокат"]},
-  {code:"14.4m",family:"14.4",category:"m",title:"Халатность/разглашение адвокатом",penalty_mode:"jail_only",jail_min:0,jail_max:10,tags:["адвокат","разглашение"]},
-  {code:"14.4f",family:"14.4",category:"f",title:"Сговор/взяточничество адвоката",penalty_mode:"and",fine_min:0,fine_max:80,jail_min:0,jail_max:25,tags:["адвокат","взятка","сговор"]}
+  {code:"11.7",category:"f",title:"Неоказание первой помощи представителем закона / медиком",penalty_mode:"or",fine_min:0,fine_max:20,jail_min:0,jail_max:15,tags:["первая помощь","медик"]}
 ];
 
 const LAW_TEXT = `
 1. ОБЩИЕ ПОЛОЖЕНИЯ
 — Преступление: деяние, запрещённое Сводом, совершённое умышленно или по неосторожности и представляющее угрозу обществу или личности.
-— Малозначительные нарушения не являются преступлениями.
 — Соучастники наказываются по санкциям соответствующей статьи.
 — Покушение карается как совершённое, приготовление — до половины санкций.
-— Невиновность презюмируется. Обвиняемый и подозреваемый не обязаны доказывать невиновность или свидетельствовать против себя и близких.
-— Задержанный — временно лишённый свободы для выяснения обстоятельств.
-— Арест — до 15 ср (департамент). Лишение свободы — более 15 ср (тюрьма).
-— Каждый обязан сообщать о преступлениях. Каждый имеет право на защиту и неприкосновенность собственности, может защищать имущество соразмерной силой.
-— Категории: (i) административное, (m) проступок, (f) уголовное.
-— Совокупность преступлений: сроки суммируются, но не более 60 ср; штраф — суммируется, но не более 750$. Исключения — особо тяжкие/казнённые.
+— Арест — до 15 суток. Тюремное заключение — свыше 15 суток.
+— Совокупность преступлений: сроки суммируются, но не более 60 суток; штраф — суммируется, но не более 750 долларов, кроме особо тяжких случаев.
 
 2. МЕЛКИЕ ПРАВОНАРУШЕНИЯ
-2.1 (i) Нарушение общественного порядка — штраф до 8$ или арест до 5 ср.
-2.2 (i) Надругательство над телами умерших/захоронениями — штраф до 10$ или арест до 5 ср.
-2.3 (m) Стрельба в городе без оснований — штраф 10–20$ или арест до 5 ср. Оружие изымается.
-2.4 (i) Охота в черте города — штраф 5–10$.
-2.5 (i) Несогласованные массовые мероприятия — штраф до 15$ или арест до 5 ср. Организатор — двойное наказание.
+2.1 Нарушение общественного порядка — штраф до 8 долларов или арест до 5 суток.
+2.2 Надругательство над телами умерших / захоронениями — штраф до 10 долларов или арест до 5 суток.
+2.3 Безосновательная стрельба в черте города — штраф 10–20 долларов или арест до 5 суток.
+2.4 Охота в черте города — штраф 5–10 долларов.
+2.5 Несогласованные массовые мероприятия — штраф до 15 долларов или арест до 5 суток.
 
 3. ИМУЩЕСТВЕННЫЕ ПРЕСТУПЛЕНИЯ
-3.1 (f) Ограбление/попытка — до 40 ср и штраф до 100$.
-3.2 (m) Кража: до 15$ — до 10 ср и до 20$; свыше 15$ — до 15 ср и до 40$. При проникновении в жилище +10 ср и +15$.
-3.3 (m) Угон движимого имущества — до 15 ср и до 40$.
-3.4 (f) Разбой — до 35 ср и до 90$.
-3.5 (f) Вымогательство — до 25 ср и до 80$.
-3.6 (f) Мошенничество — до 20 ср и до 50$.
-3.7 (m) Приобретение/сбыт краденого — до 25 ср и до 40$.
+3.1 Ограбление или попытка ограбления — до 40 суток и штраф до 100 долларов.
+3.2 Кража имущества — до 10 / 15 суток и до 20 / 40 долларов в зависимости от стоимости.
+3.3 Угон движимого имущества — до 15 суток и до 40 долларов.
+3.4 Разбой — до 35 суток и до 90 долларов.
+3.5 Вымогательство — до 25 суток и до 80 долларов.
+3.6 Мошенничество — до 20 суток и до 50 долларов.
+3.7 Сбыт краденого — до 25 суток и до 40 долларов.
 
 4. ПРОТИВ ЛИЧНОСТИ И ЗДОРОВЬЯ
-4.1 (m) Лёгкий вред здоровью или домогательства — до 15 ср и до 25$.
-4.2 (m) Тяжкий вред — до 20 ср и до 40$.
-4.3 (f) Насильственные действия сексуального характера — до 25 ср и до 40$.
-4.4 (f) Похищение/удержание — до 25 ср и до 40$.
-4.5 (f) Рабовладение — до 40 ср и до 80$.
-4.6 (f) Убийство — до 60 ср и до 200$. Покушение — до 45 ср и до 120$.
-4.7 (f) Клевета — до 30 ср и до 100$.
-4.8 (f) Противоестественные развратные деяния — до 20 ср и до 30$.
+4.1 Лёгкий вред здоровью или домогательства — до 15 суток и до 25 долларов.
+4.2 Тяжкий вред здоровью — до 20 суток и до 40 долларов.
+4.3 Насильственные действия сексуального характера — до 25 суток и до 40 долларов.
+4.4 Похищение / удержание человека — до 25 суток и до 40 долларов.
+4.5 Рабовладение — до 40 суток и до 80 долларов.
+4.6 Убийство — до 60 суток и до 200 долларов. Покушение — до 45 суток и до 120 долларов.
+4.7 Клевета — до 30 суток и до 100 долларов.
+4.8 Развратные деяния — до 20 суток и до 30 долларов.
 
 5. ПРОТИВ ВЛАСТИ
-5.1 (f) Нападение на представителя закона при исполнении — до 35 ср и до 80$.
-5.2 (m) Создание помех — до 10 ср и до 25$.
-5.3 (m) Неподчинение законному требованию — до 10 ср и до 15$.
-5.4 (f) Предложение дачи взятки — до 15 ср и до 50$.
-5.5 (f) Незаконное присвоение полномочий — до 20 ср и до 80$.
-5.6 (f) Уклонение от правосудия — до 25 ср и до 60$.
-5.7 (f) Покушение на жизнь федерального судьи или маршала — 60 ср и штраф до 300$.
+5.1 Нападение на представителя закона при исполнении — до 35 суток и до 80 долларов.
+5.2 Создание помех — до 10 суток и до 25 долларов.
+5.3 Неподчинение законному требованию — до 10 суток и до 15 долларов.
+5.4 Предложение дачи взятки — до 15 суток и до 50 долларов.
+5.5 Незаконное присвоение полномочий — до 20 суток и до 80 долларов.
+5.6 Уклонение от правосудия — до 25 суток и до 60 долларов.
+5.7 Покушение на жизнь федерального судьи или маршала — 60 суток и штраф до 300 долларов.
 
 6. ЭКОНОМИЧЕСКИЕ
-6.1 (m) Неуплата штрафа в срок — удвоение суммы и арест до 20 ср.
-6.2 (f) Дача/получение взятки, использование должности в корыстных целях — до 30 ср и до 80$.
-6.3 (f) Подделка документов — до 20 ср и до 60$.
-6.4 (m) Запрещённая предпринимательская деятельность лицами <21 лет — штраф до 80$.
+6.1 Неуплата штрафа в срок — арест до 20 суток.
+6.2 Взятка или корыстное использование должности — до 30 суток и до 80 долларов.
+6.3 Подделка документов — до 20 суток и до 60 долларов.
+6.4 Запрещённая предпринимательская деятельность лицами младше 21 года — штраф до 80 долларов.
 
 8. ОРУЖИЕ
-8.1 (i) Ношение в неуместных местах — штраф до 8$.
-8.2 (i) Оружие у лиц младше 16 лет — штраф до 20$.
-8.3 (m) Торговля оружием вне магазинов — до 25 ср и до 80$.
-8.4 (i) Хранение оружия, зарегистрированного на другого — до 5 ср или до 5$.
-8.5 (i) Хранение незарегистрированного — до 5 ср или до 5$. Повтор — конфискация без возврата.
+8.1 Ношение в неуместных местах — штраф до 8 долларов.
+8.2 Оружие у лиц младше 16 лет — штраф до 20 долларов.
+8.3 Торговля оружием вне магазинов — до 25 суток и до 80 долларов.
+8.4 Хранение оружия, зарегистрированного на другого — до 5 суток или до 5 долларов.
+8.5 Хранение незарегистрированного оружия — до 5 суток или до 5 долларов.
 
 11. ПОЛНОМОЧИЯ ПРЕДСТАВИТЕЛЕЙ ЗАКОНА
-11.6 (f) Превышение полномочий/халатность, повлёкшая ущерб — до 50 ср и до 80$.
-11.7 (f) Неоказание первой помощи представителем закона/медиком — арест до 15 ср или штраф до 20$.
-
-14. АДВОКАТСКАЯ ДЕЯТЕЛЬНОСТЬ
-14.3 (m) Разовая частная практика — до 25 ср и до 60$.
-14.3 (f) Систематическая частная практика — до 40 ср и до 100$.
-14.4 (m) Халатность/разглашение — до 10 ср.
-14.4 (f) Сговор/взяточничество — до 25 ср и до 80$.
-
-15. ВЫСШАЯ МЕРА НАКАЗАНИЯ
-— Может применяться при повторных тяжких преступлениях или особо тяжких случаях по санкции федерального судьи.
+11.6 Превышение полномочий / халатность, повлёкшая ущерб — до 50 суток и до 80 долларов.
+11.7 Неоказание первой помощи представителем закона / медиком — арест до 15 суток или штраф до 20 долларов.
 `;
-
-const PRESETS = [
-  {id:"fight",title:"Драка / конфликт",desc:"Угрозы, побои, неподчинение",codes:["4.1","5.3"]},
-  {id:"severe_fight",title:"Тяжкая драка",desc:"Серьёзный вред здоровью",codes:["4.2","5.3"]},
-  {id:"robbery",title:"Разбой",desc:"Насильственное хищение",codes:["3.4","5.3"]},
-  {id:"theft",title:"Кража с проникновением",desc:"Имущественное преступление",codes:["3.2b"]},
-  {id:"gun_city",title:"Стрельба в городе",desc:"Оружие и нарушение порядка",codes:["2.3","8.5"]},
-  {id:"cop_attack",title:"Нападение на офицера",desc:"Нападение + неподчинение + помехи",codes:["5.1","5.2","5.3"]},
-  {id:"escape",title:"Побег / уклонение",desc:"Попытка уйти от правосудия",codes:["5.6","5.3"]},
-  {id:"bribe",title:"Взятка",desc:"Предложение или получение взятки",codes:["5.4","6.2"]},
-  {id:"fake_docs",title:"Поддельные документы",desc:"Фальсификация бумаг",codes:["6.3"]},
-  {id:"illegal_weapon_trade",title:"Незаконная торговля оружием",desc:"Оружие вне закона",codes:["8.3","8.5"]}
-];
 
 const QUICK_FILTERS = [
   {id:"weapon",label:"Оружие",query:"оружие"},
@@ -1195,1742 +1582,1919 @@ const QUICK_FILTERS = [
   {id:"violence",label:"Насилие",query:"вред"},
   {id:"officer",label:"Против офицера",query:"представителя закона"},
   {id:"bribe",label:"Взятка",query:"взятка"},
-  {id:"order",label:"Порядок",query:"поряд"},
-  {id:"docs",label:"Документы",query:"документ"}
+  {id:"docs",label:"Документы",query:"документы"},
+  {id:"order",label:"Порядок",query:"порядок"}
+];
+
+const SCENARIOS = [
+  {id:"fight",title:"Драка / конфликт",desc:"Угрозы, побои, неподчинение",codes:["4.1","5.3"]},
+  {id:"serious_fight",title:"Тяжкая драка",desc:"Серьёзный вред здоровью",codes:["4.2","5.3"]},
+  {id:"robbery",title:"Разбой",desc:"Насильственное хищение",codes:["3.4","5.3"]},
+  {id:"home_theft",title:"Кража с проникновением",desc:"Имущественное преступление",codes:["3.2b"]},
+  {id:"gun_city",title:"Стрельба в городе",desc:"Оружие и нарушение порядка",codes:["2.3","8.5"]},
+  {id:"cop_attack",title:"Нападение на офицера",desc:"Нападение + неподчинение + помехи",codes:["5.1","5.2","5.3"]},
+  {id:"escape",title:"Побег / уклонение",desc:"Попытка уйти от правосудия",codes:["5.6","5.3"]},
+  {id:"bribe",title:"Взятка",desc:"Предложение или получение взятки",codes:["5.4","6.2"]},
+  {id:"fake_docs",title:"Поддельные документы",desc:"Фальсификация бумаг",codes:["6.3"]},
+  {id:"illegal_trade",title:"Незаконная торговля оружием",desc:"Оружие вне закона",codes:["8.3","8.5"]}
 ];
 
 const DEFAULT_STATE = {
+  theme:"dark",
+  auth:{
+    name:"",
+    rank:"",
+    callsign:"",
+    passed:false
+  },
   settings:{
-    default_rank:"",
-    default_name:"",
-    default_mode:"max",
-    default_style:"formal",
-    default_deadline:3,
-    autosave:true
+    name:"",
+    rank:"",
+    callsign:"",
+    mode:"max",
+    style:"department"
   },
   calc:{
     mode:"max",
     search:"",
     category:"",
     picks:{},
-    discounts:[],
-    favorites:[],
-    history:[]
+    discounts:[]
   },
   doc:{
-    type:"fine_notice",
-    style:"formal",
-    deadline_days:3,
+    type:"incident_report",
+    style:"department",
     number:"",
-    cit_fn:"",
-    cit_ln:"",
-    cit_reg:"",
-    person_status:"citizen",
     date:"",
     time:"",
+    officer_name:"",
+    officer_rank:"",
+    officer_callsign:"",
+    suspect:"",
+    victim:"",
+    reg:"",
     location:"",
     title:"",
-    brief:"",
+    delivery:"",
+    deadline_days:3,
     description:"",
-    officer_rank:"",
-    officer_name:"",
     notes:"",
+    facts:{
+      foundOnArrival:false,
+      onFootEscape:false,
+      attemptedEscape:false,
+      detained:false,
+      chase:false,
+      delivered:false
+    },
     weapons:[],
     property:[]
-  }
+  },
+  drafts:[]
 };
+
+function deepClone(v){
+  return JSON.parse(JSON.stringify(v));
+}
+
+function mergeDeep(target, source){
+  if(typeof target !== "object" || target === null) return deepClone(source);
+  const out = Array.isArray(target) ? [...target] : {...target};
+  if(typeof source !== "object" || source === null) return out;
+  for(const key of Object.keys(source)){
+    const sv = source[key];
+    const tv = out[key];
+    if(Array.isArray(sv)) out[key] = [...sv];
+    else if(typeof sv === "object" && sv !== null) out[key] = mergeDeep(tv ?? {}, sv);
+    else out[key] = sv;
+  }
+  return out;
+}
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return deepClone(DEFAULT_STATE);
+    return mergeDeep(DEFAULT_STATE, JSON.parse(raw));
+  }catch(e){
+    return deepClone(DEFAULT_STATE);
+  }
+}
 
 const STATE = loadState();
 const $ = id => document.getElementById(id);
 const clamp = (v,min,max) => Math.max(min, Math.min(max, v));
 const sum = arr => arr.reduce((a,b)=>a+b,0);
 
-function deepClone(v){
-return JSON.parse(JSON.stringify(v));
-}
-
-function mergeDeep(target, source){
-if(typeof target !== "object" || target === null) return deepClone(source);
-const out = Array.isArray(target) ? [...target] : {...target};
-if(typeof source !== "object" || source === null) return out;
-for(const key of Object.keys(source)){
-const sv = source[key];
-const tv = out[key];
-if(Array.isArray(sv)) out[key] = [...sv];
-else if(typeof sv === "object" && sv !== null) out[key] = mergeDeep(tv ?? {}, sv);
-else out[key] = sv;
-}
-return out;
-}
-
-function loadState(){
-try{
-const raw = localStorage.getItem(STORAGE_KEY);
-if(!raw) return deepClone(DEFAULT_STATE);
-const parsed = JSON.parse(raw);
-return mergeDeep(DEFAULT_STATE, parsed);
-}catch(e){
-return deepClone(DEFAULT_STATE);
-}
-}
-
-function saveState(force=false){
-try{
-if(!STATE.settings.autosave && !force){
-$("save_status").textContent = "выключено";
-return;
-}
-localStorage.setItem(STORAGE_KEY, JSON.stringify(STATE));
-$("save_status").textContent = "сохранено";
-setTimeout(()=>{
-if($("save_status")) $("save_status").textContent = STATE.settings.autosave ? "включено" : "выключено";
-}, 900);
-}catch(e){
-if($("save_status")) $("save_status").textContent = "ошибка";
-}
-}
-
-function gameNow(){
-const n = new Date();
-return new Date(1900, n.getMonth(), n.getDate(), n.getHours(), n.getMinutes(), 0, 0);
-}
-
-function toInputDate(date){
-const y = date.getFullYear();
-const m = String(date.getMonth()+1).padStart(2,"0");
-const d = String(date.getDate()).padStart(2,"0");
-return `${y}-${m}-${d}`;
-}
-
-function toInputTime(date){
-const h = String(date.getHours()).padStart(2,"0");
-const m = String(date.getMinutes()).padStart(2,"0");
-return `${h}:${m}`;
-}
-
-function fmtDate(date){
-const d = String(date.getDate()).padStart(2,"0");
-const m = String(date.getMonth()+1).padStart(2,"0");
-const y = date.getFullYear();
-return `${d}.${m}.${y}`;
-}
-
-function addDays(date, days){
-const d = new Date(date);
-d.setDate(d.getDate()+days);
-return d;
+function saveState(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(STATE));
 }
 
 function escapeHtml(str=""){
-return String(str).replace(/[&<>]/g, s => ({
-"&":"&",
-"<":"<",
-">":">"
-}[s]));
+  return String(str).replace(/[&<>]/g, s => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;"
+  }[s]));
 }
 
 function escapeRegExp(str=""){
-return String(str).replace(/[.*+?^${}()|[]\]/g, "\$&");
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function articleLabel(a){
-return `${a.code} — ${a.title}`;
+function gameNow(){
+  const n = new Date();
+  return new Date(1900, n.getMonth(), n.getDate(), n.getHours(), n.getMinutes(), n.getSeconds(), 0);
 }
 
-function rangeText(min,max,suffix){
-if(min == null && max == null) return "—";
-if(min != null && max != null) return `${min}–${max}${suffix}`;
-return `${min ?? max}${suffix}`;
+function toInputDate(date){
+  const y = date.getFullYear();
+  const m = String(date.getMonth()+1).padStart(2,"0");
+  const d = String(date.getDate()).padStart(2,"0");
+  return `${y}-${m}-${d}`;
 }
 
-function valueFromRange(min,max,mode){
-if(min == null && max == null) return 0;
-if(mode === "max") return max ?? min ?? 0;
-if(mode === "min") return min ?? max ?? 0;
-if(min == null) return Math.floor((max || 0)/2);
-if(max == null) return Math.floor((min || 0)/2);
-return Math.round((min + max) / 2);
+function toInputTime(date){
+  const h = String(date.getHours()).padStart(2,"0");
+  const m = String(date.getMinutes()).padStart(2,"0");
+  return `${h}:${m}`;
+}
+
+function fmtDate(date){
+  const d = String(date.getDate()).padStart(2,"0");
+  const m = String(date.getMonth()+1).padStart(2,"0");
+  const y = date.getFullYear();
+  return `${d}.${m}.${y}`;
+}
+
+function fmtClock(date){
+  return `${String(date.getHours()).padStart(2,"0")}:${String(date.getMinutes()).padStart(2,"0")}:${String(date.getSeconds()).padStart(2,"0")}`;
+}
+
+function addDays(date, days){
+  const d = new Date(date);
+  d.setDate(d.getDate()+days);
+  return d;
+}
+
+function articleByCode(code){
+  return ARTICLES.find(x => x.code === code);
 }
 
 function ensurePick(code){
-if(!STATE.calc.picks[code]){
-STATE.calc.picks[code] = {sel:false, use:"fine", mods:{}};
-}
-if(!STATE.calc.picks[code].mods) STATE.calc.picks[code].mods = {};
-if(!STATE.calc.picks[code].use) STATE.calc.picks[code].use = "fine";
-return STATE.calc.picks[code];
+  if(!STATE.calc.picks[code]){
+    STATE.calc.picks[code] = {sel:false,use:"fine",mods:{}};
+  }
+  if(!STATE.calc.picks[code].mods) STATE.calc.picks[code].mods = {};
+  if(!STATE.calc.picks[code].use) STATE.calc.picks[code].use = "fine";
+  return STATE.calc.picks[code];
 }
 
-function getArticleByCode(code){
-return ARTICLES.find(a => a.code === code);
+function valueFromRange(min,max,mode){
+  if(min == null && max == null) return 0;
+  if(mode === "max") return max ?? min ?? 0;
+  if(mode === "min") return min ?? max ?? 0;
+  if(min == null) return Math.floor((max || 0)/2);
+  if(max == null) return Math.floor((min || 0)/2);
+  return Math.round((min + max)/2);
+}
+
+function rangeText(min,max,suffix){
+  if(min == null && max == null) return "—";
+  if(min != null && max != null) return `${min}–${max}${suffix}`;
+  return `${min ?? max}${suffix}`;
 }
 
 function selectedArticles(){
-return ARTICLES.filter(a => STATE.calc.picks[a.code]?.sel);
+  return ARTICLES.filter(a => STATE.calc.picks[a.code]?.sel);
 }
 
 function selectedArticleCodes(){
-return selectedArticles().map(a => a.code);
+  return selectedArticles().map(a => a.code);
 }
 
-function discountValues(){
-return Array.from(document.querySelectorAll(".calc_disc:checked")).map(x => +x.dataset.val);
+function getCustodyType(jail){
+  if(jail <= 0) return {label:"без лишения свободы", short:"—"};
+  if(jail <= 15) return {label:"арест", short:"арест"};
+  return {label:"тюремное заключение", short:"тюрьма"};
+}
+
+function activeDiscounts(){
+  return Array.from(document.querySelectorAll(".discount-tag.active")).map(x => +x.dataset.val);
 }
 
 function computeTotals(){
-const mode = STATE.calc.mode;
-const discounts = discountValues();
-let fine = 0;
-let jail = 0;
-let capInfo = "";
-const selected = [];
+  const mode = STATE.calc.mode;
+  const discounts = activeDiscounts();
+  let fine = 0;
+  let jail = 0;
+  let capInfo = "";
+  const selected = [];
 
-for(const a of ARTICLES){
-const p = STATE.calc.picks[a.code];
-if(!p?.sel) continue;
+  for(const a of ARTICLES){
+    const p = STATE.calc.picks[a.code];
+    if(!p?.sel) continue;
 
+    let f = 0;
+    let j = 0;
 
-let f = 0;
-let j = 0;
-
-if(a.penalty_mode === "and"){
-  f = valueFromRange(a.fine_min, a.fine_max, mode);
-  j = valueFromRange(a.jail_min, a.jail_max, mode);
-}else if(a.penalty_mode === "fine_only"){
-  f = valueFromRange(a.fine_min, a.fine_max, mode);
-}else if(a.penalty_mode === "jail_only"){
-  j = valueFromRange(a.jail_min, a.jail_max, mode);
-}else if(a.penalty_mode === "or"){
-  if((p.use || "fine") === "jail") j = valueFromRange(a.jail_min, a.jail_max, mode);
-  else f = valueFromRange(a.fine_min, a.fine_max, mode);
-}
-
-if(a.code === "4.6" && p.mods?.attempt){
-  f = Math.min(f, 120);
-  j = Math.min(j, 45);
-}
-
-if(a.modifiers){
-  for(const key of Object.keys(a.modifiers)){
-    const mod = a.modifiers[key];
-    if(!p.mods?.[key]) continue;
-    if(mod.note) continue;
-    if(mod.kind === "mult"){
-      f = Math.round(f * (1 + (mod.fine_delta_mult || 0)));
-      j = Math.round(j * (1 + (mod.jail_delta_mult || 0)));
-    }else{
-      f += mod.fine_delta || 0;
-      j += mod.jail_delta || 0;
+    if(a.penalty_mode === "and"){
+      f = valueFromRange(a.fine_min, a.fine_max, mode);
+      j = valueFromRange(a.jail_min, a.jail_max, mode);
+    }else if(a.penalty_mode === "fine_only"){
+      f = valueFromRange(a.fine_min, a.fine_max, mode);
+    }else if(a.penalty_mode === "jail_only"){
+      j = valueFromRange(a.jail_min, a.jail_max, mode);
+    }else if(a.penalty_mode === "or"){
+      if((p.use || "fine") === "jail") j = valueFromRange(a.jail_min, a.jail_max, mode);
+      else f = valueFromRange(a.fine_min, a.fine_max, mode);
     }
+
+    if(a.code === "4.6" && p.mods?.attempt){
+      f = Math.min(f,120);
+      j = Math.min(j,45);
+    }
+
+    if(a.modifiers){
+      for(const key of Object.keys(a.modifiers)){
+        const mod = a.modifiers[key];
+        if(!p.mods?.[key] || mod.note) continue;
+        if(mod.kind === "mult"){
+          f = Math.round(f * (1 + (mod.fine_delta_mult || 0)));
+          j = Math.round(j * (1 + (mod.jail_delta_mult || 0)));
+        }else{
+          f += mod.fine_delta || 0;
+          j += mod.jail_delta || 0;
+        }
+      }
+    }
+
+    fine += f;
+    jail += j;
+    selected.push({article:a,fine:f,jail:j});
   }
+
+  const hasSpecial = selected.some(x => x.article.special?.capital);
+  if(!hasSpecial){
+    const oldFine = fine;
+    const oldJail = jail;
+    fine = Math.min(fine,750);
+    jail = Math.min(jail,60);
+    if(oldFine !== fine || oldJail !== jail){
+      capInfo = "Применён общий предел: 750 долларов и 60 суток.";
+    }
+  }else{
+    capInfo = "Есть особо тяжкая статья: стандартный предел не применяется.";
+  }
+
+  const discount = clamp(sum(discounts),0,75);
+  fine = Math.round(fine * ((100 - discount)/100));
+  jail = Math.round(jail * ((100 - discount)/100));
+  if(jail > 0 && jail < 5) jail = 5;
+
+  const custody = getCustodyType(jail);
+  return {fine,jail,discount,custody,capInfo,selected};
 }
+function buildPunishmentPhrase(fine,jail){
+  const custody = getCustodyType(jail);
 
-fine += f;
-jail += j;
-selected.push({article:a, fine:f, jail:j});
+  if(fine > 0 && jail > 0){
+    if(custody.short === "арест"){
+      return `назначен арест сроком ${jail} суток с наложением штрафа в размере ${fine} долларов`;
+    }
+    return `назначено тюремное заключение сроком ${jail} суток с наложением штрафа в размере ${fine} долларов`;
+  }
 
+  if(jail > 0){
+    if(custody.short === "арест"){
+      return `назначен арест сроком ${jail} суток`;
+    }
+    return `назначено тюремное заключение сроком ${jail} суток`;
+  }
 
-}
+  if(fine > 0){
+    return `назначен штраф в размере ${fine} долларов`;
+  }
 
-const hasSpecial = selected.some(x => x.article.special?.capital);
-if(!hasSpecial){
-const oldFine = fine;
-const oldJail = jail;
-fine = Math.min(fine, 750);
-jail = Math.min(jail, 60);
-if(oldFine !== fine || oldJail !== jail){
-capInfo = "Применён общий потолок: 750$ / 60 ср.";
-}
-}else{
-capInfo = "Есть особо тяжкая статья: стандартный потолок не применяется.";
-}
-
-const disc = clamp(sum(discounts), 0, 75);
-fine = Math.round(fine * ((100 - disc) / 100));
-jail = Math.round(jail * ((100 - disc) / 100));
-if(jail > 0 && jail < 5) jail = 5;
-
-return {fine, jail, disc, capInfo, selected};
-}
-
-function pushHistory(code){
-const list = STATE.calc.history.filter(x => x !== code);
-list.unshift(code);
-STATE.calc.history = list.slice(0, 12);
-}
-
-function toggleFavorite(code){
-const set = new Set(STATE.calc.favorites || []);
-if(set.has(code)) set.delete(code);
-else set.add(code);
-STATE.calc.favorites = Array.from(set);
-saveState();
-renderFavorites();
-renderCalcTable();
-refreshHeaderBadges();
-}
-
-function isFavorite(code){
-return (STATE.calc.favorites || []).includes(code);
+  return `мера наказания не определена`;
 }
 
 function matchesArticle(article, query, category){
-const q = (query || "").trim().toLowerCase();
-if(category && article.category !== category) return false;
-if(!q) return true;
+  const q = (query || "").trim().toLowerCase();
+  if(category && article.category !== category) return false;
+  if(!q) return true;
 
-const hay = [
-article.code,
-article.family || "",
-article.title,
-...(article.tags || []),
-article.note || ""
-].join(" ").toLowerCase();
+  const hay = [
+    article.code,
+    article.family || "",
+    article.title,
+    ...(article.tags || []),
+    article.note || ""
+  ].join(" ").toLowerCase();
 
-return hay.includes(q);
+  return hay.includes(q);
+}
+
+function setView(viewId){
+  document.querySelectorAll(".view").forEach(v => v.classList.toggle("active", v.id === viewId));
+  document.querySelectorAll("[data-view]").forEach(btn => btn.classList.toggle("active", btn.dataset.view === viewId));
+}
+
+function setSubtab(id){
+  document.querySelectorAll(".subtab").forEach(tab => tab.classList.toggle("active", tab.id === id));
+  document.querySelectorAll(".subtab-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.subtab === id));
+}
+
+function applyTheme(theme){
+  STATE.theme = theme === "light" ? "light" : "dark";
+  document.body.classList.remove("theme-dark","theme-light");
+  document.body.classList.add(STATE.theme === "light" ? "theme-light" : "theme-dark");
+  if($("set_theme")) $("set_theme").value = STATE.theme;
+  saveState();
+}
+
+function updateClock(){
+  const now = gameNow();
+  $("top_clock").textContent = fmtClock(now);
+}
+
+function syncOfficerHeader(){
+  $("top_officer_name").textContent = STATE.doc.officer_name || STATE.auth.name || "—";
+  $("top_officer_rank").textContent = STATE.doc.officer_rank || STATE.auth.rank || "—";
+  $("top_officer_callsign").textContent = STATE.doc.officer_callsign || STATE.auth.callsign || "—";
+}
+
+function showApp(){
+  $("auth_screen").classList.add("hidden");
+  $("app_shell").classList.add("ready");
+  STATE.auth.passed = true;
+  saveState();
+}
+
+function showAuth(){
+  $("auth_screen").classList.remove("hidden");
+  $("app_shell").classList.remove("ready");
+}
+
+function initAuth(){
+  $("auth_name").value = STATE.auth.name || STATE.settings.name || "";
+  $("auth_rank").value = STATE.auth.rank || STATE.settings.rank || "";
+  $("auth_callsign").value = STATE.auth.callsign || STATE.settings.callsign || "";
+
+  $("auth_apply_defaults").onclick = () => {
+    $("auth_name").value = STATE.settings.name || "";
+    $("auth_rank").value = STATE.settings.rank || "";
+    $("auth_callsign").value = STATE.settings.callsign || "";
+  };
+
+  $("auth_enter").onclick = () => {
+    STATE.auth.name = $("auth_name").value.trim();
+    STATE.auth.rank = $("auth_rank").value.trim();
+    STATE.auth.callsign = $("auth_callsign").value.trim();
+
+    if(!STATE.auth.name || !STATE.auth.rank){
+      alert("Укажи имя офицера и звание.");
+      return;
+    }
+
+    if(!STATE.doc.officer_name) STATE.doc.officer_name = STATE.auth.name;
+    if(!STATE.doc.officer_rank) STATE.doc.officer_rank = STATE.auth.rank;
+    if(!STATE.doc.officer_callsign) STATE.doc.officer_callsign = STATE.auth.callsign;
+
+    saveState();
+    initDocumentFormFromState();
+    syncOfficerHeader();
+    showApp();
+    buildDocumentPreview();
+  };
+
+  if(STATE.auth.passed){
+    showApp();
+  }else{
+    showAuth();
+  }
 }
 
 function renderQuickFilters(){
-const box = $("quick_filters");
-box.innerHTML = "";
-QUICK_FILTERS.forEach(f => {
-const btn = document.createElement("button");
-btn.className = "chip-btn";
-btn.type = "button";
-btn.textContent = f.label;
-btn.onclick = () => {
-$("calc_search").value = f.query;
-STATE.calc.search = f.query;
-renderCalcTable();
-saveState();
-};
-box.appendChild(btn);
-});
+  const box = $("quick_filters");
+  box.innerHTML = "";
+
+  QUICK_FILTERS.forEach(filter => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "tag";
+    btn.textContent = filter.label;
+    btn.onclick = () => {
+      $("calc_search").value = filter.query;
+      STATE.calc.search = filter.query;
+      renderCalcTable();
+      saveState();
+    };
+    box.appendChild(btn);
+  });
 }
 
 function renderCalcTable(){
-const tbody = $("calc_table").querySelector("tbody");
-tbody.innerHTML = "";
+  const tbody = $("calc_table").querySelector("tbody");
+  tbody.innerHTML = "";
 
-const query = $("calc_search").value.trim();
-const category = $("calc_category").value;
-STATE.calc.search = query;
-STATE.calc.category = category;
+  const query = $("calc_search").value.trim();
+  const category = $("calc_category").value;
+  STATE.calc.search = query;
+  STATE.calc.category = category;
 
-ARTICLES.filter(a => matchesArticle(a, query, category)).forEach(a => {
-const p = ensurePick(a.code);
-const tr = document.createElement("tr");
+  const filtered = ARTICLES.filter(a => matchesArticle(a, query, category));
 
+  filtered.forEach(a => {
+    const p = ensurePick(a.code);
+    const tr = document.createElement("tr");
 
-const tdSel = document.createElement("td");
-const sel = document.createElement("input");
-sel.type = "checkbox";
-sel.checked = !!p.sel;
-sel.onchange = () => {
-  p.sel = sel.checked;
-  if(sel.checked) pushHistory(a.code);
-  updateAll();
-  saveState();
-};
-tdSel.appendChild(sel);
-tr.appendChild(tdSel);
-
-const tdFav = document.createElement("td");
-const favBtn = document.createElement("button");
-favBtn.className = "btn";
-favBtn.style.padding = "5px 8px";
-favBtn.textContent = isFavorite(a.code) ? "★" : "☆";
-favBtn.onclick = () => toggleFavorite(a.code);
-tdFav.appendChild(favBtn);
-tr.appendChild(tdFav);
-
-const tdTitle = document.createElement("td");
-tdTitle.innerHTML = `<b>${escapeHtml(a.code)}</b> — ${escapeHtml(a.title)}${a.note ? `<div class="mini" style="margin-top:4px">${escapeHtml(a.note)}</div>` : ""}`;
-tr.appendChild(tdTitle);
-
-const tdCat = document.createElement("td");
-tdCat.innerHTML = `<span class="badge ${a.category}">${a.category}</span>`;
-tr.appendChild(tdCat);
-
-const tdFine = document.createElement("td");
-tdFine.textContent = a.penalty_mode === "jail_only" ? "—" : rangeText(a.fine_min, a.fine_max, "$");
-tr.appendChild(tdFine);
-
-const tdJail = document.createElement("td");
-tdJail.textContent = a.penalty_mode === "fine_only" ? "—" : rangeText(a.jail_min, a.jail_max, " ср");
-tr.appendChild(tdJail);
-
-const tdType = document.createElement("td");
-if(a.penalty_mode === "or"){
-  const s = document.createElement("select");
-  s.className = "small-select";
-  s.innerHTML = `<option value="fine">Штраф</option><option value="jail">Срок</option>`;
-  s.value = p.use || "fine";
-  s.onchange = () => {
-    p.use = s.value;
-    updateAll();
-    saveState();
-  };
-  tdType.appendChild(s);
-}else{
-  tdType.innerHTML = `<span class="badge">${a.penalty_mode}</span>`;
-}
-tr.appendChild(tdType);
-
-const tdMods = document.createElement("td");
-if(a.modifiers){
-  const stack = document.createElement("div");
-  stack.className = "stack";
-  Object.keys(a.modifiers).forEach(key => {
-    const mod = a.modifiers[key];
-    const lbl = document.createElement("label");
-    lbl.className = "pill";
-    const cb = document.createElement("input");
-    cb.type = "checkbox";
-    cb.checked = !!p.mods?.[key];
-    cb.onchange = () => {
-      ensurePick(a.code).mods[key] = cb.checked;
-      if(!p.sel){
-        p.sel = true;
-        pushHistory(a.code);
-      }
-      updateAll();
+    const tdSel = document.createElement("td");
+    const sel = document.createElement("input");
+    sel.type = "checkbox";
+    sel.checked = !!p.sel;
+    sel.onchange = () => {
+      p.sel = sel.checked;
+      renderEverything();
       saveState();
     };
-    lbl.appendChild(cb);
-    lbl.append(" " + mod.label);
-    stack.appendChild(lbl);
+    tdSel.appendChild(sel);
+    tr.appendChild(tdSel);
+
+    const tdFav = document.createElement("td");
+    const favBtn = document.createElement("button");
+    favBtn.className = "compact-btn";
+    favBtn.textContent = p.favorite ? "★" : "☆";
+    favBtn.onclick = () => {
+      p.favorite = !p.favorite;
+      renderCalcTable();
+      renderSelectedArticles();
+      saveState();
+    };
+    tdFav.appendChild(favBtn);
+    tr.appendChild(tdFav);
+
+    const tdTitle = document.createElement("td");
+    tdTitle.innerHTML = `<b>${escapeHtml(a.code)}</b> — ${escapeHtml(a.title)}${a.note ? `<div class="mini" style="margin-top:4px">${escapeHtml(a.note)}</div>` : ""}`;
+    tr.appendChild(tdTitle);
+
+    const tdCat = document.createElement("td");
+    tdCat.innerHTML = `<span class="badge ${a.category}">${a.category}</span>`;
+    tr.appendChild(tdCat);
+
+    const tdFine = document.createElement("td");
+    tdFine.textContent = a.penalty_mode === "jail_only" ? "—" : rangeText(a.fine_min, a.fine_max, "$");
+    tr.appendChild(tdFine);
+
+    const tdJail = document.createElement("td");
+    tdJail.textContent = a.penalty_mode === "fine_only" ? "—" : rangeText(a.jail_min, a.jail_max, " сут.");
+    tr.appendChild(tdJail);
+
+    const tdType = document.createElement("td");
+    if(a.penalty_mode === "or"){
+      const modeSel = document.createElement("select");
+      modeSel.innerHTML = `<option value="fine">Штраф</option><option value="jail">Лишение свободы</option>`;
+      modeSel.value = p.use || "fine";
+      modeSel.onchange = () => {
+        p.use = modeSel.value;
+        renderEverything();
+        saveState();
+      };
+      tdType.appendChild(modeSel);
+    }else{
+      tdType.innerHTML = `<span class="badge">${escapeHtml(a.penalty_mode)}</span>`;
+    }
+    tr.appendChild(tdType);
+
+    const tdMods = document.createElement("td");
+    if(a.modifiers){
+      const modWrap = document.createElement("div");
+      modWrap.className = "stack";
+
+      Object.keys(a.modifiers).forEach(key => {
+        const mod = a.modifiers[key];
+        const label = document.createElement("label");
+        label.className = "check-line";
+
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = !!p.mods[key];
+        cb.onchange = () => {
+          p.mods[key] = cb.checked;
+          if(cb.checked) p.sel = true;
+          renderEverything();
+          saveState();
+        };
+
+        label.appendChild(cb);
+        label.append(" " + mod.label);
+        modWrap.appendChild(label);
+      });
+
+      tdMods.appendChild(modWrap);
+    }else{
+      tdMods.textContent = "—";
+    }
+    tr.appendChild(tdMods);
+
+    tbody.appendChild(tr);
   });
-  tdMods.appendChild(stack);
-}else{
-  tdMods.textContent = "—";
-}
-tr.appendChild(tdMods);
-
-const tdLaw = document.createElement("td");
-const goto = document.createElement("button");
-goto.className = "btn";
-goto.textContent = "Открыть";
-goto.onclick = () => {
-  switchMainTab("laws");
-  $("law_query").value = a.code;
-  renderLawSearch();
-  scrollLawToCode(a.code);
-};
-tdLaw.appendChild(goto);
-tr.appendChild(tdLaw);
-
-tbody.appendChild(tr);
-
-
-});
 }
 
-function renderSummary(){
-const box = $("selected_summary");
-box.innerHTML = "";
-const totals = computeTotals();
+function renderSelectedArticles(){
+  const box = $("selected_articles");
+  box.innerHTML = "";
+  const totals = computeTotals();
 
-if(!totals.selected.length){
-box.innerHTML = `<div class="note">Пока не выбрано ни одной статьи.</div>`;
-$("sum_fine").textContent = "0";
-$("sum_jail").textContent = "0";
-$("sum_disc").textContent = "0";
-$("cap_info").textContent = "Потолки и исключения будут показаны здесь.";
-$("doc_footer_penalty").textContent = "0$ / 0 ср";
-return;
-}
+  if(!totals.selected.length){
+    box.innerHTML = `<div class="note">Статьи пока не выбраны.</div>`;
+    return;
+  }
 
-totals.selected.forEach(item => {
-const wrap = document.createElement("div");
-wrap.className = "card";
-wrap.innerHTML = `       <h4>${escapeHtml(item.article.code)} — ${escapeHtml(item.article.title)}</h4>       <div class="status-line">         <span class="badge ${item.article.category}">${item.article.category}</span>         <span class="pill">Штраф: <b>${item.fine}$</b></span>         <span class="pill">Срок: <b>${item.jail} ср</b></span>       </div>
-    `;
-box.appendChild(wrap);
-});
+  totals.selected.forEach(item => {
+    const row = document.createElement("div");
+    row.className = "quick-item";
 
-$("sum_fine").textContent = String(totals.fine);
-$("sum_jail").textContent = String(totals.jail);
-$("sum_disc").textContent = String(totals.disc);
-$("cap_info").textContent = totals.capInfo || "Потолки не затронуты.";
-$("doc_footer_penalty").textContent = `${totals.fine}$ / ${totals.jail} ср`;
-}
-
-function renderFavorites(){
-const box = $("favorites_list");
-box.innerHTML = "";
-
-const favs = (STATE.calc.favorites || [])
-.map(getArticleByCode)
-.filter(Boolean);
-
-if(!favs.length){
-box.innerHTML = `<div class="note">Избранных статей пока нет.</div>`;
-return;
-}
-
-favs.forEach(a => {
-const row = document.createElement("div");
-row.className = "fav-item";
-row.innerHTML = `       <div>         <div><b>${escapeHtml(a.code)}</b> — ${escapeHtml(a.title)}</div>         <div class="mini">${escapeHtml((a.tags || []).join(", "))}</div>       </div>
+    const left = document.createElement("div");
+    left.innerHTML = `
+      <div><b>${escapeHtml(item.article.code)}</b> — ${escapeHtml(item.article.title)}</div>
+      <div class="mini">Штраф ${item.fine}$ • Срок ${item.jail} сут.</div>
     `;
 
+    const tools = document.createElement("div");
+    tools.className = "article-actions";
 
-const tools = document.createElement("div");
-tools.className = "footer-tools";
+    const remove = document.createElement("button");
+    remove.className = "compact-btn";
+    remove.textContent = "Убрать";
+    remove.onclick = () => {
+      ensurePick(item.article.code).sel = false;
+      renderEverything();
+      saveState();
+    };
 
-const add = document.createElement("button");
-add.className = "btn";
-add.textContent = "Выбрать";
-add.onclick = () => {
-  ensurePick(a.code).sel = true;
-  pushHistory(a.code);
-  updateAll();
-  saveState();
-};
+    const open = document.createElement("button");
+    open.className = "compact-btn";
+    open.textContent = "Кодекс";
+    open.onclick = () => {
+      setView("laws");
+      $("law_query").value = item.article.code;
+      renderLawSearch();
+    };
 
-const open = document.createElement("button");
-open.className = "btn";
-open.textContent = "Кодекс";
-open.onclick = () => {
-  switchMainTab("laws");
-  $("law_query").value = a.code;
-  renderLawSearch();
-};
-
-const del = document.createElement("button");
-del.className = "btn danger";
-del.textContent = "Убрать";
-del.onclick = () => toggleFavorite(a.code);
-
-tools.append(add, open, del);
-row.appendChild(tools);
-box.appendChild(row);
-
-
-});
+    tools.append(remove, open);
+    row.append(left, tools);
+    box.appendChild(row);
+  });
 }
 
-function renderHistory(){
-const box = $("history_list");
-box.innerHTML = "";
+function renderPenaltySummary(){
+  const totals = computeTotals();
 
-const items = (STATE.calc.history || [])
-.map(getArticleByCode)
-.filter(Boolean);
+  $("kpi_fine").textContent = `${totals.fine}$`;
+  $("kpi_jail").textContent = `${totals.jail}`;
+  $("kpi_custody").textContent = totals.custody.label;
+  $("kpi_discount").textContent = `${totals.discount}%`;
 
-if(!items.length){
-box.innerHTML = `<div class="note">История выбора пока пуста.</div>`;
-return;
-}
-
-items.forEach(a => {
-const row = document.createElement("div");
-row.className = "history-item";
-
-
-const left = document.createElement("div");
-left.innerHTML = `<b>${escapeHtml(a.code)}</b> — ${escapeHtml(a.title)}`;
-
-const tools = document.createElement("div");
-tools.className = "footer-tools";
-
-const btn = document.createElement("button");
-btn.className = "btn";
-btn.textContent = "Повторить";
-btn.onclick = () => {
-  ensurePick(a.code).sel = true;
-  updateAll();
-  saveState();
-};
-
-tools.appendChild(btn);
-row.append(left, tools);
-box.appendChild(row);
-
-
-});
+  $("sum_fine").textContent = `${totals.fine}$`;
+  $("sum_jail").textContent = `${totals.jail} сут.`;
+  $("sum_custody").textContent = totals.custody.label;
 }
 
 function renderSmartHints(){
-const box = $("smart_hints");
-box.innerHTML = "";
-const codes = new Set(selectedArticleCodes());
-const hints = [];
+  const box = $("smart_hints");
+  box.innerHTML = "";
+  const totals = computeTotals();
+  const codes = new Set(selectedArticleCodes());
+  const hints = [];
 
-if(codes.has("2.3")) hints.push("Статья 2.3: добавь изъятое оружие в соответствующий раздел документа.");
-if(codes.has("3.2b") && STATE.calc.picks["3.2b"]?.mods?.burglary) hints.push("Для 3.2b отмечено проникновение: надбавка к сроку и штрафу уже учтена.");
-if(codes.has("4.6") && STATE.calc.picks["4.6"]?.mods?.attempt) hints.push("Для 4.6 выбран режим покушения: действует ограничение до 120$ и 45 ср.");
-if(codes.has("5.1")) hints.push("Нападение на представителя закона часто сопровождается 5.2 или 5.3, если это соответствует ситуации.");
-if(codes.has("5.6")) hints.push("При уклонении от правосудия полезно отдельно описать побег, уничтожение улик или содействие.");
-if(codes.has("8.5") && STATE.calc.picks["8.5"]?.mods?.repeat) hints.push("Для 8.5 отмечено повторное нарушение: укажи конфискацию без возврата.");
-if(codes.has("6.1")) hints.push("Для 6.1 проверь, требуется ли указать просрочку оплаты и удвоение прежнего штрафа вручную в тексте.");
-if(!hints.length) hints.push("Выбери статьи, и здесь появятся контекстные подсказки по оформлению.");
+  if(!totals.selected.length){
+    hints.push("Выбери статьи справа, чтобы система сразу посчитала штраф и форму лишения свободы.");
+  }
 
-hints.forEach(text => {
-const el = document.createElement("div");
-el.className = "note";
-el.textContent = text;
-box.appendChild(el);
-});
+  if(totals.jail > 0 && totals.jail <= 15){
+    hints.push("Итог попадает под арест: логичнее писать именно “арест”, а не “тюремное заключение”.");
+  }
+
+  if(totals.jail > 15){
+    hints.push("Итог превышает 15 суток: в документе будет использоваться формулировка “тюремное заключение”.");
+  }
+
+  if(codes.has("2.3")){
+    hints.push("При 2.3 имеет смысл заполнить раздел изъятого оружия.");
+  }
+
+  if(codes.has("3.2b") && STATE.calc.picks["3.2b"]?.mods?.burglary){
+    hints.push("Для 3.2b отмечено проникновение: надбавка к сроку и штрафу уже применена.");
+  }
+
+  if(codes.has("4.6") && STATE.calc.picks["4.6"]?.mods?.attempt){
+    hints.push("Для 4.6 выбран режим покушения: предел ограничен 120 долларами и 45 сутками.");
+  }
+
+  if(codes.has("8.5") && STATE.calc.picks["8.5"]?.mods?.repeat){
+    hints.push("Для 8.5 отмечено повторное нарушение: не забудь прописать конфискацию.");
+  }
+
+  const capInfo = totals.capInfo;
+  if(capInfo) hints.push(capInfo);
+
+  hints.forEach(text => {
+    const el = document.createElement("div");
+    el.className = "note";
+    el.textContent = text;
+    box.appendChild(el);
+  });
 }
 
-function refreshHeaderBadges(){
-$("fav_count").textContent = String((STATE.calc.favorites || []).length);
-$("last_doc_type").textContent = docTypeLabel(STATE.doc.type);
-}
-
-function switchMainTab(id){
-document.querySelectorAll(".tab-btn").forEach(btn => {
-btn.classList.toggle("active", btn.dataset.tab === id);
-});
-document.querySelectorAll(".container").forEach(c => {
-c.classList.toggle("active", c.id === id);
-});
-}
-
-function switchDocSubtab(id){
-document.querySelectorAll(".subtab-btn").forEach(btn => {
-btn.classList.toggle("active", btn.dataset.subtab === id);
-});
-document.querySelectorAll(".subtab").forEach(tab => {
-tab.classList.toggle("active", tab.id === id);
-});
-}
-
-function bindTabs(){
-document.querySelectorAll(".tab-btn").forEach(btn => {
-btn.onclick = () => switchMainTab(btn.dataset.tab);
-});
-document.querySelectorAll(".subtab-btn").forEach(btn => {
-btn.onclick = () => switchDocSubtab(btn.dataset.subtab);
-});
-}
-
-function updateAll(){
-renderCalcTable();
-renderSummary();
-renderFavorites();
-renderHistory();
-renderSmartHints();
-buildDocumentPreview();
-refreshHeaderBadges();
-}
-
-function setupCalcBindings(){
-$("calc_search").oninput = () => {
-STATE.calc.search = $("calc_search").value;
-renderCalcTable();
-saveState();
-};
-
-$("calc_category").onchange = () => {
-STATE.calc.category = $("calc_category").value;
-renderCalcTable();
-saveState();
-};
-
-$("calc_mode").onchange = () => {
-STATE.calc.mode = $("calc_mode").value;
-updateAll();
-saveState();
-};
-
-document.querySelectorAll(".calc_disc").forEach(cb => {
-cb.onchange = () => {
-STATE.calc.discounts = discountValues();
-renderSummary();
-buildDocumentPreview();
-saveState();
-};
-});
-
-$("btn_clear_selected").onclick = () => {
-Object.keys(STATE.calc.picks).forEach(code => STATE.calc.picks[code].sel = false);
-updateAll();
-saveState();
-};
-
-$("btn_clear_discounts").onclick = () => {
-document.querySelectorAll(".calc_disc").forEach(x => x.checked = false);
-STATE.calc.discounts = [];
-updateAll();
-saveState();
-};
-
-$("btn_clear_filters").onclick = () => {
-$("calc_search").value = "";
-$("calc_category").value = "";
-STATE.calc.search = "";
-STATE.calc.category = "";
-renderCalcTable();
-saveState();
-};
-}
-
-function initCalcFromState(){
-$("calc_search").value = STATE.calc.search || "";
-$("calc_category").value = STATE.calc.category || "";
-$("calc_mode").value = STATE.calc.mode || "max";
-document.querySelectorAll(".calc_disc").forEach(cb => {
-cb.checked = (STATE.calc.discounts || []).includes(+cb.dataset.val);
-});
-}
-
-function docTypeLabel(type){
-return {
-fine_notice:"Штрафной бланк",
-detention:"Оформление задержания",
-incident_report:"Отчёт о происшествии",
-seizure_report:"Протокол изъятия",
-memo:"Рапорт / служебная записка",
-brief:"Краткая сводка"
-}[type] || "—";
-}
-
-function normalizeDocArrays(){
-if(!Array.isArray(STATE.doc.weapons)) STATE.doc.weapons = [];
-if(!Array.isArray(STATE.doc.property)) STATE.doc.property = [];
-}
-
-function weaponTemplate(item={}){
-return {
-type:item.type || "",
-model:item.model || "",
-serial:item.serial || "",
-owner:item.owner || "suspect",
-basis:item.basis || "",
-note:item.note || ""
-};
-}
-
-function propertyTemplate(item={}){
-return {
-name:item.name || "",
-owner:item.owner || "",
-serial:item.serial || "",
-value:item.value || "",
-where:item.where || "",
-note:item.note || ""
-};
-}
-
-function bindDocInput(id, key){
-$(id).oninput = () => {
-STATE.doc[key] = $(id).value;
-buildDocumentPreview();
-saveState();
-};
-}
-
-function bindDocSelect(id, key){
-$(id).onchange = () => {
-STATE.doc[key] = $(id).value;
-buildDocumentPreview();
-saveState();
-};
-}
-
-function initDocDateDefaults(){
-const now = gameNow();
-if(!STATE.doc.date) STATE.doc.date = toInputDate(now);
-if(!STATE.doc.time) STATE.doc.time = toInputTime(now);
-}
-
-function initDocumentFormFromState(){
-normalizeDocArrays();
-initDocDateDefaults();
-
-$("doc_type").value = STATE.doc.type || "fine_notice";
-$("doc_style").value = STATE.doc.style || "formal";
-$("doc_deadline_days").value = STATE.doc.deadline_days || 3;
-$("doc_number").value = STATE.doc.number || "";
-$("doc_cit_fn").value = STATE.doc.cit_fn || "";
-$("doc_cit_ln").value = STATE.doc.cit_ln || "";
-$("doc_cit_reg").value = STATE.doc.cit_reg || "";
-$("doc_person_status").value = STATE.doc.person_status || "citizen";
-$("doc_date").value = STATE.doc.date || "";
-$("doc_time").value = STATE.doc.time || "";
-$("doc_location").value = STATE.doc.location || "";
-$("doc_title").value = STATE.doc.title || "";
-$("doc_brief").value = STATE.doc.brief || "";
-$("doc_description").value = STATE.doc.description || "";
-$("doc_officer_rank").value = STATE.doc.officer_rank || "";
-$("doc_officer_name").value = STATE.doc.officer_name || "";
-$("doc_notes").value = STATE.doc.notes || "";
-
-renderWeapons();
-renderProperty();
-}
-
-function setupDocumentBindings(){
-bindDocSelect("doc_type", "type");
-bindDocSelect("doc_style", "style");
-bindDocInput("doc_deadline_days", "deadline_days");
-bindDocInput("doc_number", "number");
-bindDocInput("doc_cit_fn", "cit_fn");
-bindDocInput("doc_cit_ln", "cit_ln");
-bindDocInput("doc_cit_reg", "cit_reg");
-bindDocSelect("doc_person_status", "person_status");
-bindDocInput("doc_date", "date");
-bindDocInput("doc_time", "time");
-bindDocInput("doc_location", "location");
-bindDocInput("doc_title", "title");
-bindDocInput("doc_brief", "brief");
-bindDocInput("doc_description", "description");
-bindDocInput("doc_officer_rank", "officer_rank");
-bindDocInput("doc_officer_name", "officer_name");
-bindDocInput("doc_notes", "notes");
-
-$("add_weapon").onclick = () => {
-STATE.doc.weapons.push(weaponTemplate());
-renderWeapons();
-buildDocumentPreview();
-saveState();
-};
-
-$("add_property").onclick = () => {
-STATE.doc.property.push(propertyTemplate());
-renderProperty();
-buildDocumentPreview();
-saveState();
-};
-
-$("refresh_doc").onclick = () => buildDocumentPreview();
-
-$("copy_doc").onclick = async () => {
-try{
-await navigator.clipboard.writeText($("doc_output").textContent);
-}catch(e){}
-};
-
-$("download_doc").onclick = () => {
-const text = $("doc_output").textContent || "";
-const blob = new Blob([text], {type:"text/plain;charset=utf-8"});
-const a = document.createElement("a");
-const name = (STATE.doc.type || "document") + ".txt";
-a.href = URL.createObjectURL(blob);
-a.download = name;
-document.body.appendChild(a);
-a.click();
-a.remove();
-setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
-};
-
-$("clear_doc_form").onclick = () => {
-const keepOfficerRank = STATE.settings.default_rank || "";
-const keepOfficerName = STATE.settings.default_name || "";
-const keepStyle = STATE.settings.default_style || "formal";
-const keepDeadline = STATE.settings.default_deadline || 3;
-const keepType = STATE.doc.type || "fine_notice";
-const now = gameNow();
-
-
-STATE.doc = {
-  type:keepType,
-  style:keepStyle,
-  deadline_days:keepDeadline,
-  number:"",
-  cit_fn:"",
-  cit_ln:"",
-  cit_reg:"",
-  person_status:"citizen",
-  date:toInputDate(now),
-  time:toInputTime(now),
-  location:"",
-  title:"",
-  brief:"",
-  description:"",
-  officer_rank:keepOfficerRank,
-  officer_name:keepOfficerName,
-  notes:"",
-  weapons:[],
-  property:[]
-};
-
-initDocumentFormFromState();
-buildDocumentPreview();
-saveState();
-
-
-};
-}
-
-function renderWeapons(){
-const box = $("weapons_list");
-box.innerHTML = "";
-normalizeDocArrays();
-
-if(!STATE.doc.weapons.length){
-box.innerHTML = `<div class="note">Список изъятого оружия пуст.</div>`;
-return;
-}
-
-STATE.doc.weapons.forEach((item, index) => {
-const wrap = document.createElement("div");
-wrap.className = "item";
-wrap.innerHTML = `       <input data-k="type" type="text" placeholder="Тип / название" value="${escapeHtml(item.type)}">       <input data-k="model" type="text" placeholder="Модель" value="${escapeHtml(item.model)}">       <input data-k="serial" type="text" placeholder="Серийный №" value="${escapeHtml(item.serial)}">       <select data-k="owner">         <option value="suspect">Задержанный</option>         <option value="other">Другое лицо</option>       </select>       <input data-k="basis" type="text" placeholder="Основание (ст.)" value="${escapeHtml(item.basis)}">       <button class="remove" type="button">Удалить</button>       <input class="wide" data-k="note" type="text" placeholder="Примечание / статус конфискации" value="${escapeHtml(item.note)}">
-    `;
-
-
-wrap.querySelector('select[data-k="owner"]').value = item.owner || "suspect";
-
-wrap.querySelectorAll("[data-k]").forEach(el => {
-  const key = el.dataset.k;
-  el.oninput = el.onchange = () => {
-    STATE.doc.weapons[index][key] = el.value;
-    buildDocumentPreview();
-    saveState();
+function buildFactsText(){
+  const map = {
+    foundOnArrival:"по прибытии подозреваемый был обнаружен на месте",
+    onFootEscape:"подозреваемый пытался уйти пешком",
+    attemptedEscape:"подозреваемый предпринял попытку скрыться",
+    detained:"подозреваемый был задержан",
+    chase:"в ходе инцидента началась погоня",
+    delivered:"подозреваемый был доставлен в уполномоченное учреждение"
   };
-});
 
-wrap.querySelector(".remove").onclick = () => {
-  STATE.doc.weapons.splice(index, 1);
-  renderWeapons();
-  buildDocumentPreview();
-  saveState();
-};
-
-box.appendChild(wrap);
-
-
-});
-}
-
-function renderProperty(){
-const box = $("property_list");
-box.innerHTML = "";
-normalizeDocArrays();
-
-if(!STATE.doc.property.length){
-box.innerHTML = `<div class="note">Список имущества и улик пуст.</div>`;
-return;
-}
-
-STATE.doc.property.forEach((item, index) => {
-const wrap = document.createElement("div");
-wrap.className = "item";
-wrap.innerHTML = `       <input data-k="name" type="text" placeholder="Предмет / улика" value="${escapeHtml(item.name)}">       <input data-k="owner" type="text" placeholder="Владелец" value="${escapeHtml(item.owner)}">       <input data-k="serial" type="text" placeholder="Серийный №" value="${escapeHtml(item.serial)}">       <input data-k="value" type="number" placeholder="Оценка, $" value="${escapeHtml(item.value)}">       <input data-k="where" type="text" placeholder="Где обнаружено" value="${escapeHtml(item.where)}">       <button class="remove" type="button">Удалить</button>       <input class="wide" data-k="note" type="text" placeholder="Примечание" value="${escapeHtml(item.note)}">
-    `;
-
-
-wrap.querySelectorAll("[data-k]").forEach(el => {
-  const key = el.dataset.k;
-  el.oninput = el.onchange = () => {
-    STATE.doc.property[index][key] = el.value;
-    buildDocumentPreview();
-    saveState();
-  };
-});
-
-wrap.querySelector(".remove").onclick = () => {
-  STATE.doc.property.splice(index, 1);
-  renderProperty();
-  buildDocumentPreview();
-  saveState();
-};
-
-box.appendChild(wrap);
-
-
-});
-}
-
-function selectedArticlesText(multiline=true){
-const totals = computeTotals();
-if(!totals.selected.length) return "—";
-
-if(multiline){
-return totals.selected.map(x => `${x.article.code}) ${x.article.title}`).join("\n");
-}
-return totals.selected.map(x => x.article.code).join(", ");
-}
-
-function selectedArticlesPenaltyLines(){
-const totals = computeTotals();
-if(!totals.selected.length) return "—";
-return totals.selected.map(x => `- ${x.article.code}: штраф ${x.fine}$, срок ${x.jail} ср`).join("\n");
+  const list = Object.keys(STATE.doc.facts).filter(key => STATE.doc.facts[key]).map(key => map[key]);
+  return list.length ? list.join("; ") : "дополнительные обстоятельства не отмечены";
 }
 
 function buildWeaponsText(){
-normalizeDocArrays();
-if(!STATE.doc.weapons.length) return "—";
+  if(!STATE.doc.weapons.length) return "—";
 
-return STATE.doc.weapons.map(w => {
-const parts = [
-w.type,
-w.model ? `"${w.model}"` : "",
-w.serial || ""
-].filter(Boolean).join(" ");
-const owner = w.owner === "other" ? "(другое лицо)" : "(задержанного)";
-const basis = w.basis ? `, основание: ст. ${w.basis}` : "";
-const note = w.note ? ` — ${w.note}` : "";
-return `- ${parts || "Оружие"} ${owner}${basis}${note}`;
-}).join("\n");
+  return STATE.doc.weapons.map(w => {
+    const parts = [
+      w.type,
+      w.model ? `"${w.model}"` : "",
+      w.serial || ""
+    ].filter(Boolean).join(" ");
+    const owner = w.owner === "other" ? "у иного лица" : "у подозреваемого";
+    const basis = w.basis ? `, основание: ${w.basis}` : "";
+    const note = w.note ? ` — ${w.note}` : "";
+    return `- ${parts || "Предмет вооружения"}, изъято ${owner}${basis}${note}`;
+  }).join("\n");
 }
 
 function buildPropertyText(){
-normalizeDocArrays();
-if(!STATE.doc.property.length) return "—";
+  if(!STATE.doc.property.length) return "—";
 
-return STATE.doc.property.map(p => {
-const parts = [
-p.name || "Предмет",
-p.serial ? `№${p.serial}` : "",
-p.owner ? `— владелец ${p.owner}` : "",
-p.value ? `— ${p.value}$` : "",
-p.where ? `— ${p.where}` : ""
-].filter(Boolean).join(" ");
-const note = p.note ? ` — ${p.note}` : "";
-return `- ${parts}${note}`;
-}).join("\n");
+  return STATE.doc.property.map(p => {
+    const parts = [
+      p.name || "Предмет",
+      p.serial ? `№${p.serial}` : "",
+      p.owner ? `владелец ${p.owner}` : "",
+      p.value ? `${p.value}$` : "",
+      p.where ? `обнаружено: ${p.where}` : ""
+    ].filter(Boolean).join(" • ");
+    const note = p.note ? ` — ${p.note}` : "";
+    return `- ${parts}${note}`;
+  }).join("\n");
 }
 
-function personStatusLabel(v){
-return {
-citizen:"Гражданин",
-suspect:"Подозреваемый",
-detainee:"Задержанный",
-violator:"Нарушитель"
-}[v] || "Гражданин";
+function selectedArticlesMultiline(){
+  const totals = computeTotals();
+  if(!totals.selected.length) return "—";
+  return totals.selected.map(x => `${x.article.code}) ${x.article.title}`).join("\n");
+}
+
+function selectedArticlesInline(){
+  const totals = computeTotals();
+  if(!totals.selected.length) return "—";
+  return totals.selected.map(x => x.article.code).join(", ");
 }
 
 function buildContext(){
-const totals = computeTotals();
-const rawNow = gameNow();
-const docDate = STATE.doc.date
-? fmtDate(new Date(STATE.doc.date + "T00:00:00"))
-: fmtDate(rawNow);
-const docTime = STATE.doc.time || "00:00";
-const deadlineDate = fmtDate(addDays(rawNow, parseInt(STATE.doc.deadline_days || 3, 10) || 3));
-const fullName = [STATE.doc.cit_fn, STATE.doc.cit_ln].filter(Boolean).join(" ").trim() || "****************";
-const officer = [STATE.doc.officer_rank, STATE.doc.officer_name].filter(Boolean).join(" ").trim() || "****************";
-const reg = STATE.doc.cit_reg ? `#${STATE.doc.cit_reg}` : "—";
+  const totals = computeTotals();
+  const now = gameNow();
 
-return {
-now:rawNow,
-documentNumber:STATE.doc.number || "№ ________",
-documentType:docTypeLabel(STATE.doc.type),
-style:STATE.doc.style || "formal",
-personStatus:personStatusLabel(STATE.doc.person_status),
-citizenFullName:fullName,
-citizenReg:reg,
-officer,
-officerRank:STATE.doc.officer_rank || "",
-officerName:STATE.doc.officer_name || "",
-date:docDate,
-time:docTime,
-location:STATE.doc.location || "—",
-title:STATE.doc.title || "—",
-brief:STATE.doc.brief || "—",
-description:STATE.doc.description || "—",
-notes:STATE.doc.notes || "—",
-fine:totals.fine,
-jail:totals.jail,
-discount:totals.disc,
-capInfo:totals.capInfo || "—",
-deadlineDate,
-articlesInline:selectedArticlesText(false),
-articlesMultiline:selectedArticlesText(true),
-penaltiesMultiline:selectedArticlesPenaltyLines(),
-weaponsMultiline:buildWeaponsText(),
-propertyMultiline:buildPropertyText()
-};
+  const date = STATE.doc.date
+    ? fmtDate(new Date(STATE.doc.date + "T00:00:00"))
+    : fmtDate(now);
+
+  const time = STATE.doc.time || "00:00";
+  const deadlineDate = fmtDate(addDays(now, parseInt(STATE.doc.deadline_days || 3, 10) || 3));
+
+  return {
+    documentNumber:STATE.doc.number || "№ ______",
+    date,
+    time,
+    officerName:STATE.doc.officer_name || "________________",
+    officerRank:STATE.doc.officer_rank || "________________",
+    officerCallsign:STATE.doc.officer_callsign || "________________",
+    suspect:STATE.doc.suspect || "________________",
+    victim:STATE.doc.victim || "________________",
+    reg:STATE.doc.reg || "—",
+    location:STATE.doc.location || "—",
+    title:STATE.doc.title || "—",
+    delivery:STATE.doc.delivery || "—",
+    deadlineDate,
+    facts:buildFactsText(),
+    description:STATE.doc.description || "—",
+    notes:STATE.doc.notes || "—",
+    fine:totals.fine,
+    jail:totals.jail,
+    discount:totals.discount,
+    custodyLabel:totals.custody.label,
+    punishment:buildPunishmentPhrase(totals.fine, totals.jail),
+    articlesMultiline:selectedArticlesMultiline(),
+    articlesInline:selectedArticlesInline(),
+    weapons:buildWeaponsText(),
+    property:buildPropertyText()
+  };
 }
 
 function applyTemplate(str, ctx){
-return str.replace(/{{(\w+)}}/g, (_, key) => (ctx[key] ?? ""));
+  return str.replace(/\{\{(\w+)\}\}/g, (_, key) => String(ctx[key] ?? ""));
 }
 
 const DOC_TEMPLATES = {
-fine_notice:{
-formal:`{{documentNumber}}      Дата: {{date}}
+  incident_report:{
+    department:`РАПОРТ ОБ ИНЦИДЕНТЕ
 
-{{personStatus}} {{citizenFullName}} {{citizenReg}},
-уведомляется о назначении штрафа в размере {{fine}}$ за нарушение статей: {{articlesInline}}.
+Дело: {{documentNumber}}
+Дата и время: {{date}} {{time}}
+Офицер: {{officerRank}} {{officerName}} ({{officerCallsign}})
 
-Срок оплаты штрафа: до {{deadlineDate}}.
-При необходимости сведения по санкциям:
-{{penaltiesMultiline}}
-
-Примечания:
-{{notes}}
-
-Офицер:
-{{officer}}`,
-    short:`ШТРАФНОЙ БЛАНК
-
-Лицо: {{citizenFullName}} {{citizenReg}}
-Статьи: {{articlesInline}}
-Штраф: {{fine}}$
-Оплатить до: {{deadlineDate}}
-Офицер: {{officer}}`,
-    rp:`[Штрафной бланк]
-Номер: {{documentNumber}}
-Дата: {{date}}
-
-На имя {{citizenFullName}} {{citizenReg}} был выписан штраф в размере {{fine}}$.
-Основание: статьи {{articlesInline}}.
-
-Крайний срок оплаты: {{deadlineDate}}.
-
-Оформил:
-{{officer}}`
-},
-
-detention:{
-formal:`ЗАДЕРЖАНИЕ
-
-Задержанный: {{citizenFullName}} {{citizenReg}}
+Фигурант: {{suspect}} [{{reg}}]
+Потерпевший / заявитель: {{victim}}
 Место: {{location}}
-Дата/время: {{date}} {{time}}
+Тип вызова / тема: {{title}}
+
+Установленные обстоятельства:
+{{facts}}
+
+Содержание рапорта:
+{{description}}
 
 Вменяемые статьи:
 {{articlesMultiline}}
 
 Изъятое вооружение:
-{{weaponsMultiline}}
+{{weapons}}
 
 Имущество / улики:
-{{propertyMultiline}}
+{{property}}
 
-Наказание:
-{{jail}} ср и штраф {{fine}}$
+По итогам разбирательства {{punishment}}.
 
-Описание:
-{{description}}
+Дополнительные примечания:
+{{notes}}
+
+Доставление / размещение:
+{{delivery}}`,
+
+    sheriff:`ШЕРИФСКИЙ РАПОРТ
+
+Сего дня, {{date}}, в {{time}}, мною, {{officerRank}} {{officerName}} ({{officerCallsign}}), был оформлен инцидент по делу {{documentNumber}}.
+
+Подозреваемый: {{suspect}} [{{reg}}]
+Потерпевший / заявитель: {{victim}}
+Место происшествия: {{location}}
+Суть вызова: {{title}}
+
+По обстоятельствам установлено следующее: {{facts}}.
+Далее по делу: {{description}}
+
+За указанным лицом признаны нарушения по статьям: {{articlesInline}}.
+По совокупности деяний {{punishment}}.
+
+Изъятое оружие:
+{{weapons}}
+
+Прочее имущество и улики:
+{{property}}
 
 Примечания:
 {{notes}}
 
-Офицер:
-{{officer}}`,
-    short:`ЗАДЕРЖАНИЕ
+Куда доставлен / помещён:
+{{delivery}}`,
 
-Лицо: {{citizenFullName}} {{citizenReg}}
-Дата/время: {{date}} {{time}}
-Место: {{location}}
-Статьи: {{articlesInline}}
-Наказание: {{jail}} ср, {{fine}}$
-Офицер: {{officer}}`,
-    rp:`[Оформление задержания]
+    judicial:`ДОКЛАД ОБ ИНЦИДЕНТЕ
 
-Задержанный: {{citizenFullName}} {{citizenReg}}
-Место оформления: {{location}}
-Дата и время: {{date}} {{time}}
+Настоящим довожу до сведения, что {{date}} в {{time}} офицером {{officerRank}} {{officerName}} ({{officerCallsign}}) был оформлен инцидент по делу {{documentNumber}}.
 
-По результатам разбирательства лицу вменены статьи:
+Фигурант: {{suspect}} [{{reg}}]
+Заявитель / потерпевший: {{victim}}
+Место совершения деяния: {{location}}
+Предмет разбирательства: {{title}}
+
+Обстоятельства дела:
+{{facts}}.
+
+Фактическое описание:
+{{description}}
+
+В ходе проверки установлены признаки нарушений, подпадающих под статьи:
 {{articlesMultiline}}
 
+По результатам рассмотрения материалов дела {{punishment}}.
+
+Перечень изъятого вооружения:
+{{weapons}}
+
+Перечень имущества и улик:
+{{property}}
+
+Дополнительные замечания:
+{{notes}}
+
+Дальнейшее помещение / направление:
+{{delivery}}`,
+
+    literary:`ОПИСАНИЕ ИНЦИДЕНТА
+
+{{date}} около {{time}} офицер {{officerRank}} {{officerName}} ({{officerCallsign}}) прибыл к месту, обозначенному как {{location}}, где разворачивалось происшествие по делу {{documentNumber}}.
+
+Фигурантом по делу обозначен {{suspect}} [{{reg}}], в качестве потерпевшего или заявителя указан {{victim}}.
+Повод обращения описывается как: {{title}}.
+
+По отмеченным обстоятельствам установлено, что {{facts}}.
+Дальнейшая картина происшествия складывалась следующим образом:
+{{description}}
+
+После рассмотрения обстоятельств лицу были вменены статьи:
+{{articlesMultiline}}
+
+За указанные действия {{punishment}}.
+
+Изъятое вооружение:
+{{weapons}}
+
+Установленное имущество и улики:
+{{property}}
+
+Примечания офицера:
+{{notes}}
+
+Дальнейшее направление лица:
+{{delivery}}`,
+
+    telegraph:`СВОДКА / INCIDENT
+
+Дело {{documentNumber}}.
+{{date}} {{time}}.
+Офицер: {{officerName}} / {{officerRank}} / {{officerCallsign}}.
+Фигурант: {{suspect}} [{{reg}}].
+Потерпевший: {{victim}}.
+Место: {{location}}.
+Суть: {{title}}.
+Обстоятельства: {{facts}}.
+Описание: {{description}}.
+Статьи: {{articlesInline}}.
+Итог: {{punishment}}.
+Оружие: {{weapons}}.
+Имущество: {{property}}.
+Примечания: {{notes}}.
+Доставлен: {{delivery}}.`
+  },
+
+  detention:{
+    department:`ОФОРМЛЕНИЕ ЗАДЕРЖАНИЯ
+
+Документ: {{documentNumber}}
+Дата и время: {{date}} {{time}}
+Офицер: {{officerRank}} {{officerName}} ({{officerCallsign}})
+
+Задержанное лицо: {{suspect}} [{{reg}}]
+Место задержания: {{location}}
+
+Установленные обстоятельства:
+{{facts}}
+
+Описание задержания:
+{{description}}
+
+Вменяемые статьи:
+{{articlesMultiline}}
+
+Изъятое вооружение:
+{{weapons}}
+
+Изъятое имущество:
+{{property}}
+
+По итогам оформления {{punishment}}.
+
+Примечания:
+{{notes}}
+
+Дальнейшее содержание:
+{{delivery}}`,
+
+    sheriff:`ШЕРИФСКОЕ ОФОРМЛЕНИЕ ЗАДЕРЖАНИЯ
+
+Я, {{officerRank}} {{officerName}} ({{officerCallsign}}), настоящим подтверждаю, что {{date}} в {{time}} задержал {{suspect}} [{{reg}}] в районе {{location}}.
+
+Обстоятельства были таковы: {{facts}}.
+Суть происшествия: {{description}}
+
+Лицу вменены статьи: {{articlesInline}}.
+По совокупности нарушений {{punishment}}.
+
 Изъятое:
-{{weaponsMultiline}}
+{{weapons}}
 
-Дополнительное имущество / улики:
-{{propertyMultiline}}
+Прочее имущество:
+{{property}}
 
-Итоговая мера наказания: {{jail}} ср и штраф {{fine}}$.
+Примечания:
+{{notes}}
+
+Куда помещён:
+{{delivery}}`,
+
+    judicial:`АКТ О ЗАДЕРЖАНИИ
+
+Настоящим удостоверяется, что {{date}} в {{time}} офицером {{officerRank}} {{officerName}} ({{officerCallsign}}) было произведено задержание лица {{suspect}} [{{reg}}] в местности {{location}}.
+
+Установленные обстоятельства:
+{{facts}}
+
+Подробности:
+{{description}}
+
+Действия лица подпадают под статьи:
+{{articlesMultiline}}
+
+За означенные деяния {{punishment}}.
+
+Изъятое вооружение:
+{{weapons}}
+
+Изъятое имущество:
+{{property}}
+
+Дополнительные замечания:
+{{notes}}
+
+Место дальнейшего содержания:
+{{delivery}}`,
+
+    literary:`ОПИСАНИЕ ЗАДЕРЖАНИЯ
+
+{{date}} в {{time}} офицер {{officerRank}} {{officerName}} ({{officerCallsign}}) произвёл задержание лица {{suspect}} [{{reg}}] в местности {{location}}.
+
+К этому привели следующие обстоятельства: {{facts}}.
+Детали происшествия:
+{{description}}
+
+После рассмотрения фактов лицу были вменены статьи:
+{{articlesMultiline}}
+
+Вследствие этого {{punishment}}.
+
+Изъятое вооружение:
+{{weapons}}
+
+Изъятое имущество:
+{{property}}
+
+Примечания офицера:
+{{notes}}
+
+Дальнейшее содержание лица:
+{{delivery}}`,
+
+    telegraph:`ЗАДЕРЖАНИЕ
+
+{{date}} {{time}}.
+Офицер: {{officerName}} / {{officerCallsign}}.
+Лицо: {{suspect}} [{{reg}}].
+Место: {{location}}.
+Статьи: {{articlesInline}}.
+Итог: {{punishment}}.
+Оружие: {{weapons}}.
+Имущество: {{property}}.
+Примечания: {{notes}}.
+Помещён: {{delivery}}.`
+  },
+
+  fine_notice:{
+    department:`ШТРАФНОЙ БЛАНК
+
+Документ: {{documentNumber}}
+Дата: {{date}}
+Офицер: {{officerRank}} {{officerName}} ({{officerCallsign}})
+
+Лицо: {{suspect}} [{{reg}}]
+Основание: статьи {{articlesInline}}
+
+По итогам рассмотрения назначен штраф в размере {{fine}} долларов.
+Срок уплаты: до {{deadlineDate}}.
 
 Обстоятельства:
 {{description}}
 
 Примечания:
-{{notes}}
+{{notes}}`,
 
-Составил:
-{{officer}}`
-},
+    sheriff:`ШТРАФНОЕ ПРЕДПИСАНИЕ
 
-incident_report:{
-formal:`ДЕПАРТАМЕНТ
+{{date}} мною, {{officerRank}} {{officerName}} ({{officerCallsign}}), на имя {{suspect}} [{{reg}}] был выписан штраф.
 
-Гражданин / фигурант: {{citizenFullName}} {{citizenReg}}
-Заголовок: {{title}}
-Кратко: {{brief}}
+Основание: статьи {{articlesInline}}.
+Размер взыскания: {{fine}} долларов.
+Срок уплаты: до {{deadlineDate}}.
 
-ОТЧЁТ О ПРОИСШЕСТВИИ
-
-Примерное место и время:
-{{location}}
-{{date}} {{time}}
-
-Описание ситуации:
+Описание:
 {{description}}
-
-Установленные статьи:
-{{articlesMultiline}}
-
-Изъятое вооружение:
-{{weaponsMultiline}}
-
-Украденное / обнаруженное имущество:
-{{propertyMultiline}}
-
-Назначенное наказание:
-{{jail}} ср и штраф {{fine}}$
 
 Примечания:
-{{notes}}
+{{notes}}`,
 
-Отчёт составил:
-{{officer}}`,
-    short:`ОТЧЁТ
+    judicial:`ПОСТАНОВЛЕНИЕ О НАЛОЖЕНИИ ШТРАФА
 
-Заголовок: {{title}}
-Лицо: {{citizenFullName}} {{citizenReg}}
-Место/время: {{location}}, {{date}} {{time}}
-Статьи: {{articlesInline}}
-Наказание: {{jail}} ср, {{fine}}$
-Кратко: {{brief}}
-Офицер: {{officer}}`,
-    rp:`[Отчёт о происшествии]
+Настоящим определяется, что в отношении лица {{suspect}} [{{reg}}] по результатам разбирательства установлены нарушения, подпадающие под статьи {{articlesInline}}.
 
-Тема: {{title}}
-Фигурант: {{citizenFullName}} {{citizenReg}}
+Офицером {{officerRank}} {{officerName}} ({{officerCallsign}}) назначен штраф в размере {{fine}} долларов.
+Предельный срок уплаты: {{deadlineDate}}.
 
-Место и время:
-{{location}}
-{{date}} {{time}}
-
-Суть происшествия:
+Обстоятельства:
 {{description}}
 
-По результатам рассмотрения были установлены нарушения:
-{{articlesMultiline}}
+Примечания:
+{{notes}}`,
 
-Изъятое вооружение:
-{{weaponsMultiline}}
+    literary:`ШТРАФНОЕ ИЗВЕЩЕНИЕ
 
-Имущество / улики:
-{{propertyMultiline}}
+По результатам рассмотрения обстоятельств, изложенных ниже, в отношении {{suspect}} [{{reg}}] назначено денежное взыскание в размере {{fine}} долларов.
 
-Итоговое наказание:
-{{jail}} ср и штраф {{fine}}$
+Дата оформления: {{date}}
+Офицер: {{officerRank}} {{officerName}} ({{officerCallsign}})
+Основание: статьи {{articlesInline}}
+Срок уплаты: до {{deadlineDate}}
 
-Дополнительно:
-{{notes}}
+Описание:
+{{description}}
 
-Составил отчёт:
-{{officer}}`
-},
+Примечания:
+{{notes}}`,
 
-seizure_report:{
-formal:`ПРОТОКОЛ ИЗЪЯТИЯ
+    telegraph:`ШТРАФ
 
-Лицо: {{citizenFullName}} {{citizenReg}}
+{{date}}.
+Лицо: {{suspect}} [{{reg}}].
+Статьи: {{articlesInline}}.
+Сумма: {{fine}} долларов.
+Оплатить до: {{deadlineDate}}.
+Офицер: {{officerName}} / {{officerCallsign}}.
+Примечания: {{notes}}.`
+  },
+
+  seizure_report:{
+    department:`ПРОТОКОЛ ИЗЪЯТИЯ
+
+Документ: {{documentNumber}}
+Дата и время: {{date}} {{time}}
+Офицер: {{officerRank}} {{officerName}} ({{officerCallsign}})
+Лицо: {{suspect}} [{{reg}}]
 Место: {{location}}
-Дата/время: {{date}} {{time}}
 
-Основание:
-{{articlesMultiline}}
+Основание: статьи {{articlesInline}}
 
 Изъятое вооружение:
-{{weaponsMultiline}}
+{{weapons}}
 
 Изъятое имущество / улики:
-{{propertyMultiline}}
-
-Пояснения:
-{{notes}}
-
-Протокол составил:
-{{officer}}`,
-    short:`ПРОТОКОЛ ИЗЪЯТИЯ
-
-Лицо: {{citizenFullName}} {{citizenReg}}
-Основание: {{articlesInline}}
-Оружие:
-{{weaponsMultiline}}
-
-Имущество:
-{{propertyMultiline}}
-
-Офицер: {{officer}}`,
-    rp:`[Протокол изъятия]
-
-В отношении {{citizenFullName}} {{citizenReg}} произведено изъятие имущества.
-Место и время: {{location}}, {{date}} {{time}}.
-
-Основание:
-{{articlesMultiline}}
-
-Перечень изъятого вооружения:
-{{weaponsMultiline}}
-
-Прочее изъятое имущество:
-{{propertyMultiline}}
+{{property}}
 
 Примечания:
-{{notes}}
+{{notes}}`,
 
-Оформил:
-{{officer}}`
-},
+    sheriff:`АКТ ОБ ИЗЪЯТИИ
 
-memo:{
-formal:`РАПОРТ / СЛУЖЕБНАЯ ЗАПИСКА
+{{date}} в {{time}} мной, {{officerRank}} {{officerName}} ({{officerCallsign}}), у лица {{suspect}} [{{reg}}] по месту {{location}} было произведено изъятие по основаниям статей {{articlesInline}}.
+
+Оружие:
+{{weapons}}
+
+Прочее имущество:
+{{property}}
+
+Примечания:
+{{notes}}`,
+
+    judicial:`ПРОТОКОЛЬНАЯ ЗАПИСЬ ОБ ИЗЪЯТИИ
+
+Офицером {{officerRank}} {{officerName}} ({{officerCallsign}}) {{date}} в {{time}} по месту {{location}} произведено изъятие у лица {{suspect}} [{{reg}}].
+
+Правовое основание: статьи {{articlesInline}}.
+
+Перечень вооружения:
+{{weapons}}
+
+Перечень имущества и улик:
+{{property}}
+
+Примечания:
+{{notes}}`,
+
+    literary:`ОПИСАНИЕ ИЗЪЯТИЯ
+
+{{date}} в {{time}} офицер {{officerRank}} {{officerName}} ({{officerCallsign}}) осуществил изъятие у лица {{suspect}} [{{reg}}] в местности {{location}}.
+
+Основанием послужили статьи {{articlesInline}}.
+
+Изъятое вооружение:
+{{weapons}}
+
+Имущество и улики:
+{{property}}
+
+Примечания:
+{{notes}}`,
+
+    telegraph:`ИЗЪЯТИЕ
+
+{{date}} {{time}}.
+Лицо: {{suspect}} [{{reg}}].
+Место: {{location}}.
+Основание: {{articlesInline}}.
+Оружие: {{weapons}}.
+Имущество: {{property}}.
+Офицер: {{officerName}} / {{officerCallsign}}.`
+  },
+
+  memo:{
+    department:`СЛУЖЕБНАЯ ЗАПИСКА
 
 Тема: {{title}}
 Дата: {{date}}
-Офицер: {{officer}}
+Офицер: {{officerRank}} {{officerName}} ({{officerCallsign}})
 
 Докладываю следующее:
 {{description}}
 
-Фигурант:
-{{citizenFullName}} {{citizenReg}}
-
-Применённые статьи:
-{{articlesMultiline}}
-
-Санкции:
-{{jail}} ср и штраф {{fine}}$
-
-Дополнительные сведения:
-{{notes}}`,
-    short:`РАПОРТ
-
-Тема: {{title}}
-Дата: {{date}}
-Фигурант: {{citizenFullName}} {{citizenReg}}
-Статьи: {{articlesInline}}
-Санкции: {{jail}} ср, {{fine}}$
-Офицер: {{officer}}`,
-    rp:`[Рапорт]
-
-Я, {{officer}}, докладываю о следующем.
-Дата: {{date}} {{time}}
-Тема: {{title}}
-
-Суть:
-{{description}}
-
-Лицо: {{citizenFullName}} {{citizenReg}}
-Вменённые статьи:
-{{articlesMultiline}}
-
-Итог:
-{{jail}} ср и штраф {{fine}}$
+Фигурант: {{suspect}} [{{reg}}]
+Статьи: {{articlesMultiline}}
+Итог: {{punishment}}
 
 Примечания:
-{{notes}}`
-},
+{{notes}}`,
 
-brief:{
-formal:`КРАТКАЯ СВОДКА
+    sheriff:`РАПОРТ
 
-Лицо: {{citizenFullName}} {{citizenReg}}
-Место/время: {{location}}, {{date}} {{time}}
-Суть: {{brief}}
+Докладываю, что {{date}} по делу {{documentNumber}} имело место следующее:
+{{description}}
 
+Лицо: {{suspect}} [{{reg}}]
+Место: {{location}}
 Статьи: {{articlesInline}}
-Наказание: {{jail}} ср и штраф {{fine}}$
+Итог: {{punishment}}
 
-Офицер: {{officer}}`,
-    short:`СВОДКА
-{{citizenFullName}} {{citizenReg}} • {{location}} • {{date}} {{time}}
+Составил:
+{{officerRank}} {{officerName}} ({{officerCallsign}})
+
+Примечания:
+{{notes}}`,
+
+    judicial:`ДОКЛАДНАЯ ЗАПИСКА
+
+Настоящим сообщаю, что {{date}} офицером {{officerRank}} {{officerName}} ({{officerCallsign}}) были установлены следующие обстоятельства:
+{{description}}
+
+Фигурант: {{suspect}} [{{reg}}]
+Статьи: {{articlesMultiline}}
+Результат рассмотрения: {{punishment}}
+
+Дополнительные замечания:
+{{notes}}`,
+
+    literary:`СЛУЖЕБНОЕ ОПИСАНИЕ
+
+В продолжение дела {{documentNumber}} считаю необходимым изложить следующее:
+{{description}}
+
+К делу привлечено лицо {{suspect}} [{{reg}}], действия которого отнесены к статьям:
+{{articlesMultiline}}
+
+По итогам разбирательства {{punishment}}.
+
+Примечания:
+{{notes}}
+
+Составил:
+{{officerRank}} {{officerName}} ({{officerCallsign}})`,
+
+    telegraph:`ЗАПИСКА
+
+{{date}}.
+Тема: {{title}}.
+Лицо: {{suspect}} [{{reg}}].
+Описание: {{description}}.
+Статьи: {{articlesInline}}.
+Итог: {{punishment}}.
+Офицер: {{officerName}} / {{officerCallsign}}.`
+  },
+
+  brief:{
+    department:`КРАТКАЯ СВОДКА
+
+{{date}} {{time}}
+Лицо: {{suspect}} [{{reg}}]
+Место: {{location}}
 Статьи: {{articlesInline}}
-Наказание: {{jail}} ср / {{fine}}$
-Офицер: {{officer}}`,
-    rp:`[Краткая сводка]
+Итог: {{punishment}}
+Офицер: {{officerRank}} {{officerName}} ({{officerCallsign}})
+
+Кратко:
+{{description}}`,
+
+    sheriff:`КРАТКАЯ ШЕРИФСКАЯ СВОДКА
 
 {{date}} {{time}}, {{location}}.
-Фигурант: {{citizenFullName}} {{citizenReg}}.
-Суть: {{brief}}.
-
+Фигурант: {{suspect}} [{{reg}}].
 Статьи: {{articlesInline}}.
-Наказание: {{jail}} ср и штраф {{fine}}$.
-Оформил: {{officer}}`
-}
+Итог: {{punishment}}.
+Офицер: {{officerName}}.`,
+
+    judicial:`КРАТКОЕ ИЗЛОЖЕНИЕ
+
+{{date}} в {{time}} по месту {{location}} установлено, что лицо {{suspect}} [{{reg}}] подпадает под статьи {{articlesInline}}.
+Результат: {{punishment}}.
+Офицер: {{officerRank}} {{officerName}} ({{officerCallsign}}).`,
+
+    literary:`КРАТКАЯ ВЫЖИМКА
+
+В деле {{documentNumber}} фигурирует лицо {{suspect}} [{{reg}}]. Инцидент произошёл {{date}} в {{time}} по месту {{location}}.
+Лицу вменены статьи {{articlesInline}}, а по итогам {{punishment}}.`,
+
+    telegraph:`СВОДКА: {{suspect}} [{{reg}}] • {{location}} • {{articlesInline}} • {{punishment}} • {{officerCallsign}}`
+  }
 };
 
 function buildDocumentPreview(){
-const ctx = buildContext();
-const type = STATE.doc.type || "fine_notice";
-const style = STATE.doc.style || "formal";
-const template = DOC_TEMPLATES[type]?.[style] || DOC_TEMPLATES.fine_notice.formal;
-$("doc_output").textContent = applyTemplate(template, ctx);
-refreshHeaderBadges();
+  const ctx = buildContext();
+  const type = STATE.doc.type || "incident_report";
+  const style = STATE.doc.style || "department";
+  const template = DOC_TEMPLATES[type]?.[style] || DOC_TEMPLATES.incident_report.department;
+  $("doc_output").textContent = applyTemplate(template, ctx);
 }
 
 function renderLawText(text, query=""){
-const view = $("law_view");
-if(!query){
-view.innerHTML = escapeHtml(text);
-return;
-}
-const re = new RegExp(escapeRegExp(query), "gi");
-view.innerHTML = escapeHtml(text).replace(re, m => `<span class="mark">${m}</span>`);
-}
-
-function scrollLawToCode(code){
-const view = $("law_view");
-const re = new RegExp(`(^|\\n)\\s*${escapeRegExp(code)}(\\)|\\.|\\s)`, "i");
-const idx = LAW_TEXT.search(re);
-renderLawText(LAW_TEXT, $("law_query").value.trim());
-if(idx >= 0){
-const ratio = idx / Math.max(1, LAW_TEXT.length);
-view.scrollTop = Math.max(0, ratio * (view.scrollHeight - view.clientHeight));
-}
+  const view = $("law_view");
+  if(!query){
+    view.innerHTML = escapeHtml(text);
+    return;
+  }
+  const re = new RegExp(escapeRegExp(query), "gi");
+  view.innerHTML = escapeHtml(text).replace(re, m => `<span class="mark">${m}</span>`);
 }
 
 function renderLawSearch(){
-const q = $("law_query").value.trim().toLowerCase();
-const category = $("law_category").value;
-const box = $("law_results");
-box.innerHTML = "";
+  const query = $("law_query").value.trim().toLowerCase();
+  const category = $("law_category").value;
+  const box = $("law_results");
+  box.innerHTML = "";
 
-const matches = ARTICLES.filter(a => {
-if(category && a.category !== category) return false;
-if(!q) return true;
-const hay = [
-a.code,
-a.family || "",
-a.title,
-...(a.tags || []),
-a.note || ""
-].join(" ").toLowerCase();
-return hay.includes(q);
-});
+  const matches = ARTICLES.filter(a => {
+    if(category && a.category !== category) return false;
+    if(!query) return true;
+    const hay = [a.code,a.title,a.family || "",...(a.tags || []),a.note || ""].join(" ").toLowerCase();
+    return hay.includes(query);
+  });
 
-if(!matches.length){
-box.innerHTML = `<div class="note">Ничего не найдено.</div>`;
-}else{
-matches.forEach(a => {
-const card = document.createElement("div");
-card.className = "card";
+  if(!matches.length){
+    box.innerHTML = `<div class="note">Ничего не найдено.</div>`;
+  }else{
+    matches.forEach(a => {
+      const card = document.createElement("div");
+      card.className = "scenario";
+      card.innerHTML = `
+        <div><b>${escapeHtml(a.code)}</b> — ${escapeHtml(a.title)}</div>
+        <div class="mini">Категория: <span class="badge ${a.category}">${a.category}</span></div>
+        <div class="mini">Штраф: ${escapeHtml(rangeText(a.fine_min,a.fine_max,"$"))}</div>
+        <div class="mini">Срок: ${escapeHtml(rangeText(a.jail_min,a.jail_max," сут."))}</div>
+      `;
 
+      const tools = document.createElement("div");
+      tools.className = "footer-tools";
 
-  const top = document.createElement("div");
-  top.className = "status-line";
-  top.innerHTML = `
-    <h4 style="margin:0">${escapeHtml(a.code)} — ${escapeHtml(a.title)}</h4>
-    <span class="badge ${a.category}">${a.category}</span>
-  `;
+      const add = document.createElement("button");
+      add.className = "btn";
+      add.textContent = "Выбрать";
+      add.onclick = () => {
+        ensurePick(a.code).sel = true;
+        renderEverything();
+        saveState();
+        setView("workspace");
+      };
 
-  const penalties = document.createElement("div");
-  penalties.className = "stack";
-  penalties.innerHTML = `
-    <div class="pill">Штраф: <b>${escapeHtml(rangeText(a.fine_min, a.fine_max, "$"))}</b></div>
-    <div class="pill">Срок: <b>${escapeHtml(rangeText(a.jail_min, a.jail_max, " ср"))}</b></div>
-    <div class="pill">Тип: <b>${escapeHtml(a.penalty_mode)}</b></div>
-  `;
+      const fav = document.createElement("button");
+      fav.className = "btn";
+      fav.textContent = "В поиск";
+      fav.onclick = () => {
+        $("calc_search").value = a.code;
+        STATE.calc.search = a.code;
+        renderCalcTable();
+        setView("workspace");
+      };
 
-  const mini = document.createElement("div");
-  mini.className = "mini";
-  mini.style.marginTop = "8px";
-  mini.textContent = (a.tags || []).length ? `Теги: ${(a.tags || []).join(", ")}` : "Теги не указаны";
+      tools.append(add, fav);
+      card.appendChild(tools);
 
-  const tools = document.createElement("div");
-  tools.className = "footer-tools";
-  tools.style.marginTop = "10px";
+      if(a.note){
+        const note = document.createElement("div");
+        note.className = "note";
+        note.textContent = a.note;
+        card.appendChild(note);
+      }
 
-  const btnPick = document.createElement("button");
-  btnPick.className = "btn";
-  btnPick.textContent = "Выбрать статью";
-  btnPick.onclick = () => {
-    ensurePick(a.code).sel = true;
-    pushHistory(a.code);
-    updateAll();
-    saveState();
-  };
-
-  const btnFav = document.createElement("button");
-  btnFav.className = "btn";
-  btnFav.textContent = isFavorite(a.code) ? "Убрать из избранного" : "В избранное";
-  btnFav.onclick = () => {
-    toggleFavorite(a.code);
-    renderLawSearch();
-  };
-
-  const btnGoto = document.createElement("button");
-  btnGoto.className = "btn";
-  btnGoto.textContent = "Показать в кодексе";
-  btnGoto.onclick = () => scrollLawToCode(a.code);
-
-  tools.append(btnPick, btnFav, btnGoto);
-
-  card.append(top, penalties, mini, tools);
-
-  if(a.note){
-    const note = document.createElement("div");
-    note.className = "note";
-    note.style.marginTop = "10px";
-    note.textContent = a.note;
-    card.appendChild(note);
+      box.appendChild(card);
+    });
   }
 
-  box.appendChild(card);
-});
-
-
+  renderLawText(LAW_TEXT, query);
 }
 
-renderLawText(LAW_TEXT, q);
-}
+function renderScenarios(){
+  const box = $("scenario_grid");
+  box.innerHTML = "";
 
-function setupLawBindings(){
-$("law_query").oninput = () => renderLawSearch();
-$("law_category").onchange = () => renderLawSearch();
+  SCENARIOS.forEach(s => {
+    const card = document.createElement("div");
+    card.className = "scenario";
+    card.innerHTML = `
+      <div><b>${escapeHtml(s.title)}</b></div>
+      <div class="mini">${escapeHtml(s.desc)}</div>
+    `;
 
-$("law_clear").onclick = () => {
-$("law_query").value = "";
-$("law_category").value = "";
-renderLawSearch();
-};
+    const chips = document.createElement("div");
+    chips.className = "tag-row";
+    s.codes.forEach(code => {
+      const chip = document.createElement("span");
+      chip.className = "tag";
+      chip.textContent = code;
+      chips.appendChild(chip);
+    });
 
-$("law_expand").onclick = () => {
-$("law_query").value = "";
-$("law_category").value = "";
-renderLawSearch();
-};
+    const tools = document.createElement("div");
+    tools.className = "footer-tools";
 
-$("law_copy").onclick = async () => {
-try{
-await navigator.clipboard.writeText(LAW_TEXT.trim());
-}catch(e){}
-};
-}
+    const apply = document.createElement("button");
+    apply.className = "btn primary";
+    apply.textContent = "Применить";
+    apply.onclick = () => {
+      s.codes.forEach(code => ensurePick(code).sel = true);
+      setView("workspace");
+      renderEverything();
+      saveState();
+    };
 
-function renderPresets(){
-const box = $("preset_grid");
-box.innerHTML = "";
+    const replace = document.createElement("button");
+    replace.className = "btn";
+    replace.textContent = "Заменить";
+    replace.onclick = () => {
+      Object.keys(STATE.calc.picks).forEach(code => ensurePick(code).sel = false);
+      s.codes.forEach(code => ensurePick(code).sel = true);
+      setView("workspace");
+      renderEverything();
+      saveState();
+    };
 
-PRESETS.forEach(preset => {
-const card = document.createElement("div");
-card.className = "preset";
-
-
-const title = document.createElement("div");
-title.className = "preset-title";
-title.textContent = preset.title;
-
-const desc = document.createElement("div");
-desc.className = "mini";
-desc.textContent = preset.desc;
-
-const codes = document.createElement("div");
-codes.className = "chip-list";
-preset.codes.forEach(code => {
-  const art = getArticleByCode(code);
-  const chip = document.createElement("span");
-  chip.className = "pill";
-  chip.textContent = art ? art.code : code;
-  codes.appendChild(chip);
-});
-
-const tools = document.createElement("div");
-tools.className = "footer-tools";
-
-const apply = document.createElement("button");
-apply.className = "btn primary";
-apply.textContent = "Применить";
-apply.onclick = () => {
-  preset.codes.forEach(code => {
-    const p = ensurePick(code);
-    p.sel = true;
-    pushHistory(code);
+    tools.append(apply, replace);
+    card.append(chips, tools);
+    box.appendChild(card);
   });
-  switchMainTab("dashboard");
-  updateAll();
-  saveState();
-};
-
-const replace = document.createElement("button");
-replace.className = "btn";
-replace.textContent = "Заменить выбор";
-replace.onclick = () => {
-  Object.keys(STATE.calc.picks).forEach(code => {
-    ensurePick(code).sel = false;
-  });
-  preset.codes.forEach(code => {
-    const p = ensurePick(code);
-    p.sel = true;
-    pushHistory(code);
-  });
-  switchMainTab("dashboard");
-  updateAll();
-  saveState();
-};
-
-const open = document.createElement("button");
-open.className = "btn";
-open.textContent = "Посмотреть статьи";
-open.onclick = () => {
-  switchMainTab("laws");
-  $("law_query").value = preset.codes.join(" ");
-  renderLawSearch();
-};
-
-tools.append(apply, replace, open);
-card.append(title, desc, codes, tools);
-box.appendChild(card);
-
-
-});
 }
 
-function applySettingsToForm(){
-$("doc_officer_rank").value = STATE.settings.default_rank || "";
-$("doc_officer_name").value = STATE.settings.default_name || "";
-$("doc_style").value = STATE.settings.default_style || "formal";
-$("doc_deadline_days").value = STATE.settings.default_deadline || 3;
-$("calc_mode").value = STATE.settings.default_mode || "max";
+function weaponItemTemplate(item={}){
+  return {
+    type:item.type || "",
+    model:item.model || "",
+    serial:item.serial || "",
+    owner:item.owner || "suspect",
+    basis:item.basis || "",
+    note:item.note || ""
+  };
+}
 
-STATE.doc.officer_rank = $("doc_officer_rank").value;
-STATE.doc.officer_name = $("doc_officer_name").value;
-STATE.doc.style = $("doc_style").value;
-STATE.doc.deadline_days = $("doc_deadline_days").value;
-STATE.calc.mode = $("calc_mode").value;
+function propertyItemTemplate(item={}){
+  return {
+    name:item.name || "",
+    owner:item.owner || "",
+    serial:item.serial || "",
+    value:item.value || "",
+    where:item.where || "",
+    note:item.note || ""
+  };
+}
 
-document.querySelectorAll(".calc_disc").forEach(x => x.checked = false);
-STATE.calc.discounts = [];
+function renderWeapons(){
+  const box = $("weapon_list");
+  box.innerHTML = "";
 
-updateAll();
-saveState();
+  if(!STATE.doc.weapons.length){
+    box.innerHTML = `<div class="note">Список изъятого вооружения пока пуст.</div>`;
+    return;
+  }
+
+  STATE.doc.weapons.forEach((item,index) => {
+    const row = document.createElement("div");
+    row.className = "item-row";
+    row.innerHTML = `
+      <input data-k="type" type="text" placeholder="Тип / название" value="${escapeHtml(item.type)}">
+      <input data-k="model" type="text" placeholder="Модель" value="${escapeHtml(item.model)}">
+      <input data-k="serial" type="text" placeholder="Серийный №" value="${escapeHtml(item.serial)}">
+      <select data-k="owner">
+        <option value="suspect">У подозреваемого</option>
+        <option value="other">У другого лица</option>
+      </select>
+      <input data-k="basis" type="text" placeholder="Основание" value="${escapeHtml(item.basis)}">
+      <button class="remove" type="button">Удалить</button>
+      <input class="wide" data-k="note" type="text" placeholder="Примечание" value="${escapeHtml(item.note)}">
+    `;
+
+    row.querySelector('select[data-k="owner"]').value = item.owner || "suspect";
+
+    row.querySelectorAll("[data-k]").forEach(el => {
+      const key = el.dataset.k;
+      el.oninput = el.onchange = () => {
+        STATE.doc.weapons[index][key] = el.value;
+        buildDocumentPreview();
+        saveState();
+      };
+    });
+
+    row.querySelector(".remove").onclick = () => {
+      STATE.doc.weapons.splice(index,1);
+      renderWeapons();
+      buildDocumentPreview();
+      saveState();
+    };
+
+    box.appendChild(row);
+  });
+}
+
+function renderProperty(){
+  const box = $("property_list");
+  box.innerHTML = "";
+
+  if(!STATE.doc.property.length){
+    box.innerHTML = `<div class="note">Список имущества и улик пока пуст.</div>`;
+    return;
+  }
+
+  STATE.doc.property.forEach((item,index) => {
+    const row = document.createElement("div");
+    row.className = "item-row";
+    row.innerHTML = `
+      <input data-k="name" type="text" placeholder="Предмет / улика" value="${escapeHtml(item.name)}">
+      <input data-k="owner" type="text" placeholder="Владелец" value="${escapeHtml(item.owner)}">
+      <input data-k="serial" type="text" placeholder="Серийный №" value="${escapeHtml(item.serial)}">
+      <input data-k="value" type="number" placeholder="Оценка, $" value="${escapeHtml(item.value)}">
+      <input data-k="where" type="text" placeholder="Где найдено" value="${escapeHtml(item.where)}">
+      <button class="remove" type="button">Удалить</button>
+      <input class="wide" data-k="note" type="text" placeholder="Примечание" value="${escapeHtml(item.note)}">
+    `;
+
+    row.querySelectorAll("[data-k]").forEach(el => {
+      const key = el.dataset.k;
+      el.oninput = el.onchange = () => {
+        STATE.doc.property[index][key] = el.value;
+        buildDocumentPreview();
+        saveState();
+      };
+    });
+
+    row.querySelector(".remove").onclick = () => {
+      STATE.doc.property.splice(index,1);
+      renderProperty();
+      buildDocumentPreview();
+      saveState();
+    };
+
+    box.appendChild(row);
+  });
+}
+function renderDrafts(){
+  const box = $("drafts_list");
+  box.innerHTML = "";
+
+  if(!STATE.drafts.length){
+    box.innerHTML = `<div class="note">Черновики пока не сохранены.</div>`;
+    return;
+  }
+
+  STATE.drafts
+    .slice()
+    .reverse()
+    .forEach((draft, indexFromEnd) => {
+      const realIndex = STATE.drafts.length - 1 - indexFromEnd;
+      const item = document.createElement("div");
+      item.className = "quick-item";
+
+      const left = document.createElement("div");
+      left.innerHTML = `
+        <div><b>${escapeHtml(draft.title || docTypeLabel(draft.doc.type))}</b></div>
+        <div class="mini">
+          ${escapeHtml(draft.dateLabel)} •
+          ${escapeHtml(draft.doc.suspect || "без фигуранта")} •
+          ${escapeHtml(draft.doc.officer_name || "без офицера")}
+        </div>
+      `;
+
+      const tools = document.createElement("div");
+      tools.className = "article-actions";
+
+      const loadBtn = document.createElement("button");
+      loadBtn.className = "compact-btn";
+      loadBtn.textContent = "Загрузить";
+      loadBtn.onclick = () => {
+        STATE.doc = mergeDeep(DEFAULT_STATE.doc, draft.doc);
+        STATE.calc = mergeDeep(DEFAULT_STATE.calc, draft.calc);
+        initDocumentFormFromState();
+        initCalcFromState();
+        renderEverything();
+        setView("workspace");
+        saveState();
+      };
+
+      const delBtn = document.createElement("button");
+      delBtn.className = "compact-btn";
+      delBtn.textContent = "Удалить";
+      delBtn.onclick = () => {
+        STATE.drafts.splice(realIndex, 1);
+        renderDrafts();
+        saveState();
+      };
+
+      tools.append(loadBtn, delBtn);
+      item.append(left, tools);
+      box.appendChild(item);
+    });
+}
+
+function docTypeLabel(type){
+  return {
+    incident_report:"Рапорт об инциденте",
+    detention:"Оформление задержания",
+    fine_notice:"Штрафной бланк",
+    seizure_report:"Протокол изъятия",
+    memo:"Служебная записка",
+    brief:"Краткая сводка"
+  }[type] || "Документ";
+}
+
+function initCalcFromState(){
+  $("calc_search").value = STATE.calc.search || "";
+  $("calc_category").value = STATE.calc.category || "";
+  $("calc_mode").value = STATE.calc.mode || "max";
+
+  document.querySelectorAll(".discount-tag").forEach(btn => {
+    btn.classList.toggle("active", (STATE.calc.discounts || []).includes(+btn.dataset.val));
+  });
+}
+
+function initDocumentFormFromState(){
+  const now = gameNow();
+
+  if(!STATE.doc.date) STATE.doc.date = toInputDate(now);
+  if(!STATE.doc.time) STATE.doc.time = toInputTime(now);
+
+  $("doc_type").value = STATE.doc.type || "incident_report";
+  $("doc_style").value = STATE.doc.style || "department";
+  $("doc_number").value = STATE.doc.number || "";
+  $("doc_date").value = STATE.doc.date || "";
+  $("doc_time").value = STATE.doc.time || "";
+  $("doc_officer_name").value = STATE.doc.officer_name || "";
+  $("doc_officer_rank").value = STATE.doc.officer_rank || "";
+  $("doc_officer_callsign").value = STATE.doc.officer_callsign || "";
+  $("doc_suspect").value = STATE.doc.suspect || "";
+  $("doc_victim").value = STATE.doc.victim || "";
+  $("doc_reg").value = STATE.doc.reg || "";
+  $("doc_location").value = STATE.doc.location || "";
+  $("doc_title").value = STATE.doc.title || "";
+  $("doc_delivery").value = STATE.doc.delivery || "";
+  $("doc_deadline_days").value = STATE.doc.deadline_days || 3;
+  $("doc_description").value = STATE.doc.description || "";
+  $("doc_notes").value = STATE.doc.notes || "";
+
+  document.querySelectorAll(".fact-flag").forEach(cb => {
+    cb.checked = !!STATE.doc.facts[cb.dataset.key];
+  });
+
+  renderWeapons();
+  renderProperty();
+  syncOfficerHeader();
 }
 
 function initSettingsFromState(){
-$("set_default_rank").value = STATE.settings.default_rank || "";
-$("set_default_name").value = STATE.settings.default_name || "";
-$("set_default_mode").value = STATE.settings.default_mode || "max";
-$("set_default_style").value = STATE.settings.default_style || "formal";
-$("set_default_deadline").value = STATE.settings.default_deadline || 3;
-$("set_autosave").value = STATE.settings.autosave ? "1" : "0";
+  $("set_name").value = STATE.settings.name || "";
+  $("set_rank").value = STATE.settings.rank || "";
+  $("set_callsign").value = STATE.settings.callsign || "";
+  $("set_mode").value = STATE.settings.mode || "max";
+  $("set_style").value = STATE.settings.style || "department";
+  $("set_theme").value = STATE.theme || "dark";
 }
 
-function setupSettingsBindings(){
-$("save_settings").onclick = () => {
-STATE.settings.default_rank = $("set_default_rank").value;
-STATE.settings.default_name = $("set_default_name").value;
-STATE.settings.default_mode = $("set_default_mode").value;
-STATE.settings.default_style = $("set_default_style").value;
-STATE.settings.default_deadline = parseInt($("set_default_deadline").value, 10) || 3;
-STATE.settings.autosave = $("set_autosave").value === "1";
-saveState(true);
-refreshHeaderBadges();
-};
-
-$("apply_settings").onclick = () => {
-STATE.settings.default_rank = $("set_default_rank").value;
-STATE.settings.default_name = $("set_default_name").value;
-STATE.settings.default_mode = $("set_default_mode").value;
-STATE.settings.default_style = $("set_default_style").value;
-STATE.settings.default_deadline = parseInt($("set_default_deadline").value, 10) || 3;
-STATE.settings.autosave = $("set_autosave").value === "1";
-applySettingsToForm();
-saveState(true);
-};
-
-$("export_state").onclick = () => {
-const blob = new Blob([JSON.stringify(STATE, null, 2)], {type:"application/json;charset=utf-8"});
-const a = document.createElement("a");
-a.href = URL.createObjectURL(blob);
-a.download = "ruvd_state.json";
-document.body.appendChild(a);
-a.click();
-a.remove();
-setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
-};
-
-$("import_state").onclick = () => $("import_file").click();
-
-$("import_file").onchange = async e => {
-const file = e.target.files?.[0];
-if(!file) return;
-try{
-const text = await file.text();
-const parsed = JSON.parse(text);
-const merged = mergeDeep(DEFAULT_STATE, parsed);
-
-
-  Object.keys(STATE).forEach(k => delete STATE[k]);
-  Object.assign(STATE, merged);
-
-  initCalcFromState();
-  initDocumentFormFromState();
-  initSettingsFromState();
-  renderLawSearch();
-  renderPresets();
-  updateAll();
-  saveState(true);
-}catch(err){
-  alert("Не удалось импортировать JSON.");
-}finally{
-  $("import_file").value = "";
+function updateDocField(key, value){
+  STATE.doc[key] = value;
+  if(key === "officer_name" || key === "officer_rank" || key === "officer_callsign"){
+    syncOfficerHeader();
+  }
+  buildDocumentPreview();
+  saveState();
 }
 
+function bindDocumentFields(){
+  $("doc_type").onchange = e => {
+    STATE.doc.type = e.target.value;
+    buildDocumentPreview();
+    saveState();
+  };
 
-};
+  $("doc_style").onchange = e => {
+    STATE.doc.style = e.target.value;
+    buildDocumentPreview();
+    saveState();
+  };
 
-$("reset_all_data").onclick = () => {
-if(!confirm("Удалить все локальные данные утилиты?")) return;
+  $("doc_number").oninput = e => updateDocField("number", e.target.value);
+  $("doc_date").oninput = e => updateDocField("date", e.target.value);
+  $("doc_time").oninput = e => updateDocField("time", e.target.value);
+  $("doc_officer_name").oninput = e => updateDocField("officer_name", e.target.value);
+  $("doc_officer_rank").oninput = e => updateDocField("officer_rank", e.target.value);
+  $("doc_officer_callsign").oninput = e => updateDocField("officer_callsign", e.target.value);
+  $("doc_suspect").oninput = e => updateDocField("suspect", e.target.value);
+  $("doc_victim").oninput = e => updateDocField("victim", e.target.value);
+  $("doc_reg").oninput = e => updateDocField("reg", e.target.value);
+  $("doc_location").oninput = e => updateDocField("location", e.target.value);
+  $("doc_title").oninput = e => updateDocField("title", e.target.value);
+  $("doc_delivery").oninput = e => updateDocField("delivery", e.target.value);
+  $("doc_deadline_days").oninput = e => updateDocField("deadline_days", e.target.value);
+  $("doc_description").oninput = e => updateDocField("description", e.target.value);
+  $("doc_notes").oninput = e => updateDocField("notes", e.target.value);
 
+  document.querySelectorAll(".fact-flag").forEach(cb => {
+    cb.onchange = () => {
+      STATE.doc.facts[cb.dataset.key] = cb.checked;
+      buildDocumentPreview();
+      saveState();
+    };
+  });
 
-const fresh = deepClone(DEFAULT_STATE);
-Object.keys(STATE).forEach(k => delete STATE[k]);
-Object.assign(STATE, fresh);
+  $("add_weapon").onclick = () => {
+    STATE.doc.weapons.push(weaponItemTemplate());
+    renderWeapons();
+    buildDocumentPreview();
+    saveState();
+  };
 
-initCalcFromState();
-initDocumentFormFromState();
-initSettingsFromState();
-renderLawSearch();
-renderPresets();
-renderQuickFilters();
-updateAll();
-saveState(true);
+  $("add_property").onclick = () => {
+    STATE.doc.property.push(propertyItemTemplate());
+    renderProperty();
+    buildDocumentPreview();
+    saveState();
+  };
 
+  $("copy_doc").onclick = async () => {
+    try{
+      await navigator.clipboard.writeText($("doc_output").textContent);
+    }catch(e){}
+  };
 
-};
+  $("download_doc").onclick = () => {
+    const blob = new Blob([$(`doc_output`).textContent], {type:"text/plain;charset=utf-8"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `${STATE.doc.type || "document"}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  };
+
+  $("save_draft").onclick = () => {
+    const now = gameNow();
+    STATE.drafts.push({
+      title:STATE.doc.title || docTypeLabel(STATE.doc.type),
+      dateLabel:`${fmtDate(now)} ${toInputTime(now)}`,
+      doc:deepClone(STATE.doc),
+      calc:deepClone(STATE.calc)
+    });
+    renderDrafts();
+    saveState();
+  };
+
+  $("clear_form").onclick = () => {
+    const keepOfficerName = STATE.settings.name || STATE.auth.name || "";
+    const keepOfficerRank = STATE.settings.rank || STATE.auth.rank || "";
+    const keepOfficerCallsign = STATE.settings.callsign || STATE.auth.callsign || "";
+    const keepMode = STATE.settings.mode || "max";
+    const keepStyle = STATE.settings.style || "department";
+    const now = gameNow();
+
+    STATE.calc = mergeDeep(DEFAULT_STATE.calc, {
+      mode:keepMode,
+      discounts:[]
+    });
+
+    STATE.doc = mergeDeep(DEFAULT_STATE.doc, {
+      style:keepStyle,
+      date:toInputDate(now),
+      time:toInputTime(now),
+      officer_name:keepOfficerName,
+      officer_rank:keepOfficerRank,
+      officer_callsign:keepOfficerCallsign
+    });
+
+    initCalcFromState();
+    initDocumentFormFromState();
+    renderEverything();
+    saveState();
+  };
 }
 
-function applyDefaultsOnFirstLoad(){
-if(!STATE.doc.officer_rank && STATE.settings.default_rank){
-STATE.doc.officer_rank = STATE.settings.default_rank;
+function bindCalcFields(){
+  $("calc_search").oninput = e => {
+    STATE.calc.search = e.target.value;
+    renderCalcTable();
+    saveState();
+  };
+
+  $("calc_category").onchange = e => {
+    STATE.calc.category = e.target.value;
+    renderCalcTable();
+    saveState();
+  };
+
+  $("calc_mode").onchange = e => {
+    STATE.calc.mode = e.target.value;
+    renderEverything();
+    saveState();
+  };
+
+  document.querySelectorAll(".discount-tag").forEach(btn => {
+    btn.onclick = () => {
+      btn.classList.toggle("active");
+      STATE.calc.discounts = activeDiscounts();
+      renderPenaltySummary();
+      renderSmartHints();
+      buildDocumentPreview();
+      saveState();
+    };
+  });
 }
-if(!STATE.doc.officer_name && STATE.settings.default_name){
-STATE.doc.officer_name = STATE.settings.default_name;
+
+function bindLawFields(){
+  $("law_query").oninput = () => renderLawSearch();
+  $("law_category").onchange = () => renderLawSearch();
+  $("law_clear").onclick = () => {
+    $("law_query").value = "";
+    $("law_category").value = "";
+    renderLawSearch();
+  };
+  $("law_copy").onclick = async () => {
+    try{
+      await navigator.clipboard.writeText(LAW_TEXT.trim());
+    }catch(e){}
+  };
 }
-if(!STATE.doc.style && STATE.settings.default_style){
-STATE.doc.style = STATE.settings.default_style;
+
+function bindNavigation(){
+  document.querySelectorAll("[data-view]").forEach(btn => {
+    btn.onclick = () => setView(btn.dataset.view);
+  });
+
+  document.querySelectorAll(".subtab-btn").forEach(btn => {
+    btn.onclick = () => setSubtab(btn.dataset.subtab);
+  });
+
+  $("theme_toggle").onclick = () => {
+    applyTheme(document.body.classList.contains("theme-light") ? "dark" : "light");
+  };
 }
-if(!STATE.doc.deadline_days && STATE.settings.default_deadline){
-STATE.doc.deadline_days = STATE.settings.default_deadline;
+
+function bindSettings(){
+  $("save_settings").onclick = () => {
+    STATE.settings.name = $("set_name").value.trim();
+    STATE.settings.rank = $("set_rank").value.trim();
+    STATE.settings.callsign = $("set_callsign").value.trim();
+    STATE.settings.mode = $("set_mode").value;
+    STATE.settings.style = $("set_style").value;
+    applyTheme($("set_theme").value);
+    saveState();
+  };
+
+  $("apply_defaults").onclick = () => {
+    STATE.settings.name = $("set_name").value.trim();
+    STATE.settings.rank = $("set_rank").value.trim();
+    STATE.settings.callsign = $("set_callsign").value.trim();
+    STATE.settings.mode = $("set_mode").value;
+    STATE.settings.style = $("set_style").value;
+    applyTheme($("set_theme").value);
+
+    STATE.doc.officer_name = STATE.settings.name || STATE.auth.name || "";
+    STATE.doc.officer_rank = STATE.settings.rank || STATE.auth.rank || "";
+    STATE.doc.officer_callsign = STATE.settings.callsign || STATE.auth.callsign || "";
+    STATE.doc.style = STATE.settings.style || "department";
+    STATE.calc.mode = STATE.settings.mode || "max";
+
+    initSettingsFromState();
+    initCalcFromState();
+    initDocumentFormFromState();
+    renderEverything();
+    saveState();
+  };
+
+  $("export_data").onclick = () => {
+    const blob = new Blob([JSON.stringify(STATE, null, 2)], {type:"application/json;charset=utf-8"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "mdt_state.json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  };
+
+  $("import_data").onclick = () => $("import_file").click();
+
+  $("import_file").onchange = async e => {
+    const file = e.target.files?.[0];
+    if(!file) return;
+    try{
+      const text = await file.text();
+      const parsed = JSON.parse(text);
+      const merged = mergeDeep(DEFAULT_STATE, parsed);
+
+      Object.keys(STATE).forEach(k => delete STATE[k]);
+      Object.assign(STATE, merged);
+
+      applyTheme(STATE.theme || "dark");
+      initAuth();
+      initSettingsFromState();
+      initCalcFromState();
+      initDocumentFormFromState();
+      renderScenarios();
+      renderLawSearch();
+      renderDrafts();
+      renderEverything();
+      saveState();
+    }catch(err){
+      alert("Не удалось импортировать файл.");
+    }finally{
+      $("import_file").value = "";
+    }
+  };
+
+  $("reset_data").onclick = () => {
+    if(!confirm("Полностью удалить все сохранённые данные?")) return;
+
+    const fresh = deepClone(DEFAULT_STATE);
+    Object.keys(STATE).forEach(k => delete STATE[k]);
+    Object.assign(STATE, fresh);
+
+    applyTheme("dark");
+    initSettingsFromState();
+    initCalcFromState();
+    initDocumentFormFromState();
+    renderScenarios();
+    renderLawSearch();
+    renderDrafts();
+    renderEverything();
+    showAuth();
+    saveState();
+  };
 }
-if(!STATE.calc.mode && STATE.settings.default_mode){
-STATE.calc.mode = STATE.settings.default_mode;
-}
+
+function renderEverything(){
+  renderCalcTable();
+  renderSelectedArticles();
+  renderPenaltySummary();
+  renderSmartHints();
+  renderWeapons();
+  renderProperty();
+  renderDrafts();
+  buildDocumentPreview();
+  syncOfficerHeader();
 }
 
 function init(){
-bindTabs();
-
-applyDefaultsOnFirstLoad();
-
-renderQuickFilters();
-
-initCalcFromState();
-setupCalcBindings();
-
-initDocumentFormFromState();
-setupDocumentBindings();
-
-initSettingsFromState();
-setupSettingsBindings();
-
-setupLawBindings();
-renderPresets();
-renderLawSearch();
-
-updateAll();
-saveState();
-
-if(!STATE.settings.autosave){
-$("save_status").textContent = "выключено";
-}
+  applyTheme(STATE.theme || "dark");
+  bindNavigation();
+  initAuth();
+  initSettingsFromState();
+  renderQuickFilters();
+  renderScenarios();
+  initCalcFromState();
+  initDocumentFormFromState();
+  bindCalcFields();
+  bindDocumentFields();
+  bindLawFields();
+  bindSettings();
+  renderLawSearch();
+  renderEverything();
+  updateClock();
+  setInterval(updateClock, 1000);
 }
 
-init(); </script>
-
+init();
+</script>
 </body>
 </html>
-
