@@ -1027,14 +1027,14 @@
                 </div>
 
                 <div class="col">
-                  <label>Тон документа</label>
-                  <select id="doc_style">
-                    <option value="department">Департаментский</option>
-                    <option value="sheriff">Шерифский</option>
-                    <option value="judicial">Судебный / высокий</option>
-                    <option value="literary">Литературный</option>
-                    <option value="telegraph">Телеграфный</option>
-                  </select>
+                  <label>Стиль текста</label>
+                <select id="doc_style">
+                  <option value="police">Полицейский</option>
+                  <option value="federal">Федерал</option>
+                  <option value="sheriff">Шериф</option>
+                  <option value="lady">Женщина</option>
+                  <option value="rough">Афрос/Азиат</option>
+                </select>
                 </div>
 
                 <div class="col">
@@ -1426,11 +1426,11 @@
               <div class="col">
                 <label>Тон документа по умолчанию</label>
                 <select id="set_style">
-                  <option value="department">Департаментский</option>
-                  <option value="sheriff">Шерифский</option>
-                  <option value="judicial">Судебный / высокий</option>
-                  <option value="literary">Литературный</option>
-                  <option value="telegraph">Телеграфный</option>
+                  <option value="police">Полицейский</option>
+                  <option value="federal">Федерал</option>
+                  <option value="sheriff">Шериф</option>
+                  <option value="lady">Женщина</option>
+                  <option value="rough">Афрос/Азиат</option>
                 </select>
               </div>
             </div>
@@ -1612,7 +1612,7 @@ const DEFAULT_STATE = {
     rank:"",
     callsign:"",
     mode:"max",
-    style:"department"
+    style:"police"
   },
   calc:{
     mode:"max",
@@ -1623,7 +1623,7 @@ const DEFAULT_STATE = {
   },
   doc:{
     type:"incident_report",
-    style:"department",
+    style:"police",
     number:"",
     date:"",
     time:"",
@@ -2311,21 +2311,22 @@ function applyTemplate(str, ctx){
 
 const DOC_TEMPLATES = {
   incident_report:{
-    department:`РАПОРТ ОБ ИНЦИДЕНТЕ
+    police:`РАПОРТ О ПРОИСШЕСТВИИ
 
 Дело: {{documentNumber}}
-Дата и время: {{date}} {{time}}
-Офицер: {{officerRank}} {{officerName}} ({{officerCallsign}})
+Дата: {{date}}
+Время: {{time}}
 
+Офицер: {{officerRank}} {{officerName}}, округ {{officerCallsign}}
 Фигурант: {{suspect}} [{{reg}}]
 Потерпевший / заявитель: {{victim}}
 Место: {{location}}
-Тип вызова / тема: {{title}}
+Предмет дела: {{title}}
 
 Установленные обстоятельства:
 {{facts}}
 
-Содержание рапорта:
+Краткое изложение фактов:
 {{description}}
 
 Вменяемые статьи:
@@ -2334,134 +2335,158 @@ const DOC_TEMPLATES = {
 Изъятое вооружение:
 {{weapons}}
 
-Имущество / улики:
+Имущество и улики:
 {{property}}
 
-По итогам разбирательства {{punishment}}.
-
-Дополнительные примечания:
-{{notes}}
-
-Доставление / размещение:
-{{delivery}}`,
-
-    sheriff:`ШЕРИФСКИЙ РАПОРТ
-
-Сего дня, {{date}}, в {{time}}, мною, {{officerRank}} {{officerName}} ({{officerCallsign}}), был оформлен инцидент по делу {{documentNumber}}.
-
-Подозреваемый: {{suspect}} [{{reg}}]
-Потерпевший / заявитель: {{victim}}
-Место происшествия: {{location}}
-Суть вызова: {{title}}
-
-По обстоятельствам установлено следующее: {{facts}}.
-Далее по делу: {{description}}
-
-За указанным лицом признаны нарушения по статьям: {{articlesInline}}.
-По совокупности деяний {{punishment}}.
-
-Изъятое оружие:
-{{weapons}}
-
-Прочее имущество и улики:
-{{property}}
+По результатам оформления {{punishment}}.
 
 Примечания:
 {{notes}}
 
-Куда доставлен / помещён:
+Куда препровождён:
 {{delivery}}`,
 
-    judicial:`ДОКЛАД ОБ ИНЦИДЕНТЕ
+    federal:`ОФИЦИАЛЬНЫЙ ДОКЛАД О ПРОИСШЕСТВИИ
 
-Настоящим довожу до сведения, что {{date}} в {{time}} офицером {{officerRank}} {{officerName}} ({{officerCallsign}}) был оформлен инцидент по делу {{documentNumber}}.
+Настоящим доводится до сведения, что {{date}} в {{time}} офицером {{officerRank}} {{officerName}}, состоящим при округе {{officerCallsign}}, были установлены обстоятельства по делу {{documentNumber}}.
 
-Фигурант: {{suspect}} [{{reg}}]
-Заявитель / потерпевший: {{victim}}
-Место совершения деяния: {{location}}
-Предмет разбирательства: {{title}}
+Фигурантом по означенному делу проходит {{suspect}} [{{reg}}].
+Потерпевшим либо заявителем значится {{victim}}.
+Местом события определяется: {{location}}.
+Предметом служебного рассмотрения является: {{title}}.
 
-Обстоятельства дела:
-{{facts}}.
+В ходе разбирательства установлены следующие обстоятельства:
+{{facts}}
 
-Фактическое описание:
+Фактическая часть:
 {{description}}
 
-В ходе проверки установлены признаки нарушений, подпадающих под статьи:
+По совокупности исследованных обстоятельств усматриваются признаки нарушений, подпадающих под статьи:
 {{articlesMultiline}}
 
-По результатам рассмотрения материалов дела {{punishment}}.
-
-Перечень изъятого вооружения:
+Сопутствующее изъятое вооружение:
 {{weapons}}
 
-Перечень имущества и улик:
+Сопутствующее имущество и вещественные улики:
 {{property}}
 
-Дополнительные замечания:
-{{notes}}
+По итогам рассмотрения материалов дела {{punishment}}.
 
-Дальнейшее помещение / направление:
-{{delivery}}`,
-
-    literary:`ОПИСАНИЕ ИНЦИДЕНТА
-
-{{date}} около {{time}} офицер {{officerRank}} {{officerName}} ({{officerCallsign}}) прибыл к месту, обозначенному как {{location}}, где разворачивалось происшествие по делу {{documentNumber}}.
-
-Фигурантом по делу обозначен {{suspect}} [{{reg}}], в качестве потерпевшего или заявителя указан {{victim}}.
-Повод обращения описывается как: {{title}}.
-
-По отмеченным обстоятельствам установлено, что {{facts}}.
-Дальнейшая картина происшествия складывалась следующим образом:
-{{description}}
-
-После рассмотрения обстоятельств лицу были вменены статьи:
-{{articlesMultiline}}
-
-За указанные действия {{punishment}}.
-
-Изъятое вооружение:
-{{weapons}}
-
-Установленное имущество и улики:
-{{property}}
-
-Примечания офицера:
+Особые замечания:
 {{notes}}
 
 Дальнейшее направление лица:
 {{delivery}}`,
 
-    telegraph:`СВОДКА / INCIDENT
+    sheriff:`ШЕРИФСКИЙ РАПОРТ
 
-Дело {{documentNumber}}.
-{{date}} {{time}}.
-Офицер: {{officerName}} / {{officerRank}} / {{officerCallsign}}.
-Фигурант: {{suspect}} [{{reg}}].
-Потерпевший: {{victim}}.
-Место: {{location}}.
-Суть: {{title}}.
-Обстоятельства: {{facts}}.
-Описание: {{description}}.
-Статьи: {{articlesInline}}.
-Итог: {{punishment}}.
-Оружие: {{weapons}}.
-Имущество: {{property}}.
-Примечания: {{notes}}.
-Доставлен: {{delivery}}.`
+Я, {{officerRank}} {{officerName}}, из округа {{officerCallsign}}, пишу, что {{date}} к {{time}} пришлось мне заняться делом {{documentNumber}}.
+
+Человек этот: {{suspect}} [{{reg}}].
+Кто жаловался или пострадал: {{victim}}.
+Где всё было: {{location}}.
+По какому делу: {{title}}.
+
+По делу вышло так:
+{{facts}}
+
+Что там было:
+{{description}}
+
+Под статьи пошло вот что:
+{{articlesInline}}
+
+Изъятое оружие:
+{{weapons}}
+
+Прочее добро и улики:
+{{property}}
+
+По итогу {{punishment}}.
+
+Добавка:
+{{notes}}
+
+Куда его потом дели:
+{{delivery}}`,
+
+    lady:`ОПИСАНИЕ ПРОИСШЕСТВИЯ
+
+{{date}}, около {{time}}, офицер {{officerRank}} {{officerName}}, служащий по округу {{officerCallsign}}, занялся рассмотрением дела {{documentNumber}}, касающегося события, произошедшего в местности {{location}}.
+
+Фигурантом по делу обозначен {{suspect}} [{{reg}}], в качестве потерпевшего либо заявителя указан {{victim}}.
+Предмет разбирательства: {{title}}.
+
+По отмеченным обстоятельствам было установлено следующее:
+{{facts}}
+
+Подробное изложение:
+{{description}}
+
+В результате разбора лицу были вменены статьи:
+{{articlesMultiline}}
+
+Изъятое вооружение:
+{{weapons}}
+
+Обнаруженное имущество и улики:
+{{property}}
+
+По итогам рассмотрения {{punishment}}.
+
+Примечания:
+{{notes}}
+
+Дальнейшее направление:
+{{delivery}}`,
+
+    rough:`рапорт
+
+дело {{documentNumber}}
+дата {{date}} время {{time}}
+
+офицер {{officerRank}} {{officerName}} округ {{officerCallsign}}
+подозреваемый {{suspect}} [{{reg}}]
+потерпевший {{victim}}
+место {{location}}
+дело такое: {{title}}
+
+обстоятельства:
+{{facts}}
+
+как было:
+{{description}}
+
+статьи:
+{{articlesInline}}
+
+оружие:
+{{weapons}}
+
+имущество:
+{{property}}
+
+итог: {{punishment}}
+
+заметки:
+{{notes}}
+
+куда дели:
+{{delivery}}`
   },
 
   detention:{
-    department:`ОФОРМЛЕНИЕ ЗАДЕРЖАНИЯ
+    police:`ОФОРМЛЕНИЕ ЗАДЕРЖАНИЯ
 
 Документ: {{documentNumber}}
-Дата и время: {{date}} {{time}}
-Офицер: {{officerRank}} {{officerName}} ({{officerCallsign}})
+Дата: {{date}}
+Время: {{time}}
 
+Офицер: {{officerRank}} {{officerName}}, округ {{officerCallsign}}
 Задержанное лицо: {{suspect}} [{{reg}}]
 Место задержания: {{location}}
 
-Установленные обстоятельства:
+Обстоятельства:
 {{facts}}
 
 Описание задержания:
@@ -2481,222 +2506,255 @@ const DOC_TEMPLATES = {
 Примечания:
 {{notes}}
 
-Дальнейшее содержание:
+Место содержания:
 {{delivery}}`,
 
-    sheriff:`ШЕРИФСКОЕ ОФОРМЛЕНИЕ ЗАДЕРЖАНИЯ
+    federal:`АКТ О ЗАДЕРЖАНИИ
 
-Я, {{officerRank}} {{officerName}} ({{officerCallsign}}), настоящим подтверждаю, что {{date}} в {{time}} задержал {{suspect}} [{{reg}}] в районе {{location}}.
-
-Обстоятельства были таковы: {{facts}}.
-Суть происшествия: {{description}}
-
-Лицу вменены статьи: {{articlesInline}}.
-По совокупности нарушений {{punishment}}.
-
-Изъятое:
-{{weapons}}
-
-Прочее имущество:
-{{property}}
-
-Примечания:
-{{notes}}
-
-Куда помещён:
-{{delivery}}`,
-
-    judicial:`АКТ О ЗАДЕРЖАНИИ
-
-Настоящим удостоверяется, что {{date}} в {{time}} офицером {{officerRank}} {{officerName}} ({{officerCallsign}}) было произведено задержание лица {{suspect}} [{{reg}}] в местности {{location}}.
+Настоящим удостоверяется, что {{date}} в {{time}} офицером {{officerRank}} {{officerName}}, приписанным к округу {{officerCallsign}}, было произведено задержание лица {{suspect}} [{{reg}}] в местности {{location}}.
 
 Установленные обстоятельства:
 {{facts}}
 
-Подробности:
+Фактическое описание:
 {{description}}
 
-Действия лица подпадают под статьи:
+Действия задержанного подпадают под статьи:
 {{articlesMultiline}}
-
-За означенные деяния {{punishment}}.
 
 Изъятое вооружение:
 {{weapons}}
 
 Изъятое имущество:
 {{property}}
+
+По результатам оформления {{punishment}}.
 
 Дополнительные замечания:
-{{notes}}
-
-Место дальнейшего содержания:
-{{delivery}}`,
-
-    literary:`ОПИСАНИЕ ЗАДЕРЖАНИЯ
-
-{{date}} в {{time}} офицер {{officerRank}} {{officerName}} ({{officerCallsign}}) произвёл задержание лица {{suspect}} [{{reg}}] в местности {{location}}.
-
-К этому привели следующие обстоятельства: {{facts}}.
-Детали происшествия:
-{{description}}
-
-После рассмотрения фактов лицу были вменены статьи:
-{{articlesMultiline}}
-
-Вследствие этого {{punishment}}.
-
-Изъятое вооружение:
-{{weapons}}
-
-Изъятое имущество:
-{{property}}
-
-Примечания офицера:
 {{notes}}
 
 Дальнейшее содержание лица:
 {{delivery}}`,
 
-    telegraph:`ЗАДЕРЖАНИЕ
+    sheriff:`ЗАПИСЬ О ЗАДЕРЖАНИИ
 
-{{date}} {{time}}.
-Офицер: {{officerName}} / {{officerCallsign}}.
-Лицо: {{suspect}} [{{reg}}].
-Место: {{location}}.
-Статьи: {{articlesInline}}.
-Итог: {{punishment}}.
-Оружие: {{weapons}}.
-Имущество: {{property}}.
-Примечания: {{notes}}.
-Помещён: {{delivery}}.`
-  },
+Я, {{officerRank}} {{officerName}}, округ {{officerCallsign}}, пишу, что {{date}} в {{time}} задержал {{suspect}} [{{reg}}] в месте {{location}}.
 
-  fine_notice:{
-    department:`ШТРАФНОЙ БЛАНК
+По делу было так:
+{{facts}}
 
-Документ: {{documentNumber}}
-Дата: {{date}}
-Офицер: {{officerRank}} {{officerName}} ({{officerCallsign}})
-
-Лицо: {{suspect}} [{{reg}}]
-Основание: статьи {{articlesInline}}
-
-По итогам рассмотрения назначен штраф в размере {{fine}} долларов.
-Срок уплаты: до {{deadlineDate}}.
-
-Обстоятельства:
+Что случилось:
 {{description}}
 
+Под статьи пошло:
+{{articlesInline}}
+
+Оружие забрано:
+{{weapons}}
+
+Имущество забрано:
+{{property}}
+
+По всему этому {{punishment}}.
+
 Примечания:
-{{notes}}`,
+{{notes}}
 
-    sheriff:`ШТРАФНОЕ ПРЕДПИСАНИЕ
+Куда посажен:
+{{delivery}}`,
 
-{{date}} мною, {{officerRank}} {{officerName}} ({{officerCallsign}}), на имя {{suspect}} [{{reg}}] был выписан штраф.
+    lady:`ОПИСАНИЕ ЗАДЕРЖАНИЯ
 
-Основание: статьи {{articlesInline}}.
-Размер взыскания: {{fine}} долларов.
-Срок уплаты: до {{deadlineDate}}.
+{{date}} в {{time}} офицер {{officerRank}} {{officerName}}, состоящий по округу {{officerCallsign}}, произвёл задержание лица {{suspect}} [{{reg}}] в местности {{location}}.
 
-Описание:
+К этому привели следующие обстоятельства:
+{{facts}}
+
+Подробности происшедшего:
 {{description}}
 
-Примечания:
-{{notes}}`,
-
-    judicial:`ПОСТАНОВЛЕНИЕ О НАЛОЖЕНИИ ШТРАФА
-
-Настоящим определяется, что в отношении лица {{suspect}} [{{reg}}] по результатам разбирательства установлены нарушения, подпадающие под статьи {{articlesInline}}.
-
-Офицером {{officerRank}} {{officerName}} ({{officerCallsign}}) назначен штраф в размере {{fine}} долларов.
-Предельный срок уплаты: {{deadlineDate}}.
-
-Обстоятельства:
-{{description}}
-
-Примечания:
-{{notes}}`,
-
-    literary:`ШТРАФНОЕ ИЗВЕЩЕНИЕ
-
-По результатам рассмотрения обстоятельств, изложенных ниже, в отношении {{suspect}} [{{reg}}] назначено денежное взыскание в размере {{fine}} долларов.
-
-Дата оформления: {{date}}
-Офицер: {{officerRank}} {{officerName}} ({{officerCallsign}})
-Основание: статьи {{articlesInline}}
-Срок уплаты: до {{deadlineDate}}
-
-Описание:
-{{description}}
-
-Примечания:
-{{notes}}`,
-
-    telegraph:`ШТРАФ
-
-{{date}}.
-Лицо: {{suspect}} [{{reg}}].
-Статьи: {{articlesInline}}.
-Сумма: {{fine}} долларов.
-Оплатить до: {{deadlineDate}}.
-Офицер: {{officerName}} / {{officerCallsign}}.
-Примечания: {{notes}}.`
-  },
-
-  seizure_report:{
-    department:`ПРОТОКОЛ ИЗЪЯТИЯ
-
-Документ: {{documentNumber}}
-Дата и время: {{date}} {{time}}
-Офицер: {{officerRank}} {{officerName}} ({{officerCallsign}})
-Лицо: {{suspect}} [{{reg}}]
-Место: {{location}}
-
-Основание: статьи {{articlesInline}}
+Лицу были вменены статьи:
+{{articlesMultiline}}
 
 Изъятое вооружение:
 {{weapons}}
 
-Изъятое имущество / улики:
+Изъятое имущество:
+{{property}}
+
+По итогам {{punishment}}.
+
+Примечания:
+{{notes}}
+
+Дальнейшее содержание:
+{{delivery}}`,
+
+    rough:`задержание
+
+{{date}} {{time}}
+офицер {{officerName}} округ {{officerCallsign}}
+лицо {{suspect}} [{{reg}}]
+место {{location}}
+
+как было:
+{{facts}}
+{{description}}
+
+статьи:
+{{articlesInline}}
+
+оружие:
+{{weapons}}
+
+имущество:
+{{property}}
+
+итог: {{punishment}}
+
+пометки:
+{{notes}}
+
+куда увезли:
+{{delivery}}`
+  },
+
+  fine_notice:{
+    police:`ШТРАФНОЕ ПРЕДПИСАНИЕ
+
+Документ: {{documentNumber}}
+Дата: {{date}}
+
+Офицер: {{officerRank}} {{officerName}}, округ {{officerCallsign}}
+Лицо: {{suspect}} [{{reg}}]
+
+Основание:
+статьи {{articlesInline}}
+
+Назначено денежное взыскание в размере {{fine}} долларов.
+Срок уплаты: до {{deadlineDate}}.
+
+Описание:
+{{description}}
+
+Примечания:
+{{notes}}`,
+
+    federal:`ПОСТАНОВЛЕНИЕ О НАЛОЖЕНИИ ДЕНЕЖНОГО ВЗЫСКАНИЯ
+
+Настоящим постановляется, что в отношении лица {{suspect}} [{{reg}}], по результатам рассмотрения обстоятельств дела {{documentNumber}}, установлены нарушения, подпадающие под статьи {{articlesInline}}.
+
+Офицером {{officerRank}} {{officerName}}, состоящим при округе {{officerCallsign}}, назначено денежное взыскание в размере {{fine}} долларов.
+
+Предельный срок уплаты: {{deadlineDate}}.
+
+Фактические обстоятельства:
+{{description}}
+
+Особые замечания:
+{{notes}}`,
+
+    sheriff:`ШТРАФНАЯ ЗАПИСЬ
+
+Я, {{officerRank}} {{officerName}}, округ {{officerCallsign}}, выписал штраф на имя {{suspect}} [{{reg}}].
+
+Под статьи идёт: {{articlesInline}}.
+Сумма штрафа: {{fine}} долларов.
+Заплатить надо до {{deadlineDate}}.
+
+По делу:
+{{description}}
+
+Примечания:
+{{notes}}`,
+
+    lady:`ШТРАФНОЕ ИЗВЕЩЕНИЕ
+
+По результатам рассмотрения обстоятельств дела {{documentNumber}} в отношении {{suspect}} [{{reg}}] назначено денежное взыскание в размере {{fine}} долларов.
+
+Оформлено {{date}} офицером {{officerRank}} {{officerName}}, округ {{officerCallsign}}.
+Основание: статьи {{articlesInline}}.
+Срок уплаты: до {{deadlineDate}}.
+
+Описание:
+{{description}}
+
+Примечания:
+{{notes}}`,
+
+    rough:`штраф
+
+{{date}}
+лицо {{suspect}} [{{reg}}]
+статьи {{articlesInline}}
+штраф {{fine}} долларов
+платить до {{deadlineDate}}
+
+что было:
+{{description}}
+
+заметки:
+{{notes}}`
+  },
+
+  seizure_report:{
+    police:`АКТ ИЗЪЯТИЯ
+
+Документ: {{documentNumber}}
+Дата: {{date}}
+Время: {{time}}
+
+Офицер: {{officerRank}} {{officerName}}, округ {{officerCallsign}}
+Лицо: {{suspect}} [{{reg}}]
+Место: {{location}}
+
+Основание:
+статьи {{articlesInline}}
+
+Изъятое вооружение:
+{{weapons}}
+
+Изъятое имущество и улики:
 {{property}}
 
 Примечания:
 {{notes}}`,
 
-    sheriff:`АКТ ОБ ИЗЪЯТИИ
+    federal:`ОФИЦИАЛЬНЫЙ АКТ ОБ ИЗЪЯТИИ
 
-{{date}} в {{time}} мной, {{officerRank}} {{officerName}} ({{officerCallsign}}), у лица {{suspect}} [{{reg}}] по месту {{location}} было произведено изъятие по основаниям статей {{articlesInline}}.
+Настоящим удостоверяется, что {{date}} в {{time}} офицером {{officerRank}} {{officerName}}, состоящим при округе {{officerCallsign}}, произведено изъятие у лица {{suspect}} [{{reg}}] в местности {{location}}.
+
+Правовым основанием послужили статьи {{articlesInline}}.
+
+Перечень изъятого вооружения:
+{{weapons}}
+
+Перечень имущества и вещественных улик:
+{{property}}
+
+Особые замечания:
+{{notes}}`,
+
+    sheriff:`ЗАПИСЬ ОБ ИЗЪЯТИИ
+
+{{date}} в {{time}} я, {{officerRank}} {{officerName}}, округ {{officerCallsign}}, забрал у {{suspect}} [{{reg}}] по месту {{location}} следующее.
+
+Под основание идут статьи {{articlesInline}}.
 
 Оружие:
 {{weapons}}
 
-Прочее имущество:
+Прочее добро:
 {{property}}
 
 Примечания:
 {{notes}}`,
 
-    judicial:`ПРОТОКОЛЬНАЯ ЗАПИСЬ ОБ ИЗЪЯТИИ
+    lady:`ОПИСАНИЕ ИЗЪЯТИЯ
 
-Офицером {{officerRank}} {{officerName}} ({{officerCallsign}}) {{date}} в {{time}} по месту {{location}} произведено изъятие у лица {{suspect}} [{{reg}}].
+{{date}} в {{time}} офицер {{officerRank}} {{officerName}}, служащий по округу {{officerCallsign}}, произвёл изъятие у лица {{suspect}} [{{reg}}] в местности {{location}}.
 
-Правовое основание: статьи {{articlesInline}}.
-
-Перечень вооружения:
-{{weapons}}
-
-Перечень имущества и улик:
-{{property}}
-
-Примечания:
-{{notes}}`,
-
-    literary:`ОПИСАНИЕ ИЗЪЯТИЯ
-
-{{date}} в {{time}} офицер {{officerRank}} {{officerName}} ({{officerCallsign}}) осуществил изъятие у лица {{suspect}} [{{reg}}] в местности {{location}}.
-
-Основанием послужили статьи {{articlesInline}}.
+Основанием для этого послужили статьи {{articlesInline}}.
 
 Изъятое вооружение:
 {{weapons}}
@@ -2707,25 +2765,34 @@ const DOC_TEMPLATES = {
 Примечания:
 {{notes}}`,
 
-    telegraph:`ИЗЪЯТИЕ
+    rough:`изъятие
 
-{{date}} {{time}}.
-Лицо: {{suspect}} [{{reg}}].
-Место: {{location}}.
-Основание: {{articlesInline}}.
-Оружие: {{weapons}}.
-Имущество: {{property}}.
-Офицер: {{officerName}} / {{officerCallsign}}.`
+{{date}} {{time}}
+офицер {{officerName}} округ {{officerCallsign}}
+лицо {{suspect}} [{{reg}}]
+место {{location}}
+
+основание {{articlesInline}}
+
+оружие:
+{{weapons}}
+
+имущество:
+{{property}}
+
+заметки:
+{{notes}}`
   },
 
   memo:{
-    department:`СЛУЖЕБНАЯ ЗАПИСКА
+    police:`ДОКЛАДНАЯ ЗАПИСКА
 
 Тема: {{title}}
 Дата: {{date}}
-Офицер: {{officerRank}} {{officerName}} ({{officerCallsign}})
 
-Докладываю следующее:
+Офицер: {{officerRank}} {{officerName}}, округ {{officerCallsign}}
+
+Содержание:
 {{description}}
 
 Фигурант: {{suspect}} [{{reg}}]
@@ -2735,40 +2802,42 @@ const DOC_TEMPLATES = {
 Примечания:
 {{notes}}`,
 
-    sheriff:`РАПОРТ
+    federal:`СЛУЖЕБНАЯ ДОКЛАДНАЯ ЗАПИСКА
 
-Докладываю, что {{date}} по делу {{documentNumber}} имело место следующее:
+Настоящим сообщается, что по делу {{documentNumber}}, касающемуся предмета "{{title}}", офицером {{officerRank}} {{officerName}}, состоящим при округе {{officerCallsign}}, установлены следующие обстоятельства:
+
 {{description}}
 
-Лицо: {{suspect}} [{{reg}}]
-Место: {{location}}
-Статьи: {{articlesInline}}
-Итог: {{punishment}}
+Фигурант по материалам: {{suspect}} [{{reg}}].
+Вменяемые статьи:
+{{articlesMultiline}}
 
-Составил:
-{{officerRank}} {{officerName}} ({{officerCallsign}})
-
-Примечания:
-{{notes}}`,
-
-    judicial:`ДОКЛАДНАЯ ЗАПИСКА
-
-Настоящим сообщаю, что {{date}} офицером {{officerRank}} {{officerName}} ({{officerCallsign}}) были установлены следующие обстоятельства:
-{{description}}
-
-Фигурант: {{suspect}} [{{reg}}]
-Статьи: {{articlesMultiline}}
-Результат рассмотрения: {{punishment}}
+По итогам рассмотрения {{punishment}}.
 
 Дополнительные замечания:
 {{notes}}`,
 
-    literary:`СЛУЖЕБНОЕ ОПИСАНИЕ
+    sheriff:`ЗАПИСКА
 
-В продолжение дела {{documentNumber}} считаю необходимым изложить следующее:
+Пишу по делу "{{title}}", дата {{date}}.
+
+Я, {{officerRank}} {{officerName}}, округ {{officerCallsign}}, разобрал следующее:
 {{description}}
 
-К делу привлечено лицо {{suspect}} [{{reg}}], действия которого отнесены к статьям:
+Лицо: {{suspect}} [{{reg}}]
+Статьи: {{articlesInline}}
+Итог: {{punishment}}
+
+Примечания:
+{{notes}}`,
+
+    lady:`СЛУЖЕБНОЕ ОПИСАНИЕ
+
+В продолжение дела "{{title}}" считаю необходимым изложить следующее:
+
+{{description}}
+
+Материалы касаются лица {{suspect}} [{{reg}}], действия которого отнесены к статьям:
 {{articlesMultiline}}
 
 По итогам разбирательства {{punishment}}.
@@ -2776,60 +2845,74 @@ const DOC_TEMPLATES = {
 Примечания:
 {{notes}}
 
-Составил:
-{{officerRank}} {{officerName}} ({{officerCallsign}})`,
+Составила / составил:
+{{officerRank}} {{officerName}}, округ {{officerCallsign}}`,
 
-    telegraph:`ЗАПИСКА
+    rough:`записка
 
-{{date}}.
-Тема: {{title}}.
-Лицо: {{suspect}} [{{reg}}].
-Описание: {{description}}.
-Статьи: {{articlesInline}}.
-Итог: {{punishment}}.
-Офицер: {{officerName}} / {{officerCallsign}}.`
+тема {{title}}
+дата {{date}}
+офицер {{officerName}} округ {{officerCallsign}}
+
+что было:
+{{description}}
+
+лицо {{suspect}} [{{reg}}]
+статьи {{articlesInline}}
+итог {{punishment}}
+
+заметки:
+{{notes}}`
   },
 
   brief:{
-    department:`КРАТКАЯ СВОДКА
+    police:`КРАТКАЯ СВОДКА
 
-{{date}} {{time}}
+Дата: {{date}}
+Время: {{time}}
 Лицо: {{suspect}} [{{reg}}]
 Место: {{location}}
 Статьи: {{articlesInline}}
 Итог: {{punishment}}
-Офицер: {{officerRank}} {{officerName}} ({{officerCallsign}})
+Офицер: {{officerRank}} {{officerName}}, округ {{officerCallsign}}
 
 Кратко:
 {{description}}`,
 
-    sheriff:`КРАТКАЯ ШЕРИФСКАЯ СВОДКА
+    federal:`КРАТКОЕ ИЗЛОЖЕНИЕ МАТЕРИАЛОВ
+
+{{date}} в {{time}} по месту {{location}} были установлены обстоятельства, свидетельствующие о причастности лица {{suspect}} [{{reg}}] к нарушениям, подпадающим под статьи {{articlesInline}}.
+
+Результат рассмотрения: {{punishment}}.
+Офицер: {{officerRank}} {{officerName}}, округ {{officerCallsign}}.`,
+
+    sheriff:`КОРОТКАЯ СВОДКА
 
 {{date}} {{time}}, {{location}}.
-Фигурант: {{suspect}} [{{reg}}].
+Лицо: {{suspect}} [{{reg}}].
 Статьи: {{articlesInline}}.
 Итог: {{punishment}}.
-Офицер: {{officerName}}.`,
+Офицер: {{officerName}}, округ {{officerCallsign}}.`,
 
-    judicial:`КРАТКОЕ ИЗЛОЖЕНИЕ
+    lady:`КРАТКОЕ ОПИСАНИЕ
 
-{{date}} в {{time}} по месту {{location}} установлено, что лицо {{suspect}} [{{reg}}] подпадает под статьи {{articlesInline}}.
-Результат: {{punishment}}.
-Офицер: {{officerRank}} {{officerName}} ({{officerCallsign}}).`,
-
-    literary:`КРАТКАЯ ВЫЖИМКА
-
-В деле {{documentNumber}} фигурирует лицо {{suspect}} [{{reg}}]. Инцидент произошёл {{date}} в {{time}} по месту {{location}}.
+По делу {{documentNumber}} фигурирует лицо {{suspect}} [{{reg}}]. Событие произошло {{date}} в {{time}} по месту {{location}}.
 Лицу вменены статьи {{articlesInline}}, а по итогам {{punishment}}.`,
 
-    telegraph:`СВОДКА: {{suspect}} [{{reg}}] • {{location}} • {{articlesInline}} • {{punishment}} • {{officerCallsign}}`
+    rough:`сводка
+
+{{suspect}} [{{reg}}]
+{{location}}
+{{articlesInline}}
+{{punishment}}
+{{officerName}} {{officerCallsign}}`
   }
 };
 
 function buildDocumentPreview(){
   const ctx = buildContext();
   const type = STATE.doc.type || "incident_report";
-  const style = STATE.doc.style || "department";
+  const style = STATE.doc.style || "police";
   const template = DOC_TEMPLATES[type]?.[style] || DOC_TEMPLATES.incident_report.department;
   $("doc_output").textContent = applyTemplate(template, ctx);
 }
@@ -3188,7 +3271,7 @@ function initSettingsFromState(){
   $("set_rank").value = STATE.settings.rank || "";
   $("set_callsign").value = STATE.settings.callsign || "";
   $("set_mode").value = STATE.settings.mode || "max";
-  $("set_style").value = STATE.settings.style || "department";
+  $("set_style").value = STATE.settings.style || "police";
   $("set_theme").value = STATE.theme || "dark";
 }
 
@@ -3286,7 +3369,7 @@ function bindDocumentFields(){
     const keepOfficerRank = STATE.settings.rank || STATE.auth.rank || "";
     const keepOfficerCallsign = STATE.settings.callsign || STATE.auth.callsign || "";
     const keepMode = STATE.settings.mode || "max";
-    const keepStyle = STATE.settings.style || "department";
+    const keepStyle = STATE.settings.style || "police";
     const now = gameNow();
 
     STATE.calc = mergeDeep(DEFAULT_STATE.calc, {
@@ -3392,7 +3475,7 @@ function bindSettings(){
     STATE.doc.officer_name = STATE.settings.name || STATE.auth.name || "";
     STATE.doc.officer_rank = STATE.settings.rank || STATE.auth.rank || "";
     STATE.doc.officer_callsign = STATE.settings.callsign || STATE.auth.callsign || "";
-    STATE.doc.style = STATE.settings.style || "department";
+    STATE.doc.style = STATE.settings.style || "police";
     STATE.calc.mode = STATE.settings.mode || "max";
 
     initSettingsFromState();
