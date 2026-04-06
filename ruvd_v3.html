@@ -563,7 +563,7 @@ th{position:static}
       </div>
     </div>
 
-```
+
 <div class="tabs">
   <button class="tab-btn active" data-tab="dashboard">Калькулятор</button>
   <button class="tab-btn" data-tab="documents">Генератор документов</button>
@@ -571,7 +571,7 @@ th{position:static}
   <button class="tab-btn" data-tab="presets">Сценарии</button>
   <button class="tab-btn" data-tab="settings">Настройки</button>
 </div>
-```
+
 
   </div>
 </header>
@@ -586,7 +586,7 @@ th{position:static}
             <span class="pill">Единый выбор статей для всех документов</span>
           </div>
 
-```
+
       <div class="row">
         <div class="col col-2">
           <label>Поиск по статье</label>
@@ -729,7 +729,7 @@ th{position:static}
     </div>
   </div>
 </div>
-```
+
 
   </section>
 
@@ -740,7 +740,7 @@ th{position:static}
         <span class="pill">Статьи, штраф и срок подтягиваются из калькулятора</span>
       </div>
 
-```
+
   <div class="subtabs">
     <button class="subtab-btn active" data-subtab="doc_form_main">Форма</button>
     <button class="subtab-btn" data-subtab="doc_form_seized">Изъятое / имущество</button>
@@ -899,7 +899,7 @@ th{position:static}
     </div>
   </div>
 </div>
-```
+
 
   </section>
 
@@ -912,7 +912,7 @@ th{position:static}
             <span class="pill">Статьи, ключевые слова и быстрый переход</span>
           </div>
 
-```
+
       <div class="searchline">
         <div class="col col-2">
           <label>Запрос</label>
@@ -952,7 +952,7 @@ th{position:static}
     </div>
   </div>
 </div>
-```
+
 
   </section>
 
@@ -973,7 +973,7 @@ th{position:static}
           <h2>Настройки по умолчанию</h2>
         </div>
 
-```
+
     <div class="row">
       <div class="col">
         <label>Офицер — должность</label>
@@ -1040,7 +1040,7 @@ th{position:static}
     </div>
   </div>
 </div>
-```
+
 
   </section>
 </main>
@@ -1389,7 +1389,7 @@ for(const a of ARTICLES){
 const p = STATE.calc.picks[a.code];
 if(!p?.sel) continue;
 
-```
+
 let f = 0;
 let j = 0;
 
@@ -1428,7 +1428,7 @@ if(a.modifiers){
 fine += f;
 jail += j;
 selected.push({article:a, fine:f, jail:j});
-```
+
 
 }
 
@@ -1521,7 +1521,7 @@ ARTICLES.filter(a => matchesArticle(a, query, category)).forEach(a => {
 const p = ensurePick(a.code);
 const tr = document.createElement("tr");
 
-```
+
 const tdSel = document.createElement("td");
 const sel = document.createElement("input");
 sel.type = "checkbox";
@@ -1621,7 +1621,7 @@ tdLaw.appendChild(goto);
 tr.appendChild(tdLaw);
 
 tbody.appendChild(tr);
-```
+
 
 });
 }
@@ -1675,7 +1675,7 @@ row.className = "fav-item";
 row.innerHTML = `       <div>         <div><b>${escapeHtml(a.code)}</b> — ${escapeHtml(a.title)}</div>         <div class="mini">${escapeHtml((a.tags || []).join(", "))}</div>       </div>
     `;
 
-```
+
 const tools = document.createElement("div");
 tools.className = "footer-tools";
 
@@ -1706,7 +1706,7 @@ del.onclick = () => toggleFavorite(a.code);
 tools.append(add, open, del);
 row.appendChild(tools);
 box.appendChild(row);
-```
+
 
 });
 }
@@ -1728,7 +1728,7 @@ items.forEach(a => {
 const row = document.createElement("div");
 row.className = "history-item";
 
-```
+
 const left = document.createElement("div");
 left.innerHTML = `<b>${escapeHtml(a.code)}</b> — ${escapeHtml(a.title)}`;
 
@@ -1747,7 +1747,7 @@ btn.onclick = () => {
 tools.appendChild(btn);
 row.append(left, tools);
 box.appendChild(row);
-```
+
 
 });
 }
@@ -2025,7 +2025,7 @@ const keepDeadline = STATE.settings.default_deadline || 3;
 const keepType = STATE.doc.type || "fine_notice";
 const now = gameNow();
 
-```
+
 STATE.doc = {
   type:keepType,
   style:keepStyle,
@@ -2051,7 +2051,7 @@ STATE.doc = {
 initDocumentFormFromState();
 buildDocumentPreview();
 saveState();
-```
+
 
 };
 }
@@ -2072,7 +2072,7 @@ wrap.className = "item";
 wrap.innerHTML = `       <input data-k="type" type="text" placeholder="Тип / название" value="${escapeHtml(item.type)}">       <input data-k="model" type="text" placeholder="Модель" value="${escapeHtml(item.model)}">       <input data-k="serial" type="text" placeholder="Серийный №" value="${escapeHtml(item.serial)}">       <select data-k="owner">         <option value="suspect">Задержанный</option>         <option value="other">Другое лицо</option>       </select>       <input data-k="basis" type="text" placeholder="Основание (ст.)" value="${escapeHtml(item.basis)}">       <button class="remove" type="button">Удалить</button>       <input class="wide" data-k="note" type="text" placeholder="Примечание / статус конфискации" value="${escapeHtml(item.note)}">
     `;
 
-```
+
 wrap.querySelector('select[data-k="owner"]').value = item.owner || "suspect";
 
 wrap.querySelectorAll("[data-k]").forEach(el => {
@@ -2092,7 +2092,7 @@ wrap.querySelector(".remove").onclick = () => {
 };
 
 box.appendChild(wrap);
-```
+
 
 });
 }
@@ -2113,7 +2113,7 @@ wrap.className = "item";
 wrap.innerHTML = `       <input data-k="name" type="text" placeholder="Предмет / улика" value="${escapeHtml(item.name)}">       <input data-k="owner" type="text" placeholder="Владелец" value="${escapeHtml(item.owner)}">       <input data-k="serial" type="text" placeholder="Серийный №" value="${escapeHtml(item.serial)}">       <input data-k="value" type="number" placeholder="Оценка, $" value="${escapeHtml(item.value)}">       <input data-k="where" type="text" placeholder="Где обнаружено" value="${escapeHtml(item.where)}">       <button class="remove" type="button">Удалить</button>       <input class="wide" data-k="note" type="text" placeholder="Примечание" value="${escapeHtml(item.note)}">
     `;
 
-```
+
 wrap.querySelectorAll("[data-k]").forEach(el => {
   const key = el.dataset.k;
   el.oninput = el.onchange = () => {
@@ -2131,7 +2131,7 @@ wrap.querySelector(".remove").onclick = () => {
 };
 
 box.appendChild(wrap);
-```
+
 
 });
 }
@@ -2599,7 +2599,7 @@ matches.forEach(a => {
 const card = document.createElement("div");
 card.className = "card";
 
-```
+
   const top = document.createElement("div");
   top.className = "status-line";
   top.innerHTML = `
@@ -2661,7 +2661,7 @@ card.className = "card";
 
   box.appendChild(card);
 });
-```
+
 
 }
 
@@ -2699,7 +2699,7 @@ PRESETS.forEach(preset => {
 const card = document.createElement("div");
 card.className = "preset";
 
-```
+
 const title = document.createElement("div");
 title.className = "preset-title";
 title.textContent = preset.title;
@@ -2764,7 +2764,7 @@ open.onclick = () => {
 tools.append(apply, replace, open);
 card.append(title, desc, codes, tools);
 box.appendChild(card);
-```
+
 
 });
 }
@@ -2842,7 +2842,7 @@ const text = await file.text();
 const parsed = JSON.parse(text);
 const merged = mergeDeep(DEFAULT_STATE, parsed);
 
-```
+
   Object.keys(STATE).forEach(k => delete STATE[k]);
   Object.assign(STATE, merged);
 
@@ -2858,14 +2858,14 @@ const merged = mergeDeep(DEFAULT_STATE, parsed);
 }finally{
   $("import_file").value = "";
 }
-```
+
 
 };
 
 $("reset_all_data").onclick = () => {
 if(!confirm("Удалить все локальные данные утилиты?")) return;
 
-```
+
 const fresh = deepClone(DEFAULT_STATE);
 Object.keys(STATE).forEach(k => delete STATE[k]);
 Object.assign(STATE, fresh);
@@ -2878,7 +2878,7 @@ renderPresets();
 renderQuickFilters();
 updateAll();
 saveState(true);
-```
+
 
 };
 }
