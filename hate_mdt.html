@@ -1222,14 +1222,14 @@
 
   .item-row{
     display:grid;
-    grid-template-columns:repeat(6,1fr);
-    gap:8px;
-    padding:10px;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:10px;
+    padding:12px;
     border:1px solid var(--line);
     border-radius:16px;
     background:linear-gradient(180deg, rgba(184,132,75,.07), rgba(184,132,75,.03));
   }
-
+  
   .item-row .wide{
     grid-column:1/-1;
   }
@@ -2805,8 +2805,8 @@ function styleLabel(style){
   }[style] || "официальной форме";
 }
 
-function factSentenceList(){
-  const map = {
+function factSentenceList(style = STATE.doc.style){
+  const policeMap = {
     found:"лицо было обнаружено непосредственно на месте происшествия",
     resisted:"при задержании оказывало сопротивление законным действиям представителя власти",
     escaped:"предприняло попытку скрыться",
@@ -2815,10 +2815,180 @@ function factSentenceList(){
     delivered:"после задержания было препровождено по месту содержания"
   };
 
+  const sheriffMap = {
+    found:"человек был найден прямо на месте",
+    resisted:"при задержании упирался и не хотел подчиняться",
+    escaped:"пытался уйти от преследования",
+    detained:"в итоге был задержан",
+    armed:"при нём было оружие",
+    delivered:"после всего был доставлен куда положено"
+  };
+
+  const marshalMap = {
+    found:"установлено нахождение лица непосредственно в пределах места происшествия в момент выявления обстоятельств дела",
+    resisted:"в ходе законных действий по задержанию лицо оказывало активное противодействие представителю власти",
+    escaped:"лицом была предпринята попытка уклониться от задержания и скрыться",
+    detained:"по итогам принятых мер лицо было задержано",
+    armed:"в момент контакта у лица имелось оружие",
+    delivered:"по завершении процессуальных действий лицо было препровождено к месту дальнейшего содержания"
+  };
+
+  const ladyMap = {
+    found:"лицо оказалось обнаружено непосредственно на месте произошедшего",
+    resisted:"при задержании вело себя с явным сопротивлением законным требованиям",
+    escaped:"пыталось скрыться от дальнейшего разбирательства",
+    detained:"в конечном итоге было задержано",
+    armed:"при себе имело оружие",
+    delivered:"после оформления было препровождено к месту содержания"
+  };
+
+  const roughMap = {
+    found:"нашли прям на месте",
+    resisted:"сопротивлялся при задержании",
+    escaped:"пытался слинять",
+    detained:"в итоге задержали",
+    armed:"был с пушкой",
+    delivered:"потом увезли куда надо"
+  };
+
+  const map = {
+    police: policeMap,
+    sheriff: sheriffMap,
+    marshal: marshalMap,
+    lady: ladyMap,
+    rough: roughMap
+  }[style] || policeMap;
+
   return Object.keys(STATE.doc.facts)
     .filter(key => STATE.doc.facts[key])
     .map(key => map[key])
     .filter(Boolean);
+}
+
+function buildSeizedWeaponsText(style = STATE.doc.style){
+  const list = STATE.doc.weapons || [];
+  if(!list.length) return [];
+
+  if(style === "sheriff"){
+    return list.map(item => {
+      const parts = [
+        item.kind || "Оружие",
+        item.name || "без названия",
+        item.serial ? `серийник ${item.serial}` : "",
+        item.note ? `заметка: ${item.note}` : ""
+      ].filter(Boolean);
+      return `— изъято: ${parts.join(", ")}.`;
+    });
+  }
+
+  if(style === "marshal"){
+    return list.map(item => {
+      const parts = [
+        `вид оружия: ${item.kind || "не указан"}`,
+        `наименование: ${item.name || "не указано"}`,
+        item.serial ? `серийный номер: ${item.serial}` : "серийный номер не установлен",
+        item.note ? `служебное примечание: ${item.note}` : ""
+      ].filter(Boolean);
+      return `— предмет вооружения, приобщённый к материалам изъятия: ${parts.join("; ")}.`;
+    });
+  }
+
+  if(style === "lady"){
+    return list.map(item => {
+      const parts = [
+        item.kind || "оружие",
+        item.name || "без точного наименования",
+        item.serial ? `серийный номер ${item.serial}` : "",
+        item.note ? `с примечанием: ${item.note}` : ""
+      ].filter(Boolean);
+      return `— к числу изъятого относится ${parts.join(", ")}.`;
+    });
+  }
+
+  if(style === "rough"){
+    return list.map(item => {
+      const parts = [
+        item.kind || "ствол",
+        item.name || "без названия",
+        item.serial ? `номер ${item.serial}` : "",
+        item.note ? `прим: ${item.note}` : ""
+      ].filter(Boolean);
+      return roughifyText(`- забрали ${parts.join(", ")}`);
+    });
+  }
+
+  return list.map(item => {
+    const parts = [
+      item.kind || "Оружие",
+      item.name || "без наименования",
+      item.serial ? `серийный номер: ${item.serial}` : "",
+      item.note ? `примечание: ${item.note}` : ""
+    ].filter(Boolean);
+    return `— изъятое оружие: ${parts.join(", ")}.`;
+  });
+}
+
+function buildSeizedPropertyText(style = STATE.doc.style){
+  const list = STATE.doc.property || [];
+  if(!list.length) return [];
+
+  if(style === "sheriff"){
+    return list.map(item => {
+      const parts = [
+        item.name || "предмет без названия",
+        item.count ? `количество ${item.count}` : "",
+        item.serial ? `серийник ${item.serial}` : "",
+        item.note ? `заметка: ${item.note}` : ""
+      ].filter(Boolean);
+      return `— забрано по делу: ${parts.join(", ")}.`;
+    });
+  }
+
+  if(style === "marshal"){
+    return list.map(item => {
+      const parts = [
+        `предмет: ${item.name || "не указан"}`,
+        item.count ? `количество: ${item.count}` : "количество не указано",
+        item.serial ? `серийный номер: ${item.serial}` : "серийный номер отсутствует либо не установлен",
+        item.note ? `служебное примечание: ${item.note}` : ""
+      ].filter(Boolean);
+      return `— к числу предметов, изъятых и приобщённых к материалам, относится: ${parts.join("; ")}.`;
+    });
+  }
+
+  if(style === "lady"){
+    return list.map(item => {
+      const parts = [
+        item.name || "неуточнённый предмет",
+        item.count ? `в количестве ${item.count}` : "",
+        item.serial ? `с серийным номером ${item.serial}` : "",
+        item.note ? `с примечанием: ${item.note}` : ""
+      ].filter(Boolean);
+      return `— среди изъятого также значится ${parts.join(", ")}.`;
+    });
+  }
+
+  if(style === "rough"){
+    return list.map(item => {
+      const parts = [
+        item.name || "штука",
+        item.count ? `колво ${item.count}` : "",
+        item.serial ? `номер ${item.serial}` : "",
+        item.note ? `прим: ${item.note}` : ""
+      ].filter(Boolean);
+      return roughifyText(`- еще забрали ${parts.join(", ")}`);
+    });
+  }
+
+  return list.map(item => {
+    const parts = [
+      item.name || "предмет без названия",
+      item.count ? `количество: ${item.count}` : "",
+      item.serial ? `серийный номер: ${item.serial}` : "",
+      item.note ? `примечание: ${item.note}` : ""
+    ].filter(Boolean);
+    return `— изъятое имущество: ${parts.join(", ")}.`;
+  });
 }
 
 function roughifyText(text){
@@ -2879,6 +3049,21 @@ function buildPoliceText(d, totals, selected, facts, payUntilStr){
     lines.push("");
   }
 
+  const weaponLines = buildSeizedWeaponsText("police");
+  const propertyLines = buildSeizedPropertyText("police");
+  
+  if(weaponLines.length){
+    lines.push("Изъятое вооружение:");
+    weaponLines.forEach(x => lines.push(x));
+    lines.push("");
+  }
+  
+  if(propertyLines.length){
+    lines.push("Изъятое имущество / улики:");
+    propertyLines.forEach(x => lines.push(x));
+    lines.push("");
+  }
+  
   lines.push(`По итогам рассмотрения материалов дела ${buildPunishmentPhrase(totals.fine, totals.jail)}.`);
   if(totals.fine > 0) lines.push(`Срок добровольной уплаты штрафа: до ${payUntilStr}.`);
 
@@ -2934,6 +3119,21 @@ function buildPoliceText(d, totals, selected, facts, payUntilStr){
     lines.push("");
   }
 
+const weaponLines = buildSeizedWeaponsText("sheriff");
+const propertyLines = buildSeizedPropertyText("sheriff");
+
+if(weaponLines.length){
+  lines.push("Что было изъято:");
+  weaponLines.forEach(x => lines.push(x));
+  lines.push("");
+}
+
+if(propertyLines.length){
+  lines.push("Что ещё забрали по делу:");
+  propertyLines.forEach(x => lines.push(x));
+  lines.push("");
+}
+    
   lines.push(`Решение по итогу: ${buildPunishmentPhrase(totals.fine, totals.jail)}.`);
   if(totals.fine > 0){
     lines.push(`Штраф уплатить до ${payUntilStr}.`);
@@ -2987,6 +3187,21 @@ function buildMarshalText(d, totals, selected, facts, payUntilStr){
     lines.push("");
   }
 
+const weaponLines = buildSeizedWeaponsText("marshal");
+const propertyLines = buildSeizedPropertyText("marshal");
+
+if(weaponLines.length){
+  lines.push("СВЕДЕНИЯ ОБ ИЗЪЯТОМ ВООРУЖЕНИИ");
+  weaponLines.forEach(x => lines.push(x));
+  lines.push("");
+}
+
+if(propertyLines.length){
+  lines.push("СВЕДЕНИЯ ОБ ИЗЪЯТОМ ИМУЩЕСТВЕ И ПРЕДМЕТАХ");
+  propertyLines.forEach(x => lines.push(x));
+  lines.push("");
+}
+  
   lines.push("ВЫВОД О МЕРЕ НАКАЗАНИЯ");
   lines.push(`С учётом характера нарушения, степени общественной опасности, совокупности квалифицирующих признаков и применённого режима исчисления наказания полагаю обоснованным вывод о том, что ${buildPunishmentPhrase(totals.fine, totals.jail)}.`);
   if(totals.fine > 0){
@@ -3042,6 +3257,21 @@ function buildLadyText(d, totals, selected, facts, payUntilStr){
     lines.push("");
   }
 
+const weaponLines = buildSeizedWeaponsText("lady");
+const propertyLines = buildSeizedPropertyText("lady");
+
+if(weaponLines.length){
+  lines.push("Изъятое вооружение");
+  weaponLines.forEach(x => lines.push(x));
+  lines.push("");
+}
+
+if(propertyLines.length){
+  lines.push("Изъятые предметы и улики");
+  propertyLines.forEach(x => lines.push(x));
+  lines.push("");
+}
+  
   lines.push("Итог");
   lines.push(`Сопоставив увиденное, услышанное и установленное, считаю, что по настоящему делу ${buildPunishmentPhrase(totals.fine, totals.jail)}.`);
   if(totals.fine > 0){
@@ -3097,6 +3327,21 @@ function buildRoughText(d, totals, selected, facts, payUntilStr){
     lines.push("");
   }
 
+const weaponLines = buildSeizedWeaponsText("rough");
+const propertyLines = buildSeizedPropertyText("rough");
+
+if(weaponLines.length){
+  lines.push("забратое оружие");
+  weaponLines.forEach(x => lines.push(x));
+  lines.push("");
+}
+
+if(propertyLines.length){
+  lines.push("забраные вещи");
+  propertyLines.forEach(x => lines.push(x));
+  lines.push("");
+}
+  
   lines.push("итог");
   lines.push(buildPunishmentPhrase(totals.fine, totals.jail));
   if(totals.fine > 0){
@@ -3320,17 +3565,49 @@ function renderTotals(){
 
 function renderWeaponList(){
   const root = $("weapon_list");
+
   if(!STATE.doc.weapons.length){
     root.innerHTML = `<div class="empty-state">Оружие пока не добавлено.</div>`;
     return;
   }
 
   root.innerHTML = STATE.doc.weapons.map((item, index) => `
-    <div class="item-row">
-      <input type="text" placeholder="Название" value="${escapeHtml(item.name || "")}" data-item-type="weapon" data-index="${index}" data-key="name">
-      <input type="text" placeholder="Количество" value="${escapeHtml(item.count || "")}" data-item-type="weapon" data-index="${index}" data-key="count">
-      <input type="text" placeholder="Серийный номер" value="${escapeHtml(item.serial || "")}" data-item-type="weapon" data-index="${index}" data-key="serial">
-      <input type="text" class="wide" placeholder="Примечание" value="${escapeHtml(item.note || "")}" data-item-type="weapon" data-index="${index}" data-key="note">
+    <div class="item-row item-row--evidence">
+      <select data-item-type="weapon" data-index="${index}" data-key="kind">
+        <option value="Пистолет" ${item.kind === "Пистолет" ? "selected" : ""}>Пистолет</option>
+        <option value="Ружьё" ${item.kind === "Ружьё" ? "selected" : ""}>Ружьё</option>
+        <option value="Винтовка" ${item.kind === "Винтовка" ? "selected" : ""}>Винтовка</option>
+        <option value="Прочее" ${item.kind === "Прочее" ? "selected" : ""}>Прочее</option>
+      </select>
+
+      <input
+        type="text"
+        placeholder="Наименование оружия"
+        value="${escapeHtml(item.name || "")}"
+        data-item-type="weapon"
+        data-index="${index}"
+        data-key="name"
+      >
+
+      <input
+        type="text"
+        placeholder="Серийный номер"
+        value="${escapeHtml(item.serial || "")}"
+        data-item-type="weapon"
+        data-index="${index}"
+        data-key="serial"
+      >
+
+      <input
+        type="text"
+        class="wide"
+        placeholder="Примечание"
+        value="${escapeHtml(item.note || "")}"
+        data-item-type="weapon"
+        data-index="${index}"
+        data-key="note"
+      >
+
       <button class="remove" data-remove-item="weapon" data-index="${index}">Удалить</button>
     </div>
   `).join("");
@@ -3338,10 +3615,55 @@ function renderWeaponList(){
 
 function renderPropertyList(){
   const root = $("property_list");
+
   if(!STATE.doc.property.length){
     root.innerHTML = `<div class="empty-state">Имущество и улики пока не добавлены.</div>`;
     return;
   }
+
+  root.innerHTML = STATE.doc.property.map((item, index) => `
+    <div class="item-row item-row--evidence">
+      <input
+        type="text"
+        placeholder="Что за предмет"
+        value="${escapeHtml(item.name || "")}"
+        data-item-type="property"
+        data-index="${index}"
+        data-key="name"
+      >
+
+      <input
+        type="text"
+        placeholder="Количество"
+        value="${escapeHtml(item.count || "")}"
+        data-item-type="property"
+        data-index="${index}"
+        data-key="count"
+      >
+
+      <input
+        type="text"
+        placeholder="Серийный номер (если есть)"
+        value="${escapeHtml(item.serial || "")}"
+        data-item-type="property"
+        data-index="${index}"
+        data-key="serial"
+      >
+
+      <input
+        type="text"
+        class="wide"
+        placeholder="Примечание"
+        value="${escapeHtml(item.note || "")}"
+        data-item-type="property"
+        data-index="${index}"
+        data-key="note"
+      >
+
+      <button class="remove" data-remove-item="property" data-index="${index}">Удалить</button>
+    </div>
+  `).join("");
+}
 
   root.innerHTML = STATE.doc.property.map((item, index) => `
     <div class="item-row">
@@ -3632,13 +3954,23 @@ function bindChargePanel(){
 
 function bindEvidence(){
   $("add_weapon").addEventListener("click", () => {
-    STATE.doc.weapons.push({name:"",count:"",serial:"",note:""});
+    STATE.doc.weapons.push({
+  kind:"Пистолет",
+  name:"",
+  serial:"",
+  note:""
+  });
     renderWeaponList();
     saveState();
   });
 
   $("add_property").addEventListener("click", () => {
-    STATE.doc.property.push({name:"",count:"",owner:"",note:""});
+    STATE.doc.property.push({
+  name:"",
+  count:"",
+  serial:"",
+  note:""
+  });
     renderPropertyList();
     saveState();
   });
