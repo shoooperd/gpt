@@ -3665,17 +3665,6 @@ function renderPropertyList(){
   `).join("");
 }
 
-  root.innerHTML = STATE.doc.property.map((item, index) => `
-    <div class="item-row">
-      <input type="text" placeholder="Название" value="${escapeHtml(item.name || "")}" data-item-type="property" data-index="${index}" data-key="name">
-      <input type="text" placeholder="Количество" value="${escapeHtml(item.count || "")}" data-item-type="property" data-index="${index}" data-key="count">
-      <input type="text" placeholder="Принадлежность" value="${escapeHtml(item.owner || "")}" data-item-type="property" data-index="${index}" data-key="owner">
-      <input type="text" class="wide" placeholder="Примечание" value="${escapeHtml(item.note || "")}" data-item-type="property" data-index="${index}" data-key="note">
-      <button class="remove" data-remove-item="property" data-index="${index}">Удалить</button>
-    </div>
-  `).join("");
-}
-
 function buildLawCard(article, q=""){
   const text = `${article.code} ${article.title} ${(article.tags || []).join(" ")}`;
   const re = q ? new RegExp(`(${escapeRegExp(q)})`, "ig") : null;
