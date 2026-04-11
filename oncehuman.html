@@ -7,98 +7,121 @@
   <style>
     :root{
       --bg:#0b1020;
-      --panel:#121933;
-      --panel-2:#192242;
-      --text:#edf2ff;
-      --muted:#aeb9d6;
-      --line:#2c3968;
-      --accent:#74c0fc;
-      --accent-2:#8ce99a;
-      --warn:#ffd43b;
-      --danger:#ff8787;
-      --chip:#24325f;
-      --shadow:0 12px 30px rgba(0,0,0,.28);
-      --radius:16px;
+      --bg-soft:#11172b;
+      --panel:#121a31cc;
+      --panel-solid:#131d37;
+      --panel-2:#1a2648;
+      --text:#eef4ff;
+      --muted:#9fb0d3;
+      --line:#28365f;
+      --line-soft:#202c4d;
+      --accent:#6ea8ff;
+      --accent-2:#73e0a9;
+      --accent-3:#9f8cff;
+      --danger:#ff8f8f;
+      --warn:#ffd36e;
+      --shadow:0 18px 48px rgba(0,0,0,.28);
+      --radius:18px;
+      --radius-sm:12px;
+      --blur:16px;
     }
 
     *{box-sizing:border-box}
 
+    html{scroll-behavior:smooth}
+
     body{
       margin:0;
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background:
-        radial-gradient(circle at top right, rgba(116,192,252,.12), transparent 28%),
-        radial-gradient(circle at left top, rgba(140,233,154,.08), transparent 22%),
-        var(--bg);
       color:var(--text);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 12% 0%, rgba(115,224,169,.08), transparent 28%),
+        radial-gradient(circle at 88% 8%, rgba(110,168,255,.14), transparent 30%),
+        radial-gradient(circle at 50% 100%, rgba(159,140,255,.10), transparent 36%),
+        linear-gradient(180deg, #0a0f1d 0%, #0b1020 100%);
+      min-height:100vh;
     }
 
-    a{color:var(--accent)}
-
-    .wrap{
-      width:min(1400px, calc(100% - 32px));
-      margin:24px auto 56px;
+    .app{
+      width:min(1480px, calc(100% - 28px));
+      margin:20px auto 44px;
     }
 
     .hero{
       display:grid;
-      grid-template-columns: 1.35fr .9fr;
-      gap:18px;
-      align-items:stretch;
-      margin-bottom:18px;
+      grid-template-columns: minmax(0, 1.35fr) minmax(320px, .8fr);
+      gap:16px;
+      margin-bottom:16px;
     }
 
     .panel{
-      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01)), var(--panel);
-      border:1px solid var(--line);
-      border-radius:var(--radius);
+      background:var(--panel);
+      backdrop-filter: blur(var(--blur));
+      -webkit-backdrop-filter: blur(var(--blur));
+      border:1px solid rgba(255,255,255,.06);
       box-shadow:var(--shadow);
+      border-radius:var(--radius);
     }
 
     .hero-main{
-      padding:22px 22px 18px;
+      padding:26px 24px 22px;
       position:relative;
       overflow:hidden;
     }
 
-    .hero-main::after{
+    .hero-main::before{
       content:"";
       position:absolute;
-      inset:auto -60px -60px auto;
-      width:180px;
-      height:180px;
+      right:-60px;
+      top:-50px;
+      width:220px;
+      height:220px;
       border-radius:50%;
-      background:radial-gradient(circle, rgba(116,192,252,.18), transparent 70%);
+      background:radial-gradient(circle, rgba(110,168,255,.22), transparent 68%);
       pointer-events:none;
     }
 
+    .eyebrow{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      font-size:12px;
+      color:#c4d4ff;
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.06);
+      margin-bottom:14px;
+    }
+
     h1{
-      margin:0 0 8px;
-      font-size:clamp(28px, 4vw, 40px);
-      line-height:1.05;
-      letter-spacing:.2px;
+      margin:0;
+      font-size:clamp(30px, 4vw, 48px);
+      line-height:1.02;
+      letter-spacing:-0.03em;
     }
 
-    .subtitle{
-      color:var(--muted);
-      margin:0 0 18px;
+    .subtext{
+      margin:12px 0 18px;
       font-size:15px;
-      max-width:72ch;
+      line-height:1.6;
+      color:var(--muted);
+      max-width:76ch;
     }
 
-    .badge-row,.chip-row{
+    .hero-tags{
       display:flex;
       flex-wrap:wrap;
       gap:8px;
     }
 
-    .badge, .chip{
-      background:var(--chip);
-      border:1px solid var(--line);
-      border-radius:999px;
+    .tag{
       padding:8px 12px;
+      border-radius:999px;
       font-size:13px;
-      color:var(--text);
+      color:#d9e6ff;
+      border:1px solid rgba(255,255,255,.07);
+      background:rgba(255,255,255,.04);
     }
 
     .hero-side{
@@ -108,89 +131,117 @@
       gap:12px;
     }
 
-    .stat-grid{
+    .stats{
       display:grid;
-      grid-template-columns:repeat(2,1fr);
+      grid-template-columns:repeat(2, minmax(0, 1fr));
       gap:10px;
     }
 
     .stat{
-      background:var(--panel-2);
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:14px;
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:16px;
+      padding:16px;
     }
 
-    .stat .num{
-      font-size:24px;
-      font-weight:700;
+    .stat .value{
+      font-size:28px;
+      font-weight:800;
+      letter-spacing:-0.03em;
       margin-bottom:6px;
     }
 
-    .stat .lbl{
+    .stat .label{
       font-size:13px;
       color:var(--muted);
     }
 
+    .quick-note{
+      padding:16px;
+      border-radius:16px;
+      background:linear-gradient(180deg, rgba(115,224,169,.08), rgba(110,168,255,.06));
+      border:1px solid rgba(255,255,255,.06);
+      color:#dce9ff;
+      font-size:14px;
+      line-height:1.55;
+    }
+
     .toolbar{
-      display:grid;
-      grid-template-columns: 1.4fr 1fr 1fr 1fr auto auto;
-      gap:10px;
-      padding:14px;
-      margin-bottom:18px;
       position:sticky;
       top:12px;
       z-index:20;
-      backdrop-filter: blur(10px);
-      background:rgba(18,25,51,.88);
+      padding:14px;
+      margin-bottom:16px;
+      display:grid;
+      grid-template-columns: 1.4fr repeat(3, minmax(180px, 1fr)) auto;
+      gap:10px;
+      background:rgba(10,15,30,.72);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:18px;
+      box-shadow:var(--shadow);
     }
 
-    .field, .select, .btn{
+    .field,
+    .select,
+    .button{
       width:100%;
-      border-radius:12px;
-      border:1px solid var(--line);
-      background:var(--panel-2);
-      color:var(--text);
-      padding:12px 14px;
-      font-size:14px;
+      border:none;
       outline:none;
+      font:inherit;
+      color:var(--text);
+      border-radius:14px;
+      padding:13px 14px;
+      background:linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.025));
+      border:1px solid rgba(255,255,255,.06);
+      transition:.18s ease;
     }
 
-    .field::placeholder{color:#8f9ec8}
+    .field::placeholder{color:#8ca1cb}
 
-    .btn{
-      cursor:pointer;
-      font-weight:600;
-      transition:.15s transform ease, .15s border-color ease, .15s background ease;
-    }
-
-    .btn:hover{
+    .field:focus,
+    .select:focus,
+    .button:hover{
+      border-color:rgba(110,168,255,.45);
       transform:translateY(-1px);
-      border-color:#4f669f;
     }
 
-    .btn.secondary{background:transparent}
+    .button{
+      cursor:pointer;
+      font-weight:700;
+      white-space:nowrap;
+    }
+
+    .button.secondary{
+      background:transparent;
+    }
 
     .tabs{
       display:flex;
-      gap:8px;
       flex-wrap:wrap;
-      margin:0 0 16px;
+      gap:8px;
+      margin-bottom:16px;
     }
 
     .tab{
-      border:1px solid var(--line);
-      background:var(--panel);
-      color:var(--text);
-      padding:10px 14px;
-      border-radius:999px;
+      border:none;
       cursor:pointer;
-      font-size:14px;
+      color:var(--text);
+      font:inherit;
+      padding:11px 16px;
+      border-radius:999px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.06);
+      transition:.18s ease;
     }
 
+    .tab:hover{transform:translateY(-1px)}
+
     .tab.active{
-      background:linear-gradient(180deg, rgba(116,192,252,.16), rgba(116,192,252,.06));
-      border-color:#4f669f;
+      background:linear-gradient(180deg, rgba(110,168,255,.2), rgba(110,168,255,.08));
+      border-color:rgba(110,168,255,.42);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
     }
 
     .section{display:none}
@@ -203,67 +254,109 @@
     }
 
     .card{
-      padding:16px;
+      padding:18px;
+      position:relative;
+      overflow:hidden;
       min-height:100%;
     }
 
-    .card h3{
-      margin:0 0 6px;
-      font-size:20px;
-      line-height:1.15;
+    .card::after{
+      content:"";
+      position:absolute;
+      inset:auto -24px -24px auto;
+      width:120px;
+      height:120px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(255,255,255,.06), transparent 70%);
+      pointer-events:none;
     }
 
-    .muted{color:var(--muted)}
+    .card h3{
+      margin:0 0 8px;
+      font-size:21px;
+      line-height:1.15;
+      letter-spacing:-0.02em;
+    }
+
+    .muted{
+      color:var(--muted);
+    }
+
+    .desc{
+      margin-top:6px;
+      line-height:1.55;
+      font-size:14px;
+      color:var(--muted);
+    }
 
     .meta{
       display:flex;
       flex-wrap:wrap;
       gap:8px;
-      margin:10px 0 12px;
+      margin:10px 0 14px;
     }
 
-    .meta .mini{
-      font-size:12px;
-      padding:6px 9px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.02);
-      color:var(--muted);
-    }
-
-    .list{
-      margin:0;
-      padding-left:18px;
-    }
-
-    .list li{margin:6px 0}
-
-    .confidence{
+    .pill{
       display:inline-flex;
       align-items:center;
       gap:6px;
+      padding:7px 10px;
       border-radius:999px;
-      padding:6px 10px;
       font-size:12px;
-      font-weight:600;
-      border:1px solid var(--line);
+      border:1px solid rgba(255,255,255,.06);
+      background:rgba(255,255,255,.035);
+      color:#d6e4ff;
     }
 
-    .conf-high{background:rgba(140,233,154,.12); color:#c9ffd1}
-    .conf-mid{background:rgba(255,212,59,.12); color:#ffe694}
-    .conf-low{background:rgba(255,135,135,.12); color:#ffc4c4}
-
-    details{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.02);
-      border-radius:12px;
-      padding:10px 12px;
-      margin-top:12px;
+    .status{
+      font-weight:700;
     }
 
-    summary{
-      cursor:pointer;
-      font-weight:600;
+    .high{color:#caffdf}
+    .medium{color:#ffe7a7}
+    .low{color:#ffc3c3}
+
+    .item-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .item{
+      padding:12px 12px 11px;
+      border-radius:14px;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.05);
+    }
+
+    .item-top{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:flex-start;
+    }
+
+    .item-title{
+      font-weight:700;
+      line-height:1.3;
+    }
+
+    .item-sub{
+      margin-top:6px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.5;
+    }
+
+    .mini-badge{
+      flex-shrink:0;
+      padding:6px 8px;
+      border-radius:999px;
+      font-size:11px;
+      border:1px solid rgba(255,255,255,.05);
+      background:rgba(255,255,255,.04);
+      color:#dbe7ff;
     }
 
     .recipe-grid{
@@ -272,139 +365,155 @@
       gap:14px;
     }
 
-    .recipe-line{
+    .recipe-ingredients{
       display:flex;
       flex-wrap:wrap;
       gap:8px;
-      margin-top:10px;
-    }
-
-    .ing{
-      background:rgba(116,192,252,.08);
-      border:1px solid var(--line);
-      border-radius:10px;
-      padding:7px 9px;
-      font-size:13px;
-    }
-
-    .empty{
-      padding:30px;
-      text-align:center;
-      color:var(--muted);
-      border:1px dashed var(--line);
-      border-radius:16px;
-      background:rgba(255,255,255,.02);
-    }
-
-    .footer-note{
-      margin-top:18px;
-      padding:16px;
-      font-size:13px;
-      color:var(--muted);
-    }
-
-    .codebox{
-      margin-top:10px;
-      padding:12px;
-      background:#0b132b;
-      border:1px solid var(--line);
-      border-radius:12px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size:12px;
-      white-space:pre-wrap;
-      color:#dbe8ff;
-    }
-
-    .inline-actions{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
       margin-top:12px;
     }
 
-    .small{font-size:12px}
+    .ingredient{
+      padding:8px 10px;
+      border-radius:12px;
+      font-size:13px;
+      border:1px solid rgba(255,255,255,.06);
+      background:linear-gradient(180deg, rgba(110,168,255,.11), rgba(110,168,255,.04));
+      color:#dbe9ff;
+    }
 
-    @media (max-width: 1100px){
+    .empty{
+      padding:28px;
+      text-align:center;
+      border-radius:18px;
+      border:1px dashed rgba(255,255,255,.12);
+      color:var(--muted);
+      background:rgba(255,255,255,.02);
+    }
+
+    .overview-grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+    }
+
+    .overview-stack{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:14px;
+    }
+
+    .top-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .top-row{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+      padding:12px 14px;
+      border-radius:14px;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.05);
+    }
+
+    .top-row strong{
+      display:block;
+      margin-bottom:4px;
+    }
+
+    .counter{
+      min-width:38px;
+      height:38px;
+      display:grid;
+      place-items:center;
+      border-radius:12px;
+      background:linear-gradient(180deg, rgba(115,224,169,.16), rgba(110,168,255,.12));
+      border:1px solid rgba(255,255,255,.06);
+      font-weight:800;
+    }
+
+    @media (max-width: 1180px){
       .hero{grid-template-columns:1fr}
-      .cards{grid-template-columns:repeat(2, minmax(0, 1fr))}
       .toolbar{grid-template-columns:1fr 1fr 1fr}
+      .cards{grid-template-columns:repeat(2, minmax(0, 1fr))}
+      .overview-grid{grid-template-columns:1fr}
     }
 
     @media (max-width: 760px){
-      .cards,.recipe-grid{grid-template-columns:1fr}
+      .app{width:min(100% - 18px, 1480px)}
       .toolbar{grid-template-columns:1fr}
-      .wrap{width:min(100% - 20px, 1400px)}
+      .cards,
+      .recipe-grid,
+      .overview-stack{grid-template-columns:1fr}
+      .stats{grid-template-columns:1fr 1fr}
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="hero">
-      <section class="panel hero-main">
+  <div class="app">
+    <section class="hero">
+      <div class="panel hero-main">
+        <div class="eyebrow">Once Human · база технологий</div>
         <h1>Манки Хуман Хелпер</h1>
-        <p class="subtitle">
-          Локальная интерактивная база по новой системе технологий в Once Human:
-          обратный инжиниринг, объекты на локациях, открытия технологий и рецепты технологического изобретения.
-          Всё хранится прямо в коде этого файла — его можно постепенно дополнять вручную.
+        <p class="subtext">
+          Удобная локальная база по новой системе технологий:
+          локации, структуры, инструменты и рецепты технологического изобретения.
+          Всё собрано в формате, который удобно читать и постепенно расширять.
         </p>
-        <div class="badge-row">
-          <span class="badge">Русские названия</span>
-          <span class="badge">Фильтры и поиск</span>
-          <span class="badge">Локации, объекты, рецепты</span>
-          <span class="badge">Открывается локально</span>
-          <span class="badge">Без зависимостей</span>
+        <div class="hero-tags">
+          <span class="tag">Локации</span>
+          <span class="tag">Структуры</span>
+          <span class="tag">Инструменты</span>
+          <span class="tag">Рецепты</span>
+          <span class="tag">Русские названия</span>
         </div>
-      </section>
+      </div>
 
-      <aside class="panel hero-side">
-        <div class="stat-grid">
+      <div class="panel hero-side">
+        <div class="stats">
           <div class="stat">
-            <div class="num" id="statLocations">0</div>
-            <div class="lbl">локаций</div>
+            <div class="value" id="statLocations">0</div>
+            <div class="label">локаций</div>
           </div>
           <div class="stat">
-            <div class="num" id="statObjects">0</div>
-            <div class="lbl">объектов/открытий</div>
+            <div class="value" id="statStructures">0</div>
+            <div class="label">структур</div>
           </div>
           <div class="stat">
-            <div class="num" id="statRecipes">0</div>
-            <div class="lbl">рецептов</div>
+            <div class="value" id="statTools">0</div>
+            <div class="label">инструментов</div>
           </div>
           <div class="stat">
-            <div class="num" id="statSources">0</div>
-            <div class="lbl">источников в записях</div>
+            <div class="value" id="statRecipes">0</div>
+            <div class="label">рецептов</div>
           </div>
         </div>
 
-        <div class="panel" style="padding:14px;background:rgba(255,255,255,.02)">
-          <div style="font-weight:700; margin-bottom:6px;">Где дополнять базу</div>
-          <div class="small muted">Ищи в коде блоки с пометкой:</div>
-          <div class="codebox">// === ДОБАВЛЯТЬ ДАННЫЕ ЗДЕСЬ ===</div>
+        <div class="quick-note">
+          Быстрее всего ориентироваться через поиск и фильтры:
+          можно смотреть отдельно по локациям, по структурам, по инструментам
+          или только по рецептам открытия технологий.
         </div>
-      </aside>
-    </div>
+      </div>
+    </section>
 
-    <section class="panel toolbar">
-      <input id="searchInput" class="field" type="text" placeholder="Поиск по локации, объекту, технологии, примечанию..." />
+    <section class="toolbar">
+      <input id="searchInput" class="field" type="text" placeholder="Поиск по названию, локации, объекту или рецепту..." />
 
       <select id="sectionFilter" class="select">
         <option value="all">Все разделы</option>
         <option value="locations">Локации</option>
-        <option value="objects">Объекты</option>
+        <option value="structures">Структуры</option>
+        <option value="tools">Инструменты</option>
         <option value="recipes">Рецепты</option>
       </select>
 
-      <select id="typeFilter" class="select">
-        <option value="all">Все типы</option>
-        <option value="станция">Станции</option>
-        <option value="генератор">Генераторы</option>
-        <option value="ящик">Ящики</option>
-        <option value="защита">Оборона</option>
-        <option value="транспорт">Транспорт</option>
-        <option value="расходник">Расходники</option>
-        <option value="оружие">Оружие</option>
-        <option value="инфраструктура">Инфраструктура</option>
-        <option value="другое">Другое</option>
+      <select id="locationFilter" class="select">
+        <option value="all">Все регионы</option>
       </select>
 
       <select id="confidenceFilter" class="select">
@@ -414,119 +523,71 @@
         <option value="low">Низкая</option>
       </select>
 
-      <button id="clearBtn" class="btn secondary">Сбросить</button>
-      <button id="exportBtn" class="btn">Экспорт JSON</button>
+      <button id="clearBtn" class="button secondary">Сбросить</button>
     </section>
 
     <div class="tabs">
       <button class="tab active" data-tab="overview">Сводка</button>
       <button class="tab" data-tab="locations">Локации</button>
-      <button class="tab" data-tab="objects">Объекты</button>
+      <button class="tab" data-tab="structures">Структуры</button>
+      <button class="tab" data-tab="tools">Инструменты</button>
       <button class="tab" data-tab="recipes">Рецепты</button>
-      <button class="tab" data-tab="notes">Как дополнять</button>
     </div>
 
     <section id="overview" class="section active">
-      <div class="cards" id="overviewCards"></div>
+      <div class="overview-grid">
+        <div class="panel card">
+          <h3>Самые полезные локации</h3>
+          <div class="desc">Локации с наибольшим количеством найденных объектов и открытий.</div>
+          <div class="top-list" id="topLocations"></div>
+        </div>
+
+        <div class="overview-stack">
+          <div class="panel card">
+            <h3>Структуры</h3>
+            <div class="desc">Верстаки, печи, генераторы, инфраструктура базы и стационарные объекты.</div>
+            <div class="top-list" id="topStructures"></div>
+          </div>
+
+          <div class="panel card">
+            <h3>Инструменты</h3>
+            <div class="desc">Переносимые и прикладные вещи: буры, рюкзаки, боеприпасы, ловушки и прочее.</div>
+            <div class="top-list" id="topTools"></div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section id="locations" class="section">
       <div class="cards" id="locationsGrid"></div>
     </section>
 
-    <section id="objects" class="section">
-      <div class="cards" id="objectsGrid"></div>
+    <section id="structures" class="section">
+      <div class="cards" id="structuresGrid"></div>
+    </section>
+
+    <section id="tools" class="section">
+      <div class="cards" id="toolsGrid"></div>
     </section>
 
     <section id="recipes" class="section">
       <div class="recipe-grid" id="recipesGrid"></div>
     </section>
-
-    <section id="notes" class="section">
-      <div class="panel" style="padding:18px;">
-        <h2 style="margin-top:0">Как потом дополнять этот файл</h2>
-        <p class="muted">
-          Вся база лежит ниже в JavaScript-массивах. Просто открывай этот HTML в редакторе и добавляй новые записи по образцу.
-          После сохранения обнови страницу в браузере.
-        </p>
-
-        <details open>
-          <summary>Куда добавлять новые локации</summary>
-          <div class="codebox">const LOCATIONS = [
-  {
-    id: "unikalnyy-id",
-    name: "Русское название локации",
-    region: "Регион / зона",
-    confidence: "high | medium | low",
-    notes: "Короткая заметка",
-    sources: ["Источник 1", "Источник 2"],
-    unlocks: [
-      {
-        object: "Русское название объекта",
-        type: "станция | генератор | ящик | защита | транспорт | расходник | оружие | инфраструктура | другое",
-        notes: "Что именно найдено / где именно",
-        confidence: "high | medium | low"
-      }
-    ]
-  }
-];</div>
-        </details>
-
-        <details>
-          <summary>Куда добавлять новые рецепты</summary>
-          <div class="codebox">const RECIPES = [
-  {
-    id: "recept-id",
-    name: "Русское название технологии",
-    confidence: "high | medium | low",
-    scenario: "Все / Manibus / Endless Dream / Неизвестно",
-    notes: "Комментарий",
-    ingredients: [
-      { item: "Название ресурса", qty: 1 },
-      { item: "Название ресурса", qty: 2 }
-    ],
-    sources: ["Источник 1"]
-  }
-];</div>
-        </details>
-
-        <details>
-          <summary>Как быстро добавить источник</summary>
-          <div class="codebox">sources: [
-  "Reddit: community spreadsheet",
-  "Китайский форум: подтверждение локации",
-  "Личное тестирование"
-]</div>
-        </details>
-      </div>
-    </section>
-
-    <div class="footer-note panel">
-      Это удобная база-заготовка, а не “закрытая энциклопедия”. Она специально сделана как редактируемый файл, чтобы ты мог постепенно наращивать список находок.
-    </div>
   </div>
 
   <script>
-    // =========================================================
-    // Манки Хуман Хелпер — встроенная база
-    // =========================================================
+    const STRUCTURE_TYPES = ["станция", "генератор", "ящик", "инфраструктура", "транспорт"];
+    const TOOL_TYPES = ["инструмент", "расходник", "оружие", "защита", "другое"];
 
-    // === ДОБАВЛЯТЬ ДАННЫЕ ЗДЕСЬ: ЛОКАЦИИ И ОБЪЕКТЫ ===
     const LOCATIONS = [
       {
         id: "blackfell-supermarket",
         name: "Супермаркет Блэкфелл",
         region: "Блэкфелл",
         confidence: "high",
-        notes: "Подтверждённая точка для продвинутого верстака снаряжения.",
-        sources: ["Reddit / community spreadsheet"],
+        notes: "Полезная точка для продвинутых станций.",
         unlocks: [
-          {
-            object: "Продвинутый верстак снаряжения",
-            type: "станция",
-            notes: "Найден на локации.",
-            confidence: "high"
-          }
+          { object: "Продвинутый верстак снаряжения", type: "станция", notes: "Найден на локации.", confidence: "high" }
         ]
       },
       {
@@ -534,27 +595,11 @@
         name: "Заправка Блэкфелл",
         region: "Блэкфелл",
         confidence: "high",
-        notes: "Полезная точка для ранней/средней инфраструктуры.",
-        sources: ["Reddit / community spreadsheet"],
+        notes: "Удобная точка для базовой и средней инфраструктуры.",
         unlocks: [
-          {
-            object: "Продвинутый верстак припасов",
-            type: "станция",
-            notes: "Замечен игроками на объекте.",
-            confidence: "high"
-          },
-          {
-            object: "Печь",
-            type: "станция",
-            notes: "Подтверждена на локации.",
-            confidence: "high"
-          },
-          {
-            object: "Большой солнечный генератор",
-            type: "генератор",
-            notes: "На крыше.",
-            confidence: "high"
-          }
+          { object: "Продвинутый верстак припасов", type: "станция", notes: "Замечен на локации.", confidence: "high" },
+          { object: "Печь", type: "станция", notes: "Подтверждена на локации.", confidence: "high" },
+          { object: "Большой солнечный генератор", type: "генератор", notes: "На крыше.", confidence: "high" }
         ]
       },
       {
@@ -562,15 +607,9 @@
         name: "Мотель Блэкфелл",
         region: "Блэкфелл",
         confidence: "high",
-        notes: "Дополнительная точка для ящиков и мелких открытий.",
-        sources: ["Reddit / community spreadsheet"],
+        notes: "Дополнительная точка для небольших полезных находок.",
         unlocks: [
-          {
-            object: "Малый ящик хранения",
-            type: "ящик",
-            notes: "Найден на локации.",
-            confidence: "high"
-          }
+          { object: "Малый ящик хранения", type: "ящик", notes: "Найден на локации.", confidence: "high" }
         ]
       },
       {
@@ -578,15 +617,9 @@
         name: "Ратуша Блэкфелл",
         region: "Блэкфелл",
         confidence: "high",
-        notes: "Хорошая точка для декоративно-прикладной станции.",
-        sources: ["Reddit / community spreadsheet"],
+        notes: "Точка для отдельной продвинутой станции.",
         unlocks: [
-          {
-            object: "Рабочее место дизайнера",
-            type: "станция",
-            notes: "Подтверждено сообществом.",
-            confidence: "high"
-          }
+          { object: "Рабочее место дизайнера", type: "станция", notes: "Подтверждено на локации.", confidence: "high" }
         ]
       },
       {
@@ -594,33 +627,12 @@
         name: "Блэкфелл — общая зона",
         region: "Блэкфелл",
         confidence: "high",
-        notes: "Несколько полезных находок по объектам и луту.",
-        sources: ["Reddit / community spreadsheet"],
+        notes: "Несколько полезных находок по структурам и предметам.",
         unlocks: [
-          {
-            object: "Верстак разборки",
-            type: "станция",
-            notes: "Подтверждён в общей зоне.",
-            confidence: "high"
-          },
-          {
-            object: "Ящик для оружия",
-            type: "ящик",
-            notes: "Отмечен игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Торговый автомат",
-            type: "инфраструктура",
-            notes: "Подтверждён на локации.",
-            confidence: "high"
-          },
-          {
-            object: "Красные плазменные патроны",
-            type: "расходник",
-            notes: "Отмечались как находка из ящиков.",
-            confidence: "medium"
-          }
+          { object: "Верстак разборки", type: "станция", notes: "Подтверждён в общей зоне.", confidence: "high" },
+          { object: "Ящик для оружия", type: "ящик", notes: "Отмечен на локации.", confidence: "high" },
+          { object: "Торговый автомат", type: "инфраструктура", notes: "Подтверждён на локации.", confidence: "high" },
+          { object: "Красные плазменные патроны", type: "расходник", notes: "Отмечались как находка из ящиков.", confidence: "medium" }
         ]
       },
       {
@@ -628,42 +640,13 @@
         name: "Нефтяные поля Блэкфелл",
         region: "Блэкфелл",
         confidence: "high",
-        notes: "Одна из лучших поздних точек фарма под энергетику и инфраструктуру базы.",
-        sources: [
-          "Reddit / community spreadsheet",
-          "Китайское сообщество: приоритетная поздняя точка"
-        ],
+        notes: "Одна из лучших поздних точек для энергетики и крупной инфраструктуры базы.",
         unlocks: [
-          {
-            object: "Большой биомассовый генератор",
-            type: "генератор",
-            notes: "Подтверждён игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Улучшенный большой биомассовый генератор",
-            type: "генератор",
-            notes: "Подтверждён игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Большой гараж",
-            type: "транспорт",
-            notes: "Подтверждён игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Большой гидрогенератор",
-            type: "генератор",
-            notes: "Подтверждён игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Специальные верстаки",
-            type: "станция",
-            notes: "Упоминались как дополнительные находки.",
-            confidence: "medium"
-          }
+          { object: "Большой биомассовый генератор", type: "генератор", notes: "Подтверждён на локации.", confidence: "high" },
+          { object: "Улучшенный большой биомассовый генератор", type: "генератор", notes: "Подтверждён на локации.", confidence: "high" },
+          { object: "Большой гараж", type: "транспорт", notes: "Подтверждён на локации.", confidence: "high" },
+          { object: "Большой гидрогенератор", type: "генератор", notes: "Подтверждён на локации.", confidence: "high" },
+          { object: "Специальные верстаки", type: "станция", notes: "Отмечались как дополнительные находки.", confidence: "medium" }
         ]
       },
       {
@@ -671,96 +654,22 @@
         name: "Промзона Серые воды",
         region: "Серые воды",
         confidence: "high",
-        notes: "Одна из сильнейших точек по печам, базовой индустрии и инфраструктуре.",
-        sources: [
-          "Reddit / community spreadsheet",
-          "Китайские гайды по маршрутам"
-        ],
+        notes: "Сильная точка по печам, индустрии и базовой инфраструктуре.",
         unlocks: [
-          {
-            object: "Электрическая печь",
-            type: "станция",
-            notes: "Подтверждена игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Печь",
-            type: "станция",
-            notes: "Подтверждена игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Верстак припасов",
-            type: "станция",
-            notes: "Подтверждён игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Исследовательский верстак",
-            type: "станция",
-            notes: "Подтверждён игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Ящик для брони",
-            type: "ящик",
-            notes: "Подтверждён игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Ящик для снаряжения",
-            type: "ящик",
-            notes: "Подтверждён игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Специальный ящик хранения",
-            type: "ящик",
-            notes: "Подтверждён игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Резервуар для воды",
-            type: "инфраструктура",
-            notes: "Подтверждён игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Малый гараж",
-            type: "транспорт",
-            notes: "Подтверждён игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Переносной сборщик дождевой воды",
-            type: "инфраструктура",
-            notes: "Отмечался как находка.",
-            confidence: "medium"
-          },
-          {
-            object: "Переносной обогреватель",
-            type: "инфраструктура",
-            notes: "Отмечался как находка.",
-            confidence: "medium"
-          },
-          {
-            object: "Электрический бур",
-            type: "инфраструктура",
-            notes: "Отмечался как находка.",
-            confidence: "medium"
-          },
-          {
-            object: "Аккумулятор",
-            type: "инфраструктура",
-            notes: "Отмечался как находка.",
-            confidence: "medium"
-          },
-          {
-            object: "Набор электрики",
-            type: "инфраструктура",
-            notes: "Отмечался как blueprint/находка.",
-            confidence: "medium"
-          }
+          { object: "Электрическая печь", type: "станция", notes: "Подтверждена на локации.", confidence: "high" },
+          { object: "Печь", type: "станция", notes: "Подтверждена на локации.", confidence: "high" },
+          { object: "Верстак припасов", type: "станция", notes: "Подтверждён на локации.", confidence: "high" },
+          { object: "Исследовательский верстак", type: "станция", notes: "Подтверждён на локации.", confidence: "high" },
+          { object: "Ящик для брони", type: "ящик", notes: "Подтверждён на локации.", confidence: "high" },
+          { object: "Ящик для снаряжения", type: "ящик", notes: "Подтверждён на локации.", confidence: "high" },
+          { object: "Специальный ящик хранения", type: "ящик", notes: "Подтверждён на локации.", confidence: "high" },
+          { object: "Резервуар для воды", type: "инфраструктура", notes: "Подтверждён на локации.", confidence: "high" },
+          { object: "Малый гараж", type: "транспорт", notes: "Подтверждён на локации.", confidence: "high" },
+          { object: "Переносной сборщик дождевой воды", type: "инструмент", notes: "Отмечался как находка.", confidence: "medium" },
+          { object: "Переносной обогреватель", type: "инструмент", notes: "Отмечался как находка.", confidence: "medium" },
+          { object: "Электрический бур", type: "инструмент", notes: "Отмечался как находка.", confidence: "medium" },
+          { object: "Аккумулятор", type: "инструмент", notes: "Отмечался как находка.", confidence: "medium" },
+          { object: "Набор электрики", type: "инструмент", notes: "Отмечался как открытие/находка.", confidence: "medium" }
         ]
       },
       {
@@ -768,33 +677,12 @@
         name: "Холм Гринлейк",
         region: "Гринлейк",
         confidence: "high",
-        notes: "Ключевая точка для пищевых и звёздно-пылевых станций.",
-        sources: ["Reddit / community spreadsheet"],
+        notes: "Полезная точка для пищевых и звёздно-пылевых станций.",
         unlocks: [
-          {
-            object: "Продвинутая плита",
-            type: "станция",
-            notes: "Подтверждена игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Сушилка для мяса",
-            type: "станция",
-            notes: "Подтверждена игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Плита синтеза звёздной пыли",
-            type: "станция",
-            notes: "Подтверждена игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Грузоподъёмность",
-            type: "другое",
-            notes: "Отмечалась в ящиках как находка.",
-            confidence: "medium"
-          }
+          { object: "Продвинутая плита", type: "станция", notes: "Подтверждена на локации.", confidence: "high" },
+          { object: "Сушилка для мяса", type: "станция", notes: "Подтверждена на локации.", confidence: "high" },
+          { object: "Плита синтеза звёздной пыли", type: "станция", notes: "Подтверждена на локации.", confidence: "high" },
+          { object: "Грузоподъёмность", type: "другое", notes: "Отмечалась как находка.", confidence: "medium" }
         ]
       },
       {
@@ -802,45 +690,14 @@
         name: "Институт исследования альтернативной реальности",
         region: "Спецзона",
         confidence: "high",
-        notes: "Полезная поздняя точка для специальных технологических открытий.",
-        sources: ["Reddit / community spreadsheet"],
+        notes: "Поздняя точка для специальных открытий и вспомогательных объектов.",
         unlocks: [
-          {
-            object: "Продвинутая плита",
-            type: "станция",
-            notes: "Подтверждена игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Ящик хранения девиаций",
-            type: "ящик",
-            notes: "Подтверждён игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Капсула синтеза",
-            type: "станция",
-            notes: "Подтверждена игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Высокие взрывчатые вещества",
-            type: "расходник",
-            notes: "Подтверждены игроками.",
-            confidence: "medium"
-          },
-          {
-            object: "Торговый автомат",
-            type: "инфраструктура",
-            notes: "Подтверждён игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Красные плазменные патроны",
-            type: "расходник",
-            notes: "Отмечались как лут.",
-            confidence: "medium"
-          }
+          { object: "Продвинутая плита", type: "станция", notes: "Подтверждена на локации.", confidence: "high" },
+          { object: "Ящик хранения девиаций", type: "ящик", notes: "Подтверждён на локации.", confidence: "high" },
+          { object: "Капсула синтеза", type: "станция", notes: "Подтверждена на локации.", confidence: "high" },
+          { object: "Высокие взрывчатые вещества", type: "расходник", notes: "Отмечались как находка.", confidence: "medium" },
+          { object: "Торговый автомат", type: "инфраструктура", notes: "Подтверждён на локации.", confidence: "high" },
+          { object: "Красные плазменные патроны", type: "расходник", notes: "Отмечались как лут.", confidence: "medium" }
         ]
       },
       {
@@ -848,27 +705,11 @@
         name: "Логово печи",
         region: "Спецзона",
         confidence: "high",
-        notes: "Ключевая точка для продвинутых печей.",
-        sources: ["Reddit / community spreadsheet"],
+        notes: "Ключевая точка для продвинутых печей и складской инфраструктуры.",
         unlocks: [
-          {
-            object: "Гибридная электрическая печь",
-            type: "станция",
-            notes: "Подтверждена игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Перерабатывающая электрическая печь",
-            type: "станция",
-            notes: "Подтверждена игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Терминал хранения",
-            type: "инфраструктура",
-            notes: "Подтверждён игроками.",
-            confidence: "high"
-          }
+          { object: "Гибридная электрическая печь", type: "станция", notes: "Подтверждена на локации.", confidence: "high" },
+          { object: "Перерабатывающая электрическая печь", type: "станция", notes: "Подтверждена на локации.", confidence: "high" },
+          { object: "Терминал хранения", type: "инфраструктура", notes: "Подтверждён на локации.", confidence: "high" }
         ]
       },
       {
@@ -876,33 +717,12 @@
         name: "Промышленный комплекс Херст",
         region: "Херст",
         confidence: "high",
-        notes: "Точка для полезной базовой инфраструктуры и обороны.",
-        sources: ["Reddit / community spreadsheet"],
+        notes: "Полезная точка для базовой инфраструктуры и оборонительных элементов.",
         unlocks: [
-          {
-            object: "Система сбора дождевой воды",
-            type: "инфраструктура",
-            notes: "Подтверждена игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Мешки с песком",
-            type: "защита",
-            notes: "Подтверждены игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Модуль закрепления",
-            type: "инфраструктура",
-            notes: "Подтверждён игроками.",
-            confidence: "medium"
-          },
-          {
-            object: "Малая перерабатывающая установка",
-            type: "инфраструктура",
-            notes: "Подтверждена игроками.",
-            confidence: "high"
-          }
+          { object: "Система сбора дождевой воды", type: "инфраструктура", notes: "Подтверждена на локации.", confidence: "high" },
+          { object: "Мешки с песком", type: "защита", notes: "Подтверждены на локации.", confidence: "high" },
+          { object: "Модуль закрепления", type: "инструмент", notes: "Подтверждён на локации.", confidence: "medium" },
+          { object: "Малая перерабатывающая установка", type: "инфраструктура", notes: "Подтверждена на локации.", confidence: "high" }
         ]
       },
       {
@@ -910,27 +730,11 @@
         name: "Эшентон — торговый центр",
         region: "Эшентон",
         confidence: "high",
-        notes: "Точка для транспорта и оружейной инфраструктуры.",
-        sources: ["Reddit / community spreadsheet"],
+        notes: "Точка для оружейных и прикладных открытий.",
         unlocks: [
-          {
-            object: "Добывающая платформа",
-            type: "инфраструктура",
-            notes: "Подтверждена игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Стойка для оружия",
-            type: "оружие",
-            notes: "Подтверждена игроками.",
-            confidence: "high"
-          },
-          {
-            object: "Расширение рюкзака",
-            type: "другое",
-            notes: "Отмечалось как находка из ящиков.",
-            confidence: "medium"
-          }
+          { object: "Добывающая платформа", type: "инфраструктура", notes: "Подтверждена на локации.", confidence: "high" },
+          { object: "Стойка для оружия", type: "инфраструктура", notes: "Подтверждена на локации.", confidence: "high" },
+          { object: "Расширение рюкзака", type: "инструмент", notes: "Отмечалось как находка.", confidence: "medium" }
         ]
       },
       {
@@ -938,27 +742,11 @@
         name: "Монолит Жажды",
         region: "Монолиты",
         confidence: "high",
-        notes: "Точка для утилитарных и боевых открытий.",
-        sources: ["Reddit / community spreadsheet"],
+        notes: "Полезная точка для утилитарных и боевых открытий.",
         unlocks: [
-          {
-            object: "Штурмовая винтовка ур. 3",
-            type: "оружие",
-            notes: "Подтверждена игроками.",
-            confidence: "medium"
-          },
-          {
-            object: "Комплект зиплайна",
-            type: "инфраструктура",
-            notes: "Подтверждён как blueprint/открытие.",
-            confidence: "high"
-          },
-          {
-            object: "Переносной кондиционер",
-            type: "инфраструктура",
-            notes: "Отмечался на маршруте с ящиками.",
-            confidence: "medium"
-          }
+          { object: "Штурмовая винтовка ур. 3", type: "оружие", notes: "Подтверждена на локации.", confidence: "medium" },
+          { object: "Комплект зиплайна", type: "инструмент", notes: "Подтверждён как открытие.", confidence: "high" },
+          { object: "Переносной кондиционер", type: "инструмент", notes: "Отмечался на маршруте с ящиками.", confidence: "medium" }
         ]
       },
       {
@@ -966,15 +754,9 @@
         name: "Институт Альфа",
         region: "Институты",
         confidence: "high",
-        notes: "Пока известно немного, но есть полезная оборонительная находка.",
-        sources: ["Reddit / community spreadsheet"],
+        notes: "Точка с полезным оборонительным открытием.",
         unlocks: [
-          {
-            object: "Огнемётная ловушка",
-            type: "защита",
-            notes: "Подтверждена игроками.",
-            confidence: "high"
-          }
+          { object: "Огнемётная ловушка", type: "защита", notes: "Подтверждена на локации.", confidence: "high" }
         ]
       },
       {
@@ -983,14 +765,8 @@
         region: "Добыча",
         confidence: "medium",
         notes: "Известен по отдельной технологической находке.",
-        sources: ["Reddit / community spreadsheet"],
         unlocks: [
-          {
-            object: "Комбинированный чипсет",
-            type: "инфраструктура",
-            notes: "Отмечен в ящиках.",
-            confidence: "medium"
-          }
+          { object: "Комбинированный чипсет", type: "инструмент", notes: "Отмечен как находка.", confidence: "medium" }
         ]
       },
       {
@@ -998,86 +774,53 @@
         name: "Гнилое Седло",
         region: "Не уточнено",
         confidence: "low",
-        notes: "Перспективная точка, но подтверждений пока меньше.",
-        sources: ["Reddit: единичные сообщения игроков"],
+        notes: "Перспективная точка, но с меньшим количеством подтверждений.",
         unlocks: [
-          {
-            object: "Продвинутый верстак синтеза",
-            type: "станция",
-            notes: "Сообщение игрока, требуется доп. подтверждение.",
-            confidence: "low"
-          },
-          {
-            object: "Электрическая печь",
-            type: "станция",
-            notes: "Сообщение игрока, требуется доп. подтверждение.",
-            confidence: "low"
-          },
-          {
-            object: "Продвинутый солнечный генератор",
-            type: "генератор",
-            notes: "Сообщение игрока, требуется доп. подтверждение.",
-            confidence: "low"
-          }
+          { object: "Продвинутый верстак синтеза", type: "станция", notes: "Требует дополнительной проверки.", confidence: "low" },
+          { object: "Электрическая печь", type: "станция", notes: "Требует дополнительной проверки.", confidence: "low" },
+          { object: "Продвинутый солнечный генератор", type: "генератор", notes: "Требует дополнительной проверки.", confidence: "low" }
         ]
       }
 
       // === ДОБАВЛЯТЬ ДАННЫЕ ЗДЕСЬ ===
-      // Новый пример:
-      // ,
-      // {
-      //   id: "new-location-id",
-      //   name: "Новая локация",
-      //   region: "Регион",
-      //   confidence: "medium",
-      //   notes: "Краткое описание",
-      //   sources: ["Источник 1"],
-      //   unlocks: [
-      //     { object: "Новый объект", type: "станция", notes: "Где найден", confidence: "medium" }
-      //   ]
-      // }
     ];
 
-    // === ДОБАВЛЯТЬ ДАННЫЕ ЗДЕСЬ: РЕЦЕПТЫ ТЕХНОЛОГИЧЕСКОГО ИЗОБРЕТЕНИЯ ===
     const RECIPES = [
       {
         id: "fuse-high",
         name: "Предохранитель",
         confidence: "high",
         scenario: "Все / не уточнено",
-        notes: "Один из самых устойчиво повторяющихся рецептов.",
+        notes: "Один из самых устойчивых известных рецептов.",
         ingredients: [
           { item: "Электронная деталь", qty: 1 },
           { item: "Железный слиток", qty: 5 },
           { item: "Стекло", qty: 2 },
           { item: "Металлический лом", qty: 6 }
-        ],
-        sources: ["Reddit / community spreadsheet"]
+        ]
       },
       {
         id: "adv-recycle-tool",
         name: "Продвинутый инструмент переработки",
         confidence: "high",
         scenario: "Все / не уточнено",
-        notes: "Сообщество отмечало высокий шанс успешного открытия.",
+        notes: "Высокий шанс успешного открытия.",
         ingredients: [
           { item: "Стальной слиток", qty: 10 },
           { item: "Металлический лом", qty: 5 }
-        ],
-        sources: ["Reddit / community spreadsheet"]
+        ]
       },
       {
         id: "medium-garage",
         name: "Средний гараж",
         confidence: "high",
         scenario: "Все / не уточнено",
-        notes: "Наиболее стабильный вариант по отзывам игроков.",
+        notes: "Наиболее стабильный известный вариант.",
         ingredients: [
           { item: "Стальной слиток", qty: 20 },
           { item: "Детали", qty: 13 },
           { item: "Электронная деталь", qty: 1 }
-        ],
-        sources: ["Reddit / community spreadsheet"]
+        ]
       },
       {
         id: "sandbag-v1",
@@ -1088,84 +831,73 @@
         ingredients: [
           { item: "Гравий", qty: 8 },
           { item: "Ткань", qty: 8 }
-        ],
-        sources: ["Reddit / community spreadsheet"]
+        ]
       },
       {
         id: "sandbag-v2",
         name: "Мешки с песком",
         confidence: "high",
         scenario: "Все / не уточнено",
-        notes: "Игроки отмечали как более стабильный вариант с высоким шансом.",
+        notes: "Более стабильный вариант с высоким шансом.",
         ingredients: [
           { item: "Ткань", qty: 2 },
           { item: "Гравий", qty: 21 }
-        ],
-        sources: ["Reddit / community spreadsheet"]
+        ]
       },
       {
         id: "harvesting-sickle",
         name: "Серп для сбора урожая",
         confidence: "medium",
         scenario: "Все / не уточнено",
-        notes: "У некоторых игроков превью показывало другой результат, но на выходе получался именно серп.",
+        notes: "Иногда превью может показывать другой результат.",
         ingredients: [
           { item: "Испорченная еда", qty: 7 },
           { item: "Кипячёная вода", qty: 5 }
-        ],
-        sources: ["Reddit / community spreadsheet"]
+        ]
       },
       {
         id: "lamp",
         name: "Лампа",
         confidence: "medium",
         scenario: "Все / не уточнено",
-        notes: "В части обсуждений не уточнялось, медь это руда или слиток.",
+        notes: "Один из известных вариантов открытия.",
         ingredients: [
           { item: "Стекло", qty: 1 },
           { item: "Электронная деталь", qty: 1 },
           { item: "Медь", qty: 2 }
-        ],
-        sources: ["Reddit / community spreadsheet"]
+        ]
       },
       {
         id: "copper-ammo",
         name: "Медные патроны",
         confidence: "medium",
         scenario: "Endless Dream / Бесконечный сон",
-        notes: "Игроки отдельно отмечали, что рецепт мог не работать в Manibus.",
+        notes: "Может зависеть от сценария.",
         ingredients: [
           { item: "Медь", qty: 1 },
           { item: "Порох", qty: 1 }
-        ],
-        sources: ["Reddit: обсуждения по сценариям"]
+        ]
       }
 
       // === ДОБАВЛЯТЬ ДАННЫЕ ЗДЕСЬ ===
-      // Новый пример:
-      // ,
-      // {
-      //   id: "new-recipe-id",
-      //   name: "Название технологии",
-      //   confidence: "medium",
-      //   scenario: "Manibus",
-      //   notes: "Краткая заметка",
-      //   ingredients: [
-      //     { item: "Ресурс 1", qty: 3 },
-      //     { item: "Ресурс 2", qty: 5 }
-      //   ],
-      //   sources: ["Источник"]
-      // }
     ];
 
     const confidenceMap = {
-      high: { label: "Высокая", className: "conf-high" },
-      medium: { label: "Средняя", className: "conf-mid" },
-      low: { label: "Низкая", className: "conf-low" }
+      high: { label: "Высокая", className: "high" },
+      medium: { label: "Средняя", className: "medium" },
+      low: { label: "Низкая", className: "low" }
     };
 
-    function escapeHtml(str){
-      return String(str ?? "")
+    const state = {
+      tab: "overview",
+      search: "",
+      section: "all",
+      region: "all",
+      confidence: "all"
+    };
+
+    function escapeHtml(value){
+      return String(value ?? "")
         .replaceAll("&","&amp;")
         .replaceAll("<","&lt;")
         .replaceAll(">","&gt;")
@@ -1173,134 +905,189 @@
         .replaceAll("'","&#039;");
     }
 
-    function flattenObjects(){
-      const items = [];
-      for (const loc of LOCATIONS) {
-        for (const unlock of loc.unlocks) {
-          items.push({
+    function isStructureType(type){
+      return STRUCTURE_TYPES.includes(type);
+    }
+
+    function isToolType(type){
+      return TOOL_TYPES.includes(type);
+    }
+
+    function flattenUnlocks(){
+      const result = [];
+
+      for(const loc of LOCATIONS){
+        for(const unlock of loc.unlocks){
+          result.push({
             locationId: loc.id,
             locationName: loc.name,
             region: loc.region,
+            locationNotes: loc.notes,
             locationConfidence: loc.confidence,
-            sources: loc.sources,
             ...unlock
           });
         }
       }
-      return items;
+
+      return result;
     }
-
-    function uniqueObjectsSummary(objects){
-      const map = new Map();
-
-      for (const obj of objects) {
-        const key = obj.object.toLowerCase();
-
-        if (!map.has(key)) {
-          map.set(key, {
-            name: obj.object,
-            type: obj.type,
-            confidence: obj.confidence,
-            locations: [obj.locationName],
-            sources: [...(obj.sources || [])],
-            notes: [obj.notes].filter(Boolean)
-          });
-        } else {
-          const row = map.get(key);
-          row.locations = Array.from(new Set([...row.locations, obj.locationName]));
-          row.sources = Array.from(new Set([...row.sources, ...(obj.sources || [])]));
-
-          if (obj.confidence === "high") row.confidence = "high";
-          if (obj.confidence === "medium" && row.confidence === "low") row.confidence = "medium";
-
-          if (obj.notes) row.notes.push(obj.notes);
-        }
-      }
-
-      return Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name, "ru"));
-    }
-
-    const state = {
-      tab: "overview",
-      search: "",
-      section: "all",
-      type: "all",
-      confidence: "all"
-    };
 
     function matchesConfidence(value){
       return state.confidence === "all" || value === state.confidence;
     }
 
-    function textMatch(...parts){
-      const hay = parts.flat().filter(Boolean).join(" ").toLowerCase();
-      return hay.includes(state.search.toLowerCase());
+    function matchesRegion(value){
+      return state.region === "all" || value === state.region;
     }
 
-    function renderStats(objects, uniqueObjects){
-      const sourceCount =
-        LOCATIONS.reduce((sum, l) => sum + (l.sources?.length || 0), 0) +
-        RECIPES.reduce((sum, r) => sum + (r.sources?.length || 0), 0);
+    function matchesText(...parts){
+      const query = state.search.trim().toLowerCase();
+      if(!query) return true;
+      const haystack = parts.flat().filter(Boolean).join(" ").toLowerCase();
+      return haystack.includes(query);
+    }
+
+    function aggregateByObject(unlocks, mode){
+      const map = new Map();
+
+      for(const item of unlocks){
+        const isWanted = mode === "structures" ? isStructureType(item.type) : isToolType(item.type);
+        if(!isWanted) continue;
+
+        const key = item.object.toLowerCase();
+
+        if(!map.has(key)){
+          map.set(key, {
+            name: item.object,
+            type: item.type,
+            confidence: item.confidence,
+            notes: item.notes ? [item.notes] : [],
+            locations: [item.locationName],
+            regions: [item.region]
+          });
+        } else {
+          const row = map.get(key);
+          row.locations = [...new Set([...row.locations, item.locationName])];
+          row.regions = [...new Set([...row.regions, item.region])];
+          if(item.notes) row.notes.push(item.notes);
+          if(item.confidence === "high") row.confidence = "high";
+          if(item.confidence === "medium" && row.confidence === "low") row.confidence = "medium";
+        }
+      }
+
+      return Array.from(map.values()).sort((a,b)=>a.name.localeCompare(b.name, "ru"));
+    }
+
+    function getFilteredLocations(){
+      return LOCATIONS.filter(loc => {
+        if(!matchesConfidence(loc.confidence)) return false;
+        if(!matchesRegion(loc.region)) return false;
+
+        return matchesText(
+          loc.name,
+          loc.region,
+          loc.notes,
+          loc.unlocks.map(x => `${x.object} ${x.type} ${x.notes}`).join(" ")
+        );
+      });
+    }
+
+    function getFilteredObjects(mode){
+      const unlocks = flattenUnlocks().filter(item => {
+        const typeOk = mode === "structures" ? isStructureType(item.type) : isToolType(item.type);
+        if(!typeOk) return false;
+        if(!matchesConfidence(item.confidence)) return false;
+        if(!matchesRegion(item.region)) return false;
+
+        return matchesText(
+          item.object,
+          item.type,
+          item.notes,
+          item.locationName,
+          item.region
+        );
+      });
+
+      return aggregateByObject(unlocks, mode).filter(item => {
+        return matchesText(
+          item.name,
+          item.type,
+          item.notes.join(" "),
+          item.locations.join(" "),
+          item.regions.join(" ")
+        );
+      });
+    }
+
+    function getFilteredRecipes(){
+      return RECIPES.filter(recipe => {
+        if(!matchesConfidence(recipe.confidence)) return false;
+
+        return matchesText(
+          recipe.name,
+          recipe.scenario,
+          recipe.notes,
+          recipe.ingredients.map(x => `${x.item} ${x.qty}`).join(" ")
+        );
+      });
+    }
+
+    function renderStats(){
+      const allUnlocks = flattenUnlocks();
+      const structures = aggregateByObject(allUnlocks, "structures");
+      const tools = aggregateByObject(allUnlocks, "tools");
 
       document.getElementById("statLocations").textContent = LOCATIONS.length;
-      document.getElementById("statObjects").textContent = uniqueObjects.length;
+      document.getElementById("statStructures").textContent = structures.length;
+      document.getElementById("statTools").textContent = tools.length;
       document.getElementById("statRecipes").textContent = RECIPES.length;
-      document.getElementById("statSources").textContent = sourceCount;
     }
 
-    function renderOverview(uniqueObjects){
+    function renderOverview(){
+      const allUnlocks = flattenUnlocks();
       const topLocations = [...LOCATIONS]
-        .sort((a, b) => b.unlocks.length - a.unlocks.length)
-        .slice(0, 6);
+        .sort((a,b)=>b.unlocks.length - a.unlocks.length)
+        .slice(0,6);
 
-      const cards = [
-        ...topLocations.map(loc => ({
-          title: loc.name,
-          subtitle: `${loc.region} · ${loc.unlocks.length} открытий`,
-          chips: [
-            `Подтверждённость: ${confidenceMap[loc.confidence].label}`,
-            ...loc.unlocks.slice(0, 3).map(x => x.object)
-          ],
-          body: loc.notes
-        }))
-      ];
+      const topStructures = aggregateByObject(allUnlocks, "structures").slice(0,6);
+      const topTools = aggregateByObject(allUnlocks, "tools").slice(0,6);
 
-      const html = cards.map(card => `
-        <article class="panel card">
-          <h3>${escapeHtml(card.title)}</h3>
-          <div class="muted">${escapeHtml(card.subtitle)}</div>
-          <div class="chip-row" style="margin:12px 0;">
-            ${card.chips.map(ch => `<span class="chip">${escapeHtml(ch)}</span>`).join("")}
+      document.getElementById("topLocations").innerHTML = topLocations.map(loc => `
+        <div class="top-row">
+          <div>
+            <strong>${escapeHtml(loc.name)}</strong>
+            <div class="muted">${escapeHtml(loc.region)}</div>
           </div>
-          <div class="muted">${escapeHtml(card.body)}</div>
-        </article>
+          <div class="counter">${loc.unlocks.length}</div>
+        </div>
       `).join("");
 
-      document.getElementById("overviewCards").innerHTML =
-        html || `<div class="empty">Нет данных для отображения.</div>`;
+      document.getElementById("topStructures").innerHTML = topStructures.map(item => `
+        <div class="top-row">
+          <div>
+            <strong>${escapeHtml(item.name)}</strong>
+            <div class="muted">${escapeHtml(item.type)}</div>
+          </div>
+          <div class="counter">${item.locations.length}</div>
+        </div>
+      `).join("");
+
+      document.getElementById("topTools").innerHTML = topTools.map(item => `
+        <div class="top-row">
+          <div>
+            <strong>${escapeHtml(item.name)}</strong>
+            <div class="muted">${escapeHtml(item.type)}</div>
+          </div>
+          <div class="counter">${item.locations.length}</div>
+        </div>
+      `).join("");
     }
 
     function renderLocations(){
-      const rows = LOCATIONS.filter(loc => {
-        if (state.section !== "all" && state.section !== "locations") return false;
-        if (!matchesConfidence(loc.confidence)) return false;
-
-        const matchedUnlock = loc.unlocks.some(u => {
-          const typeOk = state.type === "all" || u.type === state.type;
-          const confOk = matchesConfidence(u.confidence);
-          const textOk = textMatch(loc.name, loc.region, loc.notes, u.object, u.notes, loc.sources);
-          return typeOk && confOk && textOk;
-        });
-
-        const fallbackText = textMatch(loc.name, loc.region, loc.notes, loc.sources);
-        const typePass = state.type === "all" ? true : loc.unlocks.some(u => u.type === state.type);
-
-        return (matchedUnlock || fallbackText) && typePass;
-      });
-
+      const rows = getFilteredLocations();
       const grid = document.getElementById("locationsGrid");
 
-      if (!rows.length) {
+      if(!rows.length){
         grid.innerHTML = `<div class="empty">По текущим фильтрам локации не найдены.</div>`;
         return;
       }
@@ -1308,119 +1095,132 @@
       grid.innerHTML = rows.map(loc => {
         const conf = confidenceMap[loc.confidence];
 
-        const unlocks = loc.unlocks.filter(u => {
-          const typeOk = state.type === "all" || u.type === state.type;
-          const confOk = matchesConfidence(u.confidence);
-          const textOk = textMatch(loc.name, loc.region, loc.notes, u.object, u.notes, loc.sources);
-          return typeOk && confOk && textOk;
-        });
+        const structures = loc.unlocks.filter(x => isStructureType(x.type));
+        const tools = loc.unlocks.filter(x => isToolType(x.type));
 
         return `
           <article class="panel card">
             <h3>${escapeHtml(loc.name)}</h3>
             <div class="meta">
-              <span class="mini">${escapeHtml(loc.region)}</span>
-              <span class="confidence ${conf.className}">${conf.label}</span>
-              <span class="mini">${loc.unlocks.length} открытий</span>
+              <span class="pill">${escapeHtml(loc.region)}</span>
+              <span class="pill status ${conf.className}">${conf.label}</span>
+              <span class="pill">Открытий: ${loc.unlocks.length}</span>
             </div>
-            <div class="muted">${escapeHtml(loc.notes)}</div>
-            <ul class="list">
-              ${unlocks.map(u => {
-                const c = confidenceMap[u.confidence];
-                return `
-                  <li>
-                    <strong>${escapeHtml(u.object)}</strong>
-                    <span class="muted">· ${escapeHtml(u.type)}</span>
-                    <div class="small muted">${escapeHtml(u.notes)}</div>
-                    <div class="inline-actions">
-                      <span class="confidence ${c.className}">${c.label}</span>
+            <div class="desc">${escapeHtml(loc.notes)}</div>
+
+            ${structures.length ? `
+              <div class="item-list">
+                ${structures.map(item => `
+                  <div class="item">
+                    <div class="item-top">
+                      <div>
+                        <div class="item-title">${escapeHtml(item.object)}</div>
+                        <div class="item-sub">${escapeHtml(item.notes)}</div>
+                      </div>
+                      <span class="mini-badge">${escapeHtml(item.type)}</span>
                     </div>
-                  </li>
-                `;
-              }).join("")}
-            </ul>
-            <details>
-              <summary>Источники</summary>
-              <ul class="list">${(loc.sources || []).map(s => `<li>${escapeHtml(s)}</li>`).join("")}</ul>
-            </details>
+                  </div>
+                `).join("")}
+              </div>
+            ` : ""}
+
+            ${tools.length ? `
+              <div class="item-list" style="margin-top:12px;">
+                ${tools.map(item => `
+                  <div class="item">
+                    <div class="item-top">
+                      <div>
+                        <div class="item-title">${escapeHtml(item.object)}</div>
+                        <div class="item-sub">${escapeHtml(item.notes)}</div>
+                      </div>
+                      <span class="mini-badge">${escapeHtml(item.type)}</span>
+                    </div>
+                  </div>
+                `).join("")}
+              </div>
+            ` : ""}
           </article>
         `;
       }).join("");
     }
 
-    function renderObjects(uniqueObjects){
-      const rows = uniqueObjects.filter(obj => {
-        if (state.section !== "all" && state.section !== "objects") return false;
-        if (state.type !== "all" && obj.type !== state.type) return false;
-        if (!matchesConfidence(obj.confidence)) return false;
-        return textMatch(obj.name, obj.type, obj.locations, obj.sources, obj.notes);
-      });
+    function renderObjectGrid(mode, elementId){
+      const rows = getFilteredObjects(mode);
+      const grid = document.getElementById(elementId);
 
-      const grid = document.getElementById("objectsGrid");
-
-      if (!rows.length) {
-        grid.innerHTML = `<div class="empty">По текущим фильтрам объекты не найдены.</div>`;
+      if(!rows.length){
+        grid.innerHTML = `<div class="empty">По текущим фильтрам ничего не найдено.</div>`;
         return;
       }
 
-      grid.innerHTML = rows.map(obj => {
-        const conf = confidenceMap[obj.confidence];
+      grid.innerHTML = rows.map(item => {
+        const conf = confidenceMap[item.confidence];
+
         return `
           <article class="panel card">
-            <h3>${escapeHtml(obj.name)}</h3>
+            <h3>${escapeHtml(item.name)}</h3>
             <div class="meta">
-              <span class="mini">${escapeHtml(obj.type)}</span>
-              <span class="confidence ${conf.className}">${conf.label}</span>
-              <span class="mini">${obj.locations.length} локац.</span>
+              <span class="pill">${escapeHtml(item.type)}</span>
+              <span class="pill status ${conf.className}">${conf.label}</span>
+              <span class="pill">Локаций: ${item.locations.length}</span>
             </div>
-            <div class="muted">Замечен на локациях: ${escapeHtml(obj.locations.join(", "))}</div>
-            ${obj.notes.length
-              ? `<details><summary>Примечания</summary><ul class="list">${obj.notes.map(n => `<li>${escapeHtml(n)}</li>`).join("")}</ul></details>`
-              : ""
-            }
-            <details>
-              <summary>Источники</summary>
-              <ul class="list">${obj.sources.map(s => `<li>${escapeHtml(s)}</li>`).join("")}</ul>
-            </details>
+
+            <div class="desc">
+              Встречается на локациях: ${escapeHtml(item.locations.join(", "))}
+            </div>
+
+            ${item.notes.length ? `
+              <div class="item-list">
+                ${item.notes.slice(0,4).map(note => `
+                  <div class="item">
+                    <div class="item-sub">${escapeHtml(note)}</div>
+                  </div>
+                `).join("")}
+              </div>
+            ` : ""}
           </article>
         `;
       }).join("");
     }
 
     function renderRecipes(){
-      const rows = RECIPES.filter(r => {
-        if (state.section !== "all" && state.section !== "recipes") return false;
-        if (!matchesConfidence(r.confidence)) return false;
-        return textMatch(r.name, r.scenario, r.notes, r.sources, r.ingredients.map(i => i.item).join(" "));
-      });
-
+      const rows = getFilteredRecipes();
       const grid = document.getElementById("recipesGrid");
 
-      if (!rows.length) {
+      if(!rows.length){
         grid.innerHTML = `<div class="empty">По текущим фильтрам рецепты не найдены.</div>`;
         return;
       }
 
-      grid.innerHTML = rows.map(r => {
-        const conf = confidenceMap[r.confidence];
+      grid.innerHTML = rows.map(recipe => {
+        const conf = confidenceMap[recipe.confidence];
+
         return `
           <article class="panel card">
-            <h3>${escapeHtml(r.name)}</h3>
+            <h3>${escapeHtml(recipe.name)}</h3>
             <div class="meta">
-              <span class="confidence ${conf.className}">${conf.label}</span>
-              <span class="mini">${escapeHtml(r.scenario)}</span>
+              <span class="pill status ${conf.className}">${conf.label}</span>
+              <span class="pill">${escapeHtml(recipe.scenario)}</span>
             </div>
-            <div class="muted">${escapeHtml(r.notes)}</div>
-            <div class="recipe-line">
-              ${r.ingredients.map(i => `<span class="ing">${escapeHtml(i.item)} × ${escapeHtml(i.qty)}</span>`).join("")}
+            <div class="desc">${escapeHtml(recipe.notes)}</div>
+            <div class="recipe-ingredients">
+              ${recipe.ingredients.map(i => `
+                <span class="ingredient">${escapeHtml(i.item)} × ${escapeHtml(i.qty)}</span>
+              `).join("")}
             </div>
-            <details>
-              <summary>Источники</summary>
-              <ul class="list">${(r.sources || []).map(s => `<li>${escapeHtml(s)}</li>`).join("")}</ul>
-            </details>
           </article>
         `;
       }).join("");
+    }
+
+    function populateRegionFilter(){
+      const select = document.getElementById("locationFilter");
+      const regions = [...new Set(LOCATIONS.map(x => x.region))].sort((a,b)=>a.localeCompare(b, "ru"));
+
+      select.innerHTML = `
+        <option value="all">Все регионы</option>
+        ${regions.map(region => `<option value="${escapeHtml(region)}">${escapeHtml(region)}</option>`).join("")}
+      `;
     }
 
     function switchTab(tab){
@@ -1430,40 +1230,18 @@
         btn.classList.toggle("active", btn.dataset.tab === tab);
       });
 
-      document.querySelectorAll(".section").forEach(sec => {
-        sec.classList.toggle("active", sec.id === tab);
+      document.querySelectorAll(".section").forEach(section => {
+        section.classList.toggle("active", section.id === tab);
       });
     }
 
     function render(){
-      const objects = flattenObjects();
-      const uniqueObjects = uniqueObjectsSummary(objects);
-
-      renderStats(objects, uniqueObjects);
-      renderOverview(uniqueObjects);
+      renderStats();
+      renderOverview();
       renderLocations();
-      renderObjects(uniqueObjects);
+      renderObjectGrid("structures", "structuresGrid");
+      renderObjectGrid("tools", "toolsGrid");
       renderRecipes();
-    }
-
-    function exportData(){
-      const payload = {
-        exportedAt: new Date().toISOString(),
-        app: "Манки Хуман Хелпер",
-        locations: LOCATIONS,
-        recipes: RECIPES
-      };
-
-      const blob = new Blob(
-        [JSON.stringify(payload, null, 2)],
-        { type: "application/json;charset=utf-8" }
-      );
-
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "monkey-human-helper-data.json";
-      a.click();
-      URL.revokeObjectURL(a.href);
     }
 
     document.querySelectorAll(".tab").forEach(btn => {
@@ -1471,17 +1249,25 @@
     });
 
     document.getElementById("searchInput").addEventListener("input", e => {
-      state.search = e.target.value.trim();
+      state.search = e.target.value;
       render();
     });
 
     document.getElementById("sectionFilter").addEventListener("change", e => {
       state.section = e.target.value;
+      const value = e.target.value;
+
+      if(value !== "all"){
+        switchTab(value);
+      } else {
+        switchTab("overview");
+      }
+
       render();
     });
 
-    document.getElementById("typeFilter").addEventListener("change", e => {
-      state.type = e.target.value;
+    document.getElementById("locationFilter").addEventListener("change", e => {
+      state.region = e.target.value;
       render();
     });
 
@@ -1493,19 +1279,19 @@
     document.getElementById("clearBtn").addEventListener("click", () => {
       state.search = "";
       state.section = "all";
-      state.type = "all";
+      state.region = "all";
       state.confidence = "all";
 
       document.getElementById("searchInput").value = "";
       document.getElementById("sectionFilter").value = "all";
-      document.getElementById("typeFilter").value = "all";
+      document.getElementById("locationFilter").value = "all";
       document.getElementById("confidenceFilter").value = "all";
 
+      switchTab("overview");
       render();
     });
 
-    document.getElementById("exportBtn").addEventListener("click", exportData);
-
+    populateRegionFilter();
     switchTab("overview");
     render();
   </script>
