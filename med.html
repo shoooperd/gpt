@@ -769,11 +769,11 @@ const GOODS = [
   ["Настойка от простуды", "$1 /шт", ""],
   ["Сироп Доктора Кафа", "$6 /шт", ""],
   ["Кровь Вождя", "$6 /шт", ""],
-  ["Настойка на морфине", "$1 /шт", ""],
-  ["Настойка на женьшене", "$1 /шт", ""],
-  ["Настойка на тимьяне", "$1 /шт", ""],
-  ["Настойка на ягодах", "$1 /шт", ""],
-  ["Настойка на чесноке", "$1 /шт", ""]
+  ["Настойка на морфине", "$4 /шт", ""],
+  ["Настойка на женьшене", "$4 /шт", ""],
+  ["Настойка на тимьяне", "$4 /шт", ""],
+  ["Настойка на ягодах", "$4 /шт", ""],
+  ["Настойка на чесноке", "$4 /шт", ""]
 ];
 (function(){
   $("#services").innerHTML = SERVICES.map(([n,p])=>`<tr><td>${n}</td><td class="right mono">${p}</td></tr>`).join("");
@@ -800,11 +800,11 @@ const PRICING = [
   {id:"g_nast_cold", name:"Настойка от простуды", type:"good", pricing:{base:1}},
   {id:"g_syrop_kaf", name:"Сироп Доктора Кафа", type:"good", pricing:{base:6}},
   {id:"g_krov_vozhdya", name:"Кровь Вождя", type:"good", pricing:{base:6}},
-  {id:"g_nast_morfin",  name:"Настойка на морфине",  type:"good", pricing:{base:1}},
-  {id:"g_nast_ginseng", name:"Настойка на женьшене", type:"good", pricing:{base:1}},
-  {id:"g_nast_thyme",   name:"Настойка на тимьяне",  type:"good", pricing:{base:1}},
-  {id:"g_nast_berries", name:"Настойка на ягодах",   type:"good", pricing:{base:1}},
-  {id:"g_nast_garlic",  name:"Настойка на чесноке",  type:"good", pricing:{base:1}}
+  {id:"g_nast_morfin",  name:"Настойка на морфине",  type:"good", pricing:{base:4}},
+  {id:"g_nast_ginseng", name:"Настойка на женьшене", type:"good", pricing:{base:4}},
+  {id:"g_nast_thyme",   name:"Настойка на тимьяне",  type:"good", pricing:{base:4}},
+  {id:"g_nast_berries", name:"Настойка на ягодах",   type:"good", pricing:{base:4}},
+  {id:"g_nast_garlic",  name:"Настойка на чесноке",  type:"good", pricing:{base:4}}
 ];
 (function initPaySelect(){
   const sel = document.getElementById("payItem");
