@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#050000" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Night League // Match-3</title>
+  <title>Киберспорт по нашему</title>
   <style>
     :root {
       --bg: #030303;
@@ -462,8 +462,8 @@
   <main class="app">
     <div class="topbar">
       <div class="brand">
-        <div class="eyebrow">Night League // Match-3</div>
-        <h1>Дисциплина: не моргай</h1>
+        <div class="eyebrow">Великие три в ряд</div>
+        <h1>И ПОМНИ: ТЫ ЧЕМПИОН В ЭТОМ</h1>
       </div>
       <button class="icon-btn" id="restartBtn" aria-label="Начать заново" title="Начать заново">↻</button>
     </div>
@@ -476,7 +476,7 @@
 
     <section class="panel objective">
       <div class="objective-row">
-        <strong id="objectiveText">Протокол: 900 очков</strong>
+        <strong id="objectiveText">Нужно: 900 очков</strong>
         <span id="progressText">0%</span>
       </div>
       <div class="progress"><i id="progressBar"></i></div>
@@ -494,7 +494,7 @@
 
   <div class="modal" id="roundModal" role="dialog" aria-modal="true">
     <div class="modal-card">
-      <div class="modal-kicker" id="roundModalKicker">Контур закрыт</div>
+      <div class="modal-kicker" id="roundModalKicker">Этап закрыт</div>
       <h2 id="roundModalTitle">Допуск получен</h2>
       <p id="roundModalText"></p>
       <button class="btn" id="roundModalBtn">Продолжить</button>
@@ -504,7 +504,7 @@
   <div class="modal" id="finalModal" role="dialog" aria-modal="true">
     <div class="modal-card">
       <div class="modal-kicker">Ритуал завершён</div>
-      <h2>Вердикт системы</h2>
+      <h2>Итог</h2>
       <div class="rank" id="finalRank">S</div>
       <div class="results" id="finalResults"></div>
       <img class="congrats-image" id="congratsImage" alt="Поздравление" />
@@ -520,7 +520,7 @@
        ВСТАВЬ ПРЯМУЮ ССЫЛКУ НА КАРТИНКУ МЕЖДУ КАВЫЧКАМИ НИЖЕ.
        Например: https://example.com/photo.jpg
        ============================================================ */
-    const CONGRATS_IMAGE_URL = "PASTE_DIRECT_IMAGE_URL_HERE";
+    const CONGRATS_IMAGE_URL = "https://github.com/shoooperd/gpt/blob/main/600402791416.jpg?raw=true";
 
     const CONGRATS_TEXT = `Твой сосиска-малышок поздравляет тебя с победой в этом киберспортивном соревновании по сверхсложной дисциплине "три в ряд", а так - я хотел бы сказать тебе что я очень сильно тебя люблю и рад что ты есть в моей жизни
 С победой тебя, малёк`;
@@ -528,9 +528,9 @@
     const SIZE = 7;
     const TILES = ["👁️", "💀", "🕯️", "🩸", "🕸️", "🦴"];
     const ROUNDS = [
-      { target: 900,  moves: 12, name: "Первый допуск" },
-      { target: 1400, moves: 11, name: "Сигнал из глубины" },
-      { target: 1900, moves: 10, name: "Финальный ритуал" }
+      { target: 2000,  moves: 12, name: "Первый позади" },
+      { target: 3000, moves: 11, name: "Второй позади" },
+      { target: 4000, moves: 10, name: "Финальный финал" }
     ];
 
     const boardEl = document.getElementById("board");
