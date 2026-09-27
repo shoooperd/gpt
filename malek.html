@@ -1,0 +1,969 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#050000" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Night League // Match-3</title>
+  <style>
+    :root {
+      --bg: #030303;
+      --panel: rgba(17, 10, 10, .88);
+      --panel-2: rgba(7, 5, 5, .96);
+      --text: #f2ece8;
+      --muted: #9a8f8a;
+      --accent: #a50000;
+      --accent-2: #df2525;
+      --danger: #ff3434;
+      --bone: #d8d0c6;
+      --board-size: min(92vw, 470px);
+      --gap: 6px;
+      --radius: 4px;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      background:
+        radial-gradient(circle at 50% -15%, rgba(120, 0, 0, .30), transparent 40%),
+        radial-gradient(circle at 8% 40%, rgba(82, 0, 0, .14), transparent 30%),
+        linear-gradient(180deg, #090303 0%, #030303 55%, #000 100%);
+      overflow-x: hidden;
+      padding:
+        max(16px, env(safe-area-inset-top))
+        max(14px, env(safe-area-inset-right))
+        max(20px, env(safe-area-inset-bottom))
+        max(14px, env(safe-area-inset-left));
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      pointer-events: none;
+      opacity: .15;
+      background: repeating-linear-gradient(0deg, rgba(255,255,255,.07) 0 1px, transparent 1px 4px);
+      mix-blend-mode: overlay;
+      animation: scan 8s linear infinite;
+    }
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 998;
+      pointer-events: none;
+      box-shadow: inset 0 0 120px 45px #000;
+      background: radial-gradient(circle at center, transparent 35%, rgba(0,0,0,.54) 100%);
+    }
+    @keyframes scan { from { transform: translateY(-8px); } to { transform: translateY(8px); } }
+
+    button { font: inherit; }
+    .app { width: min(100%, 560px); margin: 0 auto; position: relative; z-index: 1; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid rgba(191, 24, 24, .35);
+      padding-bottom: 12px;
+    }
+
+    .brand { min-width: 0; }
+    .eyebrow {
+      color: #d22;
+      font-size: 10px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: .19em;
+      text-transform: uppercase;
+      margin-bottom: 7px;
+      text-shadow: 0 0 10px rgba(255,0,0,.42);
+    }
+    h1 {
+      position: relative;
+      margin: 0;
+      font-size: clamp(20px, 6vw, 29px);
+      line-height: 1.04;
+      letter-spacing: -.055em;
+      text-transform: uppercase;
+      text-shadow: 2px 0 0 rgba(180,0,0,.26), -1px 0 0 rgba(255,255,255,.07);
+      animation: titleFlicker 7s infinite;
+    }
+    @keyframes titleFlicker {
+      0%, 91%, 94%, 100% { opacity: 1; transform: translateX(0); }
+      92% { opacity: .45; transform: translateX(-1px); }
+      93% { opacity: .8; transform: translateX(2px); }
+    }
+
+    .icon-btn {
+      flex: 0 0 auto;
+      width: 42px;
+      height: 42px;
+      border-radius: 2px;
+      border: 1px solid rgba(192, 34, 34, .38);
+      color: #ddd3cb;
+      background: rgba(90,0,0,.11);
+      cursor: pointer;
+      box-shadow: inset 0 0 16px rgba(120,0,0,.12);
+    }
+    .icon-btn:active { transform: scale(.97); background: rgba(120,0,0,.22); }
+
+    .panel {
+      background:
+        linear-gradient(180deg, rgba(31,12,12,.91), rgba(8,6,6,.94)),
+        repeating-linear-gradient(90deg, transparent 0 8px, rgba(255,0,0,.02) 8px 9px);
+      border: 1px solid rgba(154, 30, 30, .27);
+      border-radius: var(--radius);
+      box-shadow: 0 20px 65px rgba(0,0,0,.52), inset 0 1px 0 rgba(255,255,255,.025);
+    }
+
+    .hud {
+      padding: 10px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+      margin-bottom: 10px;
+    }
+    .stat {
+      min-width: 0;
+      padding: 10px 7px;
+      background: rgba(255,255,255,.018);
+      border: 1px solid rgba(255,255,255,.035);
+      text-align: center;
+    }
+    .stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .stat strong { display: block; margin-top: 5px; font-size: 17px; color: #eee6df; }
+
+    .objective { padding: 12px 13px 13px; margin-bottom: 10px; }
+    .objective-row { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; margin-bottom: 9px; }
+    .objective-row strong { font-size: 12px; text-transform: uppercase; }
+    .objective-row span { color: #c4b4aa; font-size: 11px; font-weight: 800; }
+    .progress { height: 7px; background: #080808; border: 1px solid rgba(255,255,255,.035); overflow: hidden; }
+    .progress > i {
+      display: block; width: 0%; height: 100%;
+      background: linear-gradient(90deg, #570000, #b00000 60%, #ef2525);
+      box-shadow: 0 0 18px rgba(221,0,0,.48);
+      transition: width .28s ease;
+    }
+
+    .board-wrap {
+      position: relative;
+      padding: 8px;
+      width: var(--board-size);
+      max-width: 100%;
+      margin: 0 auto;
+      border-radius: 3px;
+      background: linear-gradient(145deg, rgba(120,0,0,.18), rgba(255,255,255,.018));
+      border: 1px solid rgba(151, 23, 23, .35);
+      box-shadow: 0 25px 75px rgba(0,0,0,.7), 0 0 32px rgba(90,0,0,.12);
+    }
+    .board-wrap::before,
+    .board-wrap::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      background: #5e0000;
+      opacity: .65;
+    }
+    .board-wrap::before { width: 35%; height: 1px; left: -6px; top: 18px; }
+    .board-wrap::after { width: 1px; height: 27%; right: 18px; bottom: -6px; }
+
+    .board {
+      width: 100%;
+      aspect-ratio: 1;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: var(--gap);
+      padding: var(--gap);
+      border-radius: 2px;
+      background: #020202;
+      overflow: hidden;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      border: 1px solid rgba(255,255,255,.018);
+    }
+
+    .tile {
+      position: relative;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 2px;
+      cursor: pointer;
+      min-width: 0;
+      aspect-ratio: 1;
+      color: #e9e1d8;
+      font-size: clamp(20px, 7vw, 34px);
+      line-height: 1;
+      background:
+        radial-gradient(circle at 45% 30%, rgba(130,0,0,.16), transparent 38%),
+        linear-gradient(145deg, rgba(255,255,255,.042), rgba(255,255,255,.012));
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.025), inset 0 -12px 24px rgba(0,0,0,.28);
+      transform: translateZ(0);
+      transition: transform .12s ease, opacity .16s ease, box-shadow .12s ease, filter .16s ease;
+      filter: saturate(.72) contrast(1.07);
+    }
+    .tile::after {
+      content: "";
+      position: absolute;
+      inset: 2px;
+      border: 1px solid rgba(125, 23, 23, .09);
+      pointer-events: none;
+    }
+    .tile:active { transform: scale(.93); }
+    .tile.selected {
+      z-index: 2;
+      transform: scale(1.06);
+      box-shadow: 0 0 0 1px #f12b2b, 0 0 20px rgba(205,0,0,.46), inset 0 0 18px rgba(120,0,0,.2);
+      filter: saturate(1.2) brightness(1.16);
+    }
+    .tile.matched { animation: rupture .28s ease forwards; filter: brightness(1.45) saturate(.9); }
+    .tile.empty { opacity: 0; pointer-events: none; }
+    @keyframes rupture {
+      0% { transform: scale(1); opacity: 1; }
+      38% { transform: scale(1.16) rotate(-2deg); }
+      65% { transform: scale(.92) rotate(4deg); opacity: .85; filter: brightness(2); }
+      100% { transform: scale(.15); opacity: 0; }
+    }
+
+    .tip {
+      color: #817671;
+      text-align: center;
+      font-size: 11px;
+      line-height: 1.5;
+      margin: 13px auto 0;
+      max-width: 440px;
+      letter-spacing: .015em;
+    }
+    .tip::before { content: "// "; color: #851717; }
+
+    .toast {
+      position: fixed;
+      z-index: 50;
+      left: 50%;
+      bottom: calc(max(18px, env(safe-area-inset-bottom)) + 6px);
+      transform: translate(-50%, 14px);
+      background: rgba(13,4,4,.96);
+      border: 1px solid rgba(180,24,24,.4);
+      border-radius: 2px;
+      padding: 10px 13px;
+      color: #e4d8d2;
+      font-weight: 800;
+      font-size: 11px;
+      opacity: 0;
+      pointer-events: none;
+      transition: .22s ease;
+      box-shadow: 0 14px 40px rgba(0,0,0,.55), 0 0 18px rgba(100,0,0,.18);
+      white-space: nowrap;
+      max-width: 92vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    .modal {
+      position: fixed;
+      z-index: 100;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: max(18px, env(safe-area-inset-top)) 16px max(18px, env(safe-area-inset-bottom));
+      background: rgba(0,0,0,.86);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      overflow-y: auto;
+    }
+    .modal.open { display: flex; animation: modalIn .22s ease both; }
+    @keyframes modalIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal-card {
+      width: min(100%, 470px);
+      padding: 21px;
+      border-radius: 3px;
+      background:
+        radial-gradient(circle at 50% -10%, rgba(120,0,0,.24), transparent 34%),
+        linear-gradient(180deg, rgba(24,8,8,.99), rgba(4,4,4,.995));
+      border: 1px solid rgba(161, 26, 26, .38);
+      box-shadow: 0 28px 100px rgba(0,0,0,.78), 0 0 60px rgba(95,0,0,.18);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .modal-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(0deg, transparent 0 5px, rgba(255,255,255,.014) 5px 6px);
+    }
+    .modal-card::after {
+      content: "SIGNAL // UNSTABLE";
+      position: absolute;
+      right: 10px;
+      top: 8px;
+      color: rgba(196,35,35,.18);
+      font-size: 8px;
+      letter-spacing: .13em;
+      pointer-events: none;
+    }
+    .modal-kicker {
+      color: #ca2424;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      font-size: 10px;
+      font-weight: 900;
+    }
+    .modal h2 {
+      margin: 10px 0 9px;
+      font-size: clamp(25px, 8vw, 38px);
+      line-height: 1;
+      letter-spacing: -.055em;
+      text-transform: uppercase;
+      text-shadow: 2px 0 #4f0000;
+    }
+    .modal p {
+      color: #cbc0b9;
+      font-size: 13px;
+      line-height: 1.62;
+      margin: 10px 0 0;
+      white-space: pre-line;
+      position: relative;
+      z-index: 1;
+    }
+
+    .rank {
+      width: 88px;
+      height: 88px;
+      display: grid;
+      place-items: center;
+      margin: 18px auto 8px;
+      border-radius: 50%;
+      font-size: 44px;
+      font-weight: 1000;
+      letter-spacing: -.08em;
+      color: #f0ded4;
+      background: radial-gradient(circle, #3a0000 0 44%, #100000 46% 64%, #020202 66%);
+      border: 1px solid #8e1818;
+      box-shadow: 0 0 38px rgba(157,0,0,.3), inset 0 0 20px rgba(255,0,0,.13);
+      text-shadow: 0 0 14px rgba(255,45,45,.54);
+      transform: rotate(-3deg);
+    }
+    .rank::after { content: "RANK"; position: absolute; margin-top: 112px; color: #6e5f5a; font-size: 8px; letter-spacing: .24em; }
+
+    .results { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 18px; }
+    .result-pill { background: rgba(255,255,255,.018); border: 1px solid rgba(147,24,24,.2); border-radius: 2px; padding: 9px 5px; }
+    .result-pill span { display: block; color: #796e69; font-size: 9px; text-transform: uppercase; }
+    .result-pill strong { display: block; margin-top: 4px; font-size: 14px; }
+
+    .congrats-image {
+      width: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      border-radius: 2px;
+      margin-top: 18px;
+      border: 1px solid rgba(145,26,26,.37);
+      display: none;
+      background: #090909;
+      filter: grayscale(.18) contrast(1.06);
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn {
+      width: 100%;
+      border: 1px solid #7f1717;
+      border-radius: 2px;
+      padding: 14px 16px;
+      margin-top: 18px;
+      color: #eee4de;
+      font-weight: 900;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      background: linear-gradient(90deg, #3c0000, #770808 50%, #3b0000);
+      box-shadow: 0 10px 30px rgba(100,0,0,.25), inset 0 0 20px rgba(255,0,0,.05);
+      cursor: pointer;
+      position: relative;
+      z-index: 1;
+    }
+    .btn:active { transform: translateY(1px) scale(.995); filter: brightness(1.18); }
+    .btn.secondary { background: rgba(255,255,255,.025); border-color: rgba(146,37,37,.26); box-shadow: none; color: #a99d96; }
+
+    .combo-float {
+      position: fixed;
+      z-index: 60;
+      left: 50%;
+      top: 42%;
+      transform: translate(-50%, -50%) scale(.82);
+      font-size: clamp(28px, 10vw, 52px);
+      font-weight: 1000;
+      letter-spacing: -.06em;
+      color: #f2ded7;
+      text-shadow: 2px 0 #7f0000, -2px 0 rgba(255,255,255,.1), 0 0 28px rgba(177,0,0,.5);
+      pointer-events: none;
+      opacity: 0;
+      text-transform: uppercase;
+    }
+    .combo-float.show { animation: combo .65s ease both; }
+    @keyframes combo {
+      0% { opacity: 0; transform: translate(-51%, -42%) scale(.72); }
+      25% { opacity: 1; transform: translate(-49%, -50%) scale(1.08); }
+      42% { transform: translate(-52%, -51%) scale(1.02); }
+      100% { opacity: 0; transform: translate(-50%, -70%) scale(.94); }
+    }
+
+    .confetti {
+      position: fixed;
+      z-index: 110;
+      top: -14px;
+      width: 3px;
+      height: 18px;
+      border-radius: 0;
+      pointer-events: none;
+      animation: fall linear forwards;
+      box-shadow: 0 0 6px currentColor;
+    }
+    @keyframes fall { to { transform: translate3d(var(--drift), 110vh, 0) rotate(620deg); opacity: .15; } }
+
+    @media (max-width: 390px) {
+      :root { --gap: 5px; }
+      .hud { gap: 5px; padding: 8px; }
+      .stat { padding: 9px 5px; }
+      .stat strong { font-size: 15px; }
+      .board-wrap { padding: 6px; }
+      .modal-card { padding: 18px; }
+      .modal p { font-size: 12.5px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <div class="topbar">
+      <div class="brand">
+        <div class="eyebrow">Night League // Match-3</div>
+        <h1>Дисциплина: не моргай</h1>
+      </div>
+      <button class="icon-btn" id="restartBtn" aria-label="Начать заново" title="Начать заново">↻</button>
+    </div>
+
+    <section class="panel hud" aria-label="Статистика игры">
+      <div class="stat"><span>Раунд</span><strong id="roundLabel">1 / 3</strong></div>
+      <div class="stat"><span>Счёт</span><strong id="scoreLabel">0</strong></div>
+      <div class="stat"><span>Ходы</span><strong id="movesLabel">12</strong></div>
+    </section>
+
+    <section class="panel objective">
+      <div class="objective-row">
+        <strong id="objectiveText">Протокол: 900 очков</strong>
+        <span id="progressText">0%</span>
+      </div>
+      <div class="progress"><i id="progressBar"></i></div>
+    </section>
+
+    <section class="board-wrap" aria-label="Игровое поле">
+      <div class="board" id="board"></div>
+    </section>
+
+    <p class="tip">Сдвигай соседние метки тапами или свайпом. Три одинаковых символа в линии разрывают контур.</p>
+  </main>
+
+  <div class="toast" id="toast"></div>
+  <div class="combo-float" id="comboFloat"></div>
+
+  <div class="modal" id="roundModal" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-kicker" id="roundModalKicker">Контур закрыт</div>
+      <h2 id="roundModalTitle">Допуск получен</h2>
+      <p id="roundModalText"></p>
+      <button class="btn" id="roundModalBtn">Продолжить</button>
+    </div>
+  </div>
+
+  <div class="modal" id="finalModal" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-kicker">Ритуал завершён</div>
+      <h2>Вердикт системы</h2>
+      <div class="rank" id="finalRank">S</div>
+      <div class="results" id="finalResults"></div>
+      <img class="congrats-image" id="congratsImage" alt="Поздравление" />
+      <p id="congratsText"></p>
+      <button class="btn secondary" id="playAgainBtn">Повторить ритуал</button>
+    </div>
+  </div>
+
+  <script>
+    "use strict";
+
+    /* ============================================================
+       ВСТАВЬ ПРЯМУЮ ССЫЛКУ НА КАРТИНКУ МЕЖДУ КАВЫЧКАМИ НИЖЕ.
+       Например: https://example.com/photo.jpg
+       ============================================================ */
+    const CONGRATS_IMAGE_URL = "PASTE_DIRECT_IMAGE_URL_HERE";
+
+    const CONGRATS_TEXT = `Твой сосиска-малышок поздравляет тебя с победой в этом киберспортивном соревновании по сверхсложной дисциплине "три в ряд", а так - я хотел бы сказать тебе что я очень сильно тебя люблю и рад что ты есть в моей жизни
+С победой тебя, малёк`;
+
+    const SIZE = 7;
+    const TILES = ["👁️", "💀", "🕯️", "🩸", "🕸️", "🦴"];
+    const ROUNDS = [
+      { target: 900,  moves: 12, name: "Первый допуск" },
+      { target: 1400, moves: 11, name: "Сигнал из глубины" },
+      { target: 1900, moves: 10, name: "Финальный ритуал" }
+    ];
+
+    const boardEl = document.getElementById("board");
+    const roundLabel = document.getElementById("roundLabel");
+    const scoreLabel = document.getElementById("scoreLabel");
+    const movesLabel = document.getElementById("movesLabel");
+    const objectiveText = document.getElementById("objectiveText");
+    const progressText = document.getElementById("progressText");
+    const progressBar = document.getElementById("progressBar");
+    const toastEl = document.getElementById("toast");
+    const comboFloat = document.getElementById("comboFloat");
+    const roundModal = document.getElementById("roundModal");
+    const finalModal = document.getElementById("finalModal");
+    const roundModalKicker = document.getElementById("roundModalKicker");
+    const roundModalTitle = document.getElementById("roundModalTitle");
+    const roundModalText = document.getElementById("roundModalText");
+    const roundModalBtn = document.getElementById("roundModalBtn");
+    const finalRank = document.getElementById("finalRank");
+    const finalResults = document.getElementById("finalResults");
+    const congratsImage = document.getElementById("congratsImage");
+    const congratsText = document.getElementById("congratsText");
+
+    let board = [];
+    let roundIndex = 0;
+    let score = 0;
+    let movesLeft = ROUNDS[0].moves;
+    let selected = null;
+    let busy = false;
+    let roundResults = [];
+    let toastTimer = null;
+    let pointerStart = null;
+
+    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+    const key = (r, c) => `${r}:${c}`;
+    const isAdjacent = (a, b) => Math.abs(a.r - b.r) + Math.abs(a.c - b.c) === 1;
+    const pulse = pattern => { try { navigator.vibrate?.(pattern); } catch (_) {} };
+
+    function randomTile() {
+      return TILES[Math.floor(Math.random() * TILES.length)];
+    }
+
+    function createPlayableBoard() {
+      for (let attempt = 0; attempt < 120; attempt++) {
+        const candidate = Array.from({ length: SIZE }, () => Array(SIZE).fill(null));
+        for (let r = 0; r < SIZE; r++) {
+          for (let c = 0; c < SIZE; c++) {
+            let choices = [...TILES];
+            if (c >= 2 && candidate[r][c - 1] === candidate[r][c - 2]) {
+              choices = choices.filter(v => v !== candidate[r][c - 1]);
+            }
+            if (r >= 2 && candidate[r - 1][c] === candidate[r - 2][c]) {
+              choices = choices.filter(v => v !== candidate[r - 1][c]);
+            }
+            candidate[r][c] = choices[Math.floor(Math.random() * choices.length)];
+          }
+        }
+        if (hasPossibleMove(candidate)) return candidate;
+      }
+      return Array.from({ length: SIZE }, () => Array.from({ length: SIZE }, randomTile));
+    }
+
+    function renderBoard(matchSet = new Set()) {
+      const frag = document.createDocumentFragment();
+      boardEl.innerHTML = "";
+
+      for (let r = 0; r < SIZE; r++) {
+        for (let c = 0; c < SIZE; c++) {
+          const value = board[r][c];
+          const tile = document.createElement("button");
+          tile.type = "button";
+          tile.className = "tile";
+          tile.dataset.r = r;
+          tile.dataset.c = c;
+          tile.setAttribute("aria-label", value ? `Фишка ${value}, ряд ${r + 1}, колонка ${c + 1}` : "Пустая ячейка");
+          tile.textContent = value || "";
+
+          if (!value) tile.classList.add("empty");
+          if (selected && selected.r === r && selected.c === c) tile.classList.add("selected");
+          if (matchSet.has(key(r, c))) tile.classList.add("matched");
+
+          frag.appendChild(tile);
+        }
+      }
+      boardEl.appendChild(frag);
+    }
+
+    function updateHud() {
+      const cfg = ROUNDS[roundIndex];
+      roundLabel.textContent = `${roundIndex + 1} / ${ROUNDS.length}`;
+      scoreLabel.textContent = score.toLocaleString("ru-RU");
+      movesLabel.textContent = movesLeft;
+      objectiveText.textContent = `${cfg.name}: ${cfg.target.toLocaleString("ru-RU")} очков`;
+      const pct = Math.min(100, Math.round(score / cfg.target * 100));
+      progressText.textContent = `${pct}%`;
+      progressBar.style.width = `${pct}%`;
+    }
+
+    function findMatches(matrix = board) {
+      const found = new Set();
+
+      for (let r = 0; r < SIZE; r++) {
+        let start = 0;
+        for (let c = 1; c <= SIZE; c++) {
+          if (c < SIZE && matrix[r][c] && matrix[r][c] === matrix[r][start]) continue;
+          const length = c - start;
+          if (matrix[r][start] && length >= 3) {
+            for (let x = start; x < c; x++) found.add(key(r, x));
+          }
+          start = c;
+        }
+      }
+
+      for (let c = 0; c < SIZE; c++) {
+        let start = 0;
+        for (let r = 1; r <= SIZE; r++) {
+          if (r < SIZE && matrix[r][c] && matrix[r][c] === matrix[start][c]) continue;
+          const length = r - start;
+          if (matrix[start] && matrix[start][c] && length >= 3) {
+            for (let x = start; x < r; x++) found.add(key(x, c));
+          }
+          start = r;
+        }
+      }
+
+      return found;
+    }
+
+    function hasPossibleMove(matrix) {
+      const swap = (r1, c1, r2, c2) => {
+        [matrix[r1][c1], matrix[r2][c2]] = [matrix[r2][c2], matrix[r1][c1]];
+      };
+
+      for (let r = 0; r < SIZE; r++) {
+        for (let c = 0; c < SIZE; c++) {
+          const dirs = [[0, 1], [1, 0]];
+          for (const [dr, dc] of dirs) {
+            const nr = r + dr, nc = c + dc;
+            if (nr >= SIZE || nc >= SIZE) continue;
+            swap(r, c, nr, nc);
+            const good = findMatches(matrix).size > 0;
+            swap(r, c, nr, nc);
+            if (good) return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    function collapseAndRefill() {
+      for (let c = 0; c < SIZE; c++) {
+        const values = [];
+        for (let r = SIZE - 1; r >= 0; r--) {
+          if (board[r][c] !== null) values.push(board[r][c]);
+        }
+        for (let r = SIZE - 1, i = 0; r >= 0; r--, i++) {
+          board[r][c] = i < values.length ? values[i] : randomTile();
+        }
+      }
+    }
+
+    function swapCells(a, b) {
+      [board[a.r][a.c], board[b.r][b.c]] = [board[b.r][b.c], board[a.r][a.c]];
+    }
+
+    async function trySwap(a, b) {
+      if (busy || !isAdjacent(a, b)) return;
+      busy = true;
+      selected = null;
+
+      swapCells(a, b);
+      renderBoard();
+      await sleep(100);
+
+      if (findMatches().size === 0) {
+        swapCells(a, b);
+        renderBoard();
+        showToast("Контур отверг этот ход");
+        busy = false;
+        return;
+      }
+
+      movesLeft--;
+      pulse(18);
+      await resolveBoard();
+      updateHud();
+
+      const cfg = ROUNDS[roundIndex];
+      if (score >= cfg.target) {
+        await sleep(150);
+        finishRound(true);
+        busy = false;
+        return;
+      }
+
+      if (movesLeft <= 0) {
+        await sleep(150);
+        finishRound(false);
+        busy = false;
+        return;
+      }
+
+      if (!hasPossibleMove(board)) {
+        showToast("Сигнал потерян — поле пересобрано");
+        await sleep(420);
+        board = createPlayableBoard();
+        renderBoard();
+      }
+
+      busy = false;
+    }
+
+    async function resolveBoard() {
+      let combo = 1;
+      let matches = findMatches();
+
+      while (matches.size > 0) {
+        renderBoard(matches);
+        const gained = matches.size * 100 * combo;
+        score += gained;
+        updateHud();
+
+        if (combo > 1) { showCombo(`РАЗРЫВ ×${combo}`); pulse([16, 28, 16]); }
+        await sleep(230);
+
+        for (const pos of matches) {
+          const [r, c] = pos.split(":").map(Number);
+          board[r][c] = null;
+        }
+        renderBoard();
+        await sleep(80);
+
+        collapseAndRefill();
+        renderBoard();
+        await sleep(170);
+
+        combo++;
+        matches = findMatches();
+      }
+    }
+
+    function handleCellChoice(cell) {
+      if (busy || !cell) return;
+      const current = { r: Number(cell.dataset.r), c: Number(cell.dataset.c) };
+
+      if (!selected) {
+        selected = current;
+        renderBoard();
+        return;
+      }
+
+      if (selected.r === current.r && selected.c === current.c) {
+        selected = null;
+        renderBoard();
+        return;
+      }
+
+      if (isAdjacent(selected, current)) {
+        const first = selected;
+        selected = null;
+        trySwap(first, current);
+      } else {
+        selected = current;
+        renderBoard();
+      }
+    }
+
+    boardEl.addEventListener("pointerdown", event => {
+      if (busy) return;
+      const tile = event.target.closest(".tile");
+      if (!tile) return;
+      pointerStart = {
+        x: event.clientX,
+        y: event.clientY,
+        r: Number(tile.dataset.r),
+        c: Number(tile.dataset.c),
+        id: event.pointerId
+      };
+      boardEl.setPointerCapture?.(event.pointerId);
+    });
+
+    boardEl.addEventListener("pointerup", event => {
+      if (busy || !pointerStart || pointerStart.id !== event.pointerId) return;
+      const dx = event.clientX - pointerStart.x;
+      const dy = event.clientY - pointerStart.y;
+      const distance = Math.hypot(dx, dy);
+      const from = { r: pointerStart.r, c: pointerStart.c };
+      pointerStart = null;
+
+      if (distance < 24) {
+        const tile = document.elementFromPoint(event.clientX, event.clientY)?.closest?.(".tile");
+        handleCellChoice(tile || boardEl.querySelector(`[data-r="${from.r}"][data-c="${from.c}"]`));
+        return;
+      }
+
+      let to = { ...from };
+      if (Math.abs(dx) > Math.abs(dy)) to.c += dx > 0 ? 1 : -1;
+      else to.r += dy > 0 ? 1 : -1;
+
+      if (to.r >= 0 && to.r < SIZE && to.c >= 0 && to.c < SIZE) {
+        selected = null;
+        trySwap(from, to);
+      }
+    });
+
+    boardEl.addEventListener("pointercancel", () => { pointerStart = null; });
+
+    function showToast(text) {
+      clearTimeout(toastTimer);
+      toastEl.textContent = text;
+      toastEl.classList.add("show");
+      toastTimer = setTimeout(() => toastEl.classList.remove("show"), 1500);
+    }
+
+    function showCombo(text) {
+      comboFloat.textContent = text;
+      comboFloat.classList.remove("show");
+      void comboFloat.offsetWidth;
+      comboFloat.classList.add("show");
+    }
+
+    function finishRound(success) {
+      const cfg = ROUNDS[roundIndex];
+      if (success) {
+        roundResults[roundIndex] = {
+          score,
+          movesLeft,
+          moveLimit: cfg.moves,
+          target: cfg.target,
+          name: cfg.name
+        };
+
+        if (roundIndex === ROUNDS.length - 1) {
+          showFinal();
+          return;
+        }
+
+        roundModalKicker.textContent = `Контур ${roundIndex + 1} закрыт`;
+        roundModalTitle.textContent = "Допуск получен";
+        roundModalText.textContent = `${cfg.name}: ${score.toLocaleString("ru-RU")} очков.\nОсталось ходов: ${movesLeft}.`;
+        roundModalBtn.textContent = "Спуститься глубже";
+        roundModalBtn.dataset.action = "next";
+        roundModal.classList.add("open");
+      } else {
+        roundModalKicker.textContent = `Контур ${roundIndex + 1} не закрыт`;
+        roundModalTitle.textContent = "Система не отпускает";
+        roundModalText.textContent = `Не хватает ${Math.max(0, cfg.target - score).toLocaleString("ru-RU")} очков. Контур придётся пройти снова.`;
+        roundModalBtn.textContent = "Войти снова";
+        roundModalBtn.dataset.action = "retry";
+        roundModal.classList.add("open");
+      }
+    }
+
+    roundModalBtn.addEventListener("click", () => {
+      const action = roundModalBtn.dataset.action;
+      roundModal.classList.remove("open");
+      if (action === "next") roundIndex++;
+      startRound();
+    });
+
+    function startRound() {
+      const cfg = ROUNDS[roundIndex];
+      score = 0;
+      movesLeft = cfg.moves;
+      selected = null;
+      busy = false;
+      board = createPlayableBoard();
+      renderBoard();
+      updateHud();
+      showToast(`${cfg.name} // соединение установлено`);
+    }
+
+    function calculateRank() {
+      const efficiency = roundResults.reduce((sum, r) => sum + (r.movesLeft / r.moveLimit), 0) / ROUNDS.length;
+      const overshoot = roundResults.reduce((sum, r) => sum + Math.min(.35, Math.max(0, (r.score - r.target) / r.target)), 0) / ROUNDS.length;
+      const metric = efficiency + overshoot * .45;
+      if (metric >= .58) return "S";
+      if (metric >= .42) return "A";
+      if (metric >= .25) return "B";
+      return "C";
+    }
+
+    function showFinal() {
+      finalRank.textContent = calculateRank();
+      finalResults.innerHTML = roundResults.map((r, i) => `
+        <div class="result-pill">
+          <span>Раунд ${i + 1}</span>
+          <strong>${r.score.toLocaleString("ru-RU")}</strong>
+        </div>
+      `).join("");
+      congratsText.textContent = CONGRATS_TEXT;
+
+      if (CONGRATS_IMAGE_URL && !CONGRATS_IMAGE_URL.includes("PASTE_DIRECT_IMAGE_URL_HERE")) {
+        congratsImage.src = CONGRATS_IMAGE_URL;
+        congratsImage.style.display = "block";
+        congratsImage.onerror = () => { congratsImage.style.display = "none"; };
+      } else {
+        congratsImage.removeAttribute("src");
+        congratsImage.style.display = "none";
+      }
+
+      finalModal.classList.add("open");
+      launchConfetti();
+    }
+
+    function launchConfetti() {
+      const colors = ["#8b0000", "#bd1515", "#e8ded7", "#4a0000", "#ffffff"];
+      for (let i = 0; i < 54; i++) {
+        const bit = document.createElement("i");
+        bit.className = "confetti";
+        bit.style.left = `${Math.random() * 100}vw`;
+        bit.style.background = colors[Math.floor(Math.random() * colors.length)];
+        bit.style.setProperty("--drift", `${(Math.random() - .5) * 180}px`);
+        bit.style.animationDuration = `${2.7 + Math.random() * 2.2}s`;
+        bit.style.animationDelay = `${Math.random() * .8}s`;
+        document.body.appendChild(bit);
+        setTimeout(() => bit.remove(), 5600);
+      }
+    }
+
+    function fullRestart() {
+      finalModal.classList.remove("open");
+      roundModal.classList.remove("open");
+      roundResults = [];
+      roundIndex = 0;
+      startRound();
+    }
+
+    document.getElementById("restartBtn").addEventListener("click", () => {
+      if (confirm("Сбросить все контуры и начать сначала?")) fullRestart();
+    });
+    document.getElementById("playAgainBtn").addEventListener("click", fullRestart);
+
+    startRound();
+  </script>
+</body>
+</html>
